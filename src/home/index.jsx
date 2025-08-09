@@ -2,39 +2,39 @@
 
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
+import { Helmet } from "react-helmet";
 import PropTypes from "prop-types";
 import axios from "axios";
-import Image from 'next/image';
 
-// import { getImageURL } from "../../../utils/utils-image";
+import { getImageURL } from "../../../utils/utils-image";
 
-import handSpeaker from "../../public/images/hand-speaker.png";
-import leftArrow from "../../public/images/left-arrow.png";
-import rightArrow from "../../public/images/right-arrow.png";
-import clgSmallImg from "../../public/images/img-dummy-sm.png";
-import imglite from "../../public/images/img-dummy-lite.png";
-import mapIcon from "../../public/images/map-icon.png";
-import clgBanner from "../../public/images/clg-bnr.png";
-import downlaod from "../../public/images/downloads.svg";
-import compare from "../../public/images/compare.svg";
-import star from "../../public/images/star.png";
-import arrowTilt from "../../public/images/arrow-tilt.svg";
-import studentIcon from "../../public/images/students-icon.svg";
-import emailIcon from "../../public/images/email-icon.svg";
-import phoneIcon from "../../public/images/phone-icon.svg";
+import handSpeaker from "/images/hand-speaker.png";
+import leftArrow from "/images/left-arrow.png";
+import rightArrow from "/images/right-arrow.png";
+import clgSmallImg from "/images/img-dummy-sm.png";
+import imglite from "/images/img-dummy-lite.png";
+import mapIcon from "/images/map-icon.png";
+import clgBanner from "/images/clg-bnr.png";
+import downlaod from "/images/downloads.svg";
+import compare from "/images/compare.svg";
+import star from "/images/star.png";
+import arrowTilt from "/images/arrow-tilt.svg";
+import studentIcon from "/images/students-icon.svg";
+import emailIcon from "/images/email-icon.svg";
+import phoneIcon from "/images/phone-icon.svg";
 
-import NewsAndUpdates from "@/home/newsAndUpdates";
-import FutureGoals from "@/home/futureGoals";
-import Citywise from "@/home/citywise";
-import Featured from "@/home/featured";
-import Exams from "@/home/exams";
+import Slider from "react-slick";
+import Featured from "./featured";
+import FutureGoals from "./futureGoals";
+import Exams from "./exams";
+import NewsAndUpdates from "./newsAndUpdates";
+import Citywise from "./citywise";
 
-import GlobalSearch from "@/components/ui/globalSearch";
-import Modal from "@/components/ui/modal";
-import Login from "@/components/ui/login";
+import { openModel } from "../../../redux/manageModelSlice";
 
-import { openModel } from "@/app/redux/manageModelSlice";
-
+import GlobalSearch from "../commonComps/globalSearch";
+import Modal from "../commonComps/modal";
+import Login from "../commonComps/login";
 
 function Home(props) {
   const dispatch = useDispatch();
@@ -102,7 +102,7 @@ function Home(props) {
   useEffect(() => {
     axios
       //.get("/api/cmsdetails/" + cms_url)
-      .get("/api/home/topcourses")
+      .get("/api/topCourses/")
       .then((response) => {
         setTopcourses(response.data);
       })
@@ -111,7 +111,7 @@ function Home(props) {
       });
     axios
       //.get("/api/cmsdetails/" + cms_url)
-      .get("/api/home/topnotifications")
+      .get("/api/topnotifications/")
       .then((response) => {
         setTopnotification(response.data);
       })
@@ -120,7 +120,7 @@ function Home(props) {
       });
     axios
       //.get("/api/cmsdetails/" + cms_url)
-      .get("/api/home/toppopulercolleges")
+      .get("/api/toppopulercolleges/")
       .then((response) => {
         setToppopularcollegelisting(response.data);
       })
@@ -129,7 +129,7 @@ function Home(props) {
       });
 
     axios
-      .get("/api/home/studybycities")
+      .get("/api/studybycities/")
       .then((response) => {
         setBycity(response.data);
       })
@@ -137,7 +137,7 @@ function Home(props) {
         console.error(error);
       });
     axios
-      .get("/api/home/trending")
+      .get("/api/tradings")
       .then((response) => {
         setTradingarr(response.data);
       })
@@ -208,7 +208,7 @@ function Home(props) {
 
   return (
     <>
-      {/* <Helmet>
+      <Helmet>
         <title>
           Check Abroad Colleges Scholarships, College Search, Lists, Admission,
           Rankings & Awards and Students Review!
@@ -246,18 +246,53 @@ function Home(props) {
           key="og:image"
           content={`https://timesofcollege.com/images/logoWhite.png`}
         />
-      </Helmet> */}
+      </Helmet>
       <section className="sliding-banner">
         <div className="search-container">
           <div className="top-search">
             <span style={{ color: "#fff" }}>Top Courses:</span>
             {topcourses.length > 0 &&
               topcourses.map((citem) => (
-                <span key={`citem-${citem}`} className="border-chips" id={citem.cour_id}>
+                <span className="border-chips" id={citem.cour_id}>
                   <a href={"course/" + citem.course_url}>{citem.course_name}</a>
                 </span>
               ))}
           </div>
+          {/* <div className="search-wrapper mt-7">
+            <form action="" name="searchForm" id="searchForm" method="post">
+              <input
+                type="text"
+                value={searchparameter.search_parameter}
+                id="search-input"
+                name="search_parameter"
+                placeholder="Search: Collages, Courses, Exams, Specializations & More"
+                onChange={handleChangeFormdata}
+                onKeyUp={(e) => autosuggestcolleges(e)}
+                autocomplete="off"
+              />
+              <input
+                type="button"
+                id="search-btn"
+                value="Search"
+                onClick={searchCollege}
+              />
+
+              {suggestcolleges?.length > 0 && (
+                <div className="collegeAutosuggest-section">
+                  <ul>
+                    {suggestcolleges.map((item, id) => (
+                      <li
+                        key={id}
+                        onClick={(e) => searchvalueset(e, item.college_name)}
+                      >
+                        {item.college_name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </form>
+          </div> */}
           <div onClick={() => dispatch(openModel())}>
             <GlobalSearch />
           </div>
@@ -272,16 +307,10 @@ function Home(props) {
       <section className="latest-news">
         <div className="news-wrapper">
           <span>
-            <Image 
-              src={handSpeaker}
-              alt=''
-            />
+            <img src={handSpeaker} alt="" />
           </span>
           <span>
-            <Image 
-              src={leftArrow}
-              alt=''
-            />
+            <img src={leftArrow} alt="" />
           </span>
           <div className="news-list">
             {topnotification.length > 0 &&
@@ -300,10 +329,7 @@ function Home(props) {
               ))}
           </div>
           <span>
-            <Image 
-              src={rightArrow}
-              alt=''
-            />
+            <img src={rightArrow} alt="" />
           </span>
         </div>
       </section>
@@ -349,13 +375,13 @@ function Home(props) {
                         <div
                           className="header"
                           style={{
-                            // backgroundImage: `url(${getImageURL(item.banner) ? getImageURL(item.banner) : clgBanner})`,
+                            backgroundImage: `url(${getImageURL(item.banner) ? getImageURL(item.banner) : clgBanner})`,
                             backgroundRepeat: "no-repeat",
                           }}
                         >
                           <div>
                             <a href={"college/" + item.college_url}>
-                            {/* <img src={getImageURL(item.logo)} alt="" /> */}
+                            <img src={getImageURL(item.logo)} alt="" />
                             <div className="details">
                               <h3>{item.college_name} </h3>
                               <p>
@@ -371,11 +397,7 @@ function Home(props) {
                           <div className="clg-type-rating">
                             <span>{item.courses && courlink}</span>
                             <span className="clg-rating">
-                              {/* <img src={star} alt="" /> */}
-                              <Image 
-                                src={star}
-                                alt=''            
-                              />
+                              <img src={star} alt="" />
                               <span>
                                 <b>
                                   {item.total_rating
@@ -416,17 +438,11 @@ function Home(props) {
                           <div className="action-btns">
                             <div className="download" onClick={(e) => openModal(e)}
                             >
-                              <Image 
-                                src={downlaod}
-                                alt=''            
-                              />
+                              <img src={downlaod} alt="" />
                               <span>Download Brochure</span>
                             </div>
                             <div className="compare" onClick={(e) => openModal(e)}                            >
-                              <Image 
-                                src={compare}
-                                alt=''
-                              />
+                              <img src={compare} alt="" />
                               <span>Compare</span>
                             </div>
                           </div>
@@ -453,10 +469,7 @@ function Home(props) {
             <div className="chips-link">
               <span>JEE Mains Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -464,10 +477,7 @@ function Home(props) {
             <div className="chips-link">
               <span>CUET Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''              
-                />
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -475,10 +485,7 @@ function Home(props) {
             <div className="chips-link">
               <span>MBA Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -486,10 +493,7 @@ function Home(props) {
             <div className="chips-link">
               <span>LLB Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -497,10 +501,7 @@ function Home(props) {
             <div className="chips-link">
               <span>B.Sc Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />              
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -508,10 +509,7 @@ function Home(props) {
             <div className="chips-link">
               <span>MBBS Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -519,10 +517,7 @@ function Home(props) {
             <div className="chips-link">
               <span>PhD Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />              
+                <img src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -530,11 +525,8 @@ function Home(props) {
             <div className="chips-link">
               <span>B Ed Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />              
-                </span>
+                <img src={arrowTilt} alt="" />
+              </span>
             </div>
           </a>
         </div>
@@ -548,11 +540,8 @@ function Home(props) {
                 <div className="chips-link" key={keyid}>
                   <span>{trd.trading_name}</span>
                   <span>
-                  <Image 
-                    src={arrowTilt}
-                    alt=''
-                  />                  
-                </span>
+                    <img src={arrowTilt} alt="" />
+                  </span>
                 </div>
               </a>
             ))}
@@ -564,10 +553,7 @@ function Home(props) {
           <div className="get-notify-container">
             <div className="form-element">
               <span>
-                <Image 
-                  src={studentIcon}
-                  alt=''
-                />
+                <img src={studentIcon} alt="" />
               </span>
               <select name="course-list" id="">
                 <option value="-Select-">Choose courses</option>
@@ -576,19 +562,13 @@ function Home(props) {
             </div>
             <div className="form-element">
               <span>
-                <Image 
-                  src={emailIcon}
-                  alt=''
-                />                
+                <img src={emailIcon} alt="" />
               </span>
               <input type="text" name="" id="" placeholder="Enter your email" />
             </div>
             <div className="form-element">
               <span>
-                <Image 
-                  src={phoneIcon}
-                  alt=''
-                /> 
+                <img src={phoneIcon} alt="" />
               </span>
               <input type="text" name="" id="" placeholder="Enter your phone" />
             </div>
