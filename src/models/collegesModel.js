@@ -1,13 +1,10 @@
 import pool from "@/lib/db";
 
 //get all colleges our database
-const getColleges = async (req) => {
+export const getColleges = async (req) => {
   try {
     return await new Promise(function (resolve, reject) {
       var search = "";
-      //console.log("loging-->", localStorage.getItem("logedin"));
-      //console.log("loging-->", session.Session["logedin"]);
-      // console.log("server req -->", req);
       if (req.loginrole_id == "2") {
         search = " AND added_by=" + req.loginid;
       }
@@ -1335,7 +1332,7 @@ const updatecollegefaqs = (body) => {
   });
 }
 
-const getMenurolewise = async (login_id) => {
+export const getMenurolewise = async (login_id) => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1496,6 +1493,7 @@ const getModulearr = async () => {
     throw new Error("Internal server error");
   }
 };
+
 const getCollegetypearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1518,6 +1516,7 @@ const getCollegetypearr = async () => {
     throw new Error("Internal server error");
   }
 };
+
 const getExamlistarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1540,6 +1539,7 @@ const getExamlistarr = async () => {
     throw new Error("Internal server error");
   }
 };
+
 const getFeetypearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1562,6 +1562,7 @@ const getFeetypearr = async () => {
     throw new Error("Internal server error");
   }
 };
+
 const getCategoriesarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -2715,6 +2716,5 @@ module.exports = {
   updateCMS,
   getNotificationlisting,
   updateRating,
-  getMenurolewise,
   collegeenquirylisting,
 };

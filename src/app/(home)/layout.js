@@ -7,7 +7,7 @@ import { store } from '@/lib/store'
 
 import "@/styles/globals.css";
 
-export default function RootLayout({
+export default function HomeLayout({
   children,
 }) {
   return (
@@ -26,11 +26,13 @@ export default function RootLayout({
       </head>
       <body className={`dark:bg-gray-900`}>
          <Provider store={store}>
+            <Header />
               <div className="website-wrapper">
-                <div className="main-contents">
+                <div className="main-contents w-full">
                   {children}                
                 </div>
-              </div>                        
+              </div>            
+          <Footer />
          </Provider>
       </body>
     </html>

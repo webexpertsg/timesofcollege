@@ -14,7 +14,7 @@ import { openModel, closeModel } from "@/app/redux/manageModelSlice";
 import logo from "../../../public/images/logoWhite.png";
 import searchIcon from "../../../public/images/search.svg";
 
-function Relatedcolleges(props) {
+function Header(props) {
   const modelStatus = useSelector((state) => state.manageModel.isOpen);
   const [isMobMenuOpen, setIsMobMenuOpen] = useState(false)
   const dispatch = useDispatch();
@@ -192,4 +192,4 @@ function Relatedcolleges(props) {
     </>
   );
 }
-export default Relatedcolleges;
+export default Header;

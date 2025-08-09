@@ -8,20 +8,20 @@ import Image from 'next/image';
 
 // import { getImageURL } from "../../../utils/utils-image";
 
-import handSpeaker from "../../public/images/hand-speaker.png";
-import leftArrow from "../../public/images/left-arrow.png";
-import rightArrow from "../../public/images/right-arrow.png";
-import clgSmallImg from "../../public/images/img-dummy-sm.png";
-import imglite from "../../public/images/img-dummy-lite.png";
-import mapIcon from "../../public/images/map-icon.png";
-import clgBanner from "../../public/images/clg-bnr.png";
-import downlaod from "../../public/images/downloads.svg";
-import compare from "../../public/images/compare.svg";
-import star from "../../public/images/star.png";
-import arrowTilt from "../../public/images/arrow-tilt.svg";
-import studentIcon from "../../public/images/students-icon.svg";
-import emailIcon from "../../public/images/email-icon.svg";
-import phoneIcon from "../../public/images/phone-icon.svg";
+import handSpeaker from "@/public/images/hand-speaker.png";
+import leftArrow from "@/public/images/left-arrow.png";
+import rightArrow from "@/public/images/right-arrow.png";
+import clgSmallImg from "@/public/images/img-dummy-sm.png";
+import imglite from "@/public/images/img-dummy-lite.png";
+import mapIcon from "@/public/images/map-icon.png";
+import clgBanner from "@/public/images/clg-bnr.png";
+import downlaod from "@/public/images/downloads.svg";
+import compare from "@/public/images/compare.svg";
+import star from "@/public/images/star.png";
+import arrowTilt from "@/public/images/arrow-tilt.svg";
+import studentIcon from "@/public/images/students-icon.svg";
+import emailIcon from "@/public/images/email-icon.svg";
+import phoneIcon from "@/public/images/phone-icon.svg";
 
 import NewsAndUpdates from "@/home/newsAndUpdates";
 import FutureGoals from "@/home/futureGoals";

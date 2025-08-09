@@ -21,8 +21,6 @@ import { getSubcoursestypearr, getSubcoursearr } from '@/models/collegesModel';
 
 export async function GET(request, {params}) {
     const { slug } = params;
-
-    console.log('slug==---------------------------', slug);
     
     if(slug === 'collegelisting'){
         const collegeLists = await listing();
