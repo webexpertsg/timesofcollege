@@ -16,9 +16,7 @@ import { listing } from '@/models/Frontend/collegelistingModel';
 
 export async function GET(request, {params}) {
     const { slug } = params;
-
-    console.log('=============-----------------------------', slug);
-    
+        
     if(slug === 'collegelisting'){
         const collegeLists = await listing();
         return NextResponse.json(collegeLists)

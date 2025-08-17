@@ -25,7 +25,7 @@ function GlobalSearch(props) {
     if (college_name != "") {
       axios
         //.get("/api/cmsdetails/" + cms_url)
-        .get("/api/autosuggestcolleges/" + college_name)
+        .get(`/api/autosuggestcolleges/${college_name}`)
         .then((response) => {
           setSuggestcolleges(response.data);
         })
@@ -44,7 +44,7 @@ function GlobalSearch(props) {
 
   const searchCollege = () => {
     //alert(searchparameter.search_parameter);
-    window.location = "/search?keyword=" + searchparameter.search_parameter;
+    window.location = "/college?keyword=" + searchparameter.search_parameter;
   };
 
   return (

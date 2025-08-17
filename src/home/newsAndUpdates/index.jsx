@@ -41,7 +41,7 @@ function NewsAndUpdates({}) {
       <p className="details">{nuitem.na_brief_description}</p>
       <hr className="hr-x" />
       <span className="link">
-        <a href={"exam/" + nuitem.na_url}>Continue Reading... </a>
+        <a href={"exams/" + nuitem.na_url}>Continue Reading... </a>
       </span>
     </div>
   );

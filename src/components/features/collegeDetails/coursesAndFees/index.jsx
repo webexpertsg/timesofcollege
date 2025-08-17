@@ -1,15 +1,26 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import { useRouter, usePathname } from "next/navigation";
+import Link from "next/link";
+import Image from 'next/image';
+
+// import { Helmet } from "react-helmet";
 
 import Relatedcolleges from "../../college/relatedcolleges";
 import Relatednews from "../../college/relatednews";
-import Rating from "../../commonComps/ratings";
-import Contact from "../../commonComps/contact";
-import Facilities from "../../commonComps/facilities";
-import { getImageURL } from "../../../../utils/utils-image";
+import Rating from "@/components/ui/ratings";
+import Contact from "@/components/ui/contact";
+import Facilities from "@/components/ui/facilities";
+
+import Star from "../../../../../public/images/star.png"
 
 function CollegeCoursesFees(props) {
+  // const router = useRouter();
+  const pathname = usePathname();
+      // const { slug } = router.query;
+      // console.log('cl-=-=-=--=', slug);
+      
+
+
   const {
     sub_course_details,
     college_name,
@@ -24,8 +35,8 @@ function CollegeCoursesFees(props) {
 
   const { courses, openModal } = props;
   const placementyear = new Date();
+    // console.log('courses--------', courses);
 
-  const { pathname } = useLocation();
   useEffect(() => {
     window.scroll(0, 0);
   }, [pathname]);
@@ -36,7 +47,7 @@ function CollegeCoursesFees(props) {
 
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={metakeyword} />
@@ -58,7 +69,7 @@ function CollegeCoursesFees(props) {
           content={metaDescription}
         />
         <meta property="og:image" key="og:image" content={getImageURL(logo)} />
-      </Helmet>
+      </Helmet> */}
       <section className="courses-fees">
         <h2 className="font-bold text-2xl mb-5">
           {`${college_name} Courses, Eligibility and Fees`}
@@ -76,7 +87,7 @@ function CollegeCoursesFees(props) {
             </thead>
             <tbody className="table-bordered-body">
               {sub_course_details?.map((item, i) => (
-                <tr id={"trc-" + i} key={i}>
+                <tr id={"trc-" + i} key={`key-course-details-${i}`}>
                   <td>{courses[item.subcourseId]}</td>
                   <td>
                     <b>{item.course_fee ? item.course_fee : "-"}</b>
@@ -118,7 +129,7 @@ function CollegeCoursesFees(props) {
       <section className="courses college-list-wrapper">
         <h2 className="font-bold text-2xl mb-5">All Programs</h2>
         {sub_course_details?.map((item, i) => (
-          <div className="college-list-card" id="34">
+          <div className="college-list-card" id="34" key={`key-details-${i}`}>
             <div className="title-section">
               <div className="heart"></div>
               <div className="title-details">
@@ -127,11 +138,26 @@ function CollegeCoursesFees(props) {
                   {/* <span className="owner medium">25 Courses</span> */}
                   {/* <span className="rank bold green"># NIRF</span> */}
                   <span className="rating">
-                    <img src="/images/star.png" alt="" />
-                    <img src="/images/star.png" alt="" />
-                    <img src="/images/star.png" alt="" />
-                    <img src="/images/star.png" alt="" />
-                    <img src="/images/star.png" alt="" />
+                    <Image 
+                      src={Star}
+                      alt=''
+                    />
+                    <Image 
+                      src={Star}
+                      alt=''
+                    />
+                    <Image 
+                      src={Star}
+                      alt=''
+                    />
+                    <Image 
+                      src={Star}
+                      alt=''
+                    />
+                    <Image 
+                      src={Star}
+                      alt=''
+                    />
                   </span>
                 </div>
               </div>
@@ -221,7 +247,7 @@ function CollegeCoursesFees(props) {
           />
         )}
 
-        <Link className="viewAll-btn" to={""}>
+        <Link className="viewAll-btn" href={""}>
           View All News and Events
         </Link>
       </section>

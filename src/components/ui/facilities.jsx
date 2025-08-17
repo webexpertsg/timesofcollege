@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
 import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 
 import { CONSTANT } from "../../constant";
 
@@ -19,10 +20,11 @@ function Facilities(props) {
           {data &&
             data.split(",").map((item, i) => (
               <li key={i}>
-                <img
+                <Image 
                   src={CONSTANT.FACILITIES[item].imgUrl}
                   style={{ width: "50px" }}
-                />
+                  alt=''
+                />                
                 <span>{CONSTANT.FACILITIES[item].name}</span>
               </li>
             ))}

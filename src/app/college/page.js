@@ -113,7 +113,7 @@ function Listing(props) {
     //     "Content-Type": 'application/json',
     //   },
     // }
-    console.log('queryString------->', queryString);
+    // console.log('queryString------->', queryString);
 
     axios
     .get(`/api/college/collegelisting`)
@@ -167,7 +167,7 @@ function Listing(props) {
 
   //console.log("collegelisting", collegelisting.length);
   //console.log("props", props.city_url);
-  const filterurl = "/listing?filter=college";
+  const filterurl = "/college?filter=college";
   const openModal = (event) => {
     event.stopPropagation();
     const { name, title } = event.target.dataset;
@@ -186,7 +186,6 @@ function Listing(props) {
     if (e.target.value > 0) {
       cfilterarr.push(e.target.value);
     }
-    console.log("cfilterarr-->", cfilterarr);
     cfilterarr
       ? (window.location = filterurl + "&courfilter=" + cfilterarr)
       : "";
@@ -527,14 +526,21 @@ function Listing(props) {
 
           <div className="ads">
             <a href="https://timesofcollege.com/college/jaipuria-school-of-business-ghaziabad">
-              {/* <img src={adsImg1} alt="JAIPURIA" /> */}
+                <Image 
+                    src={adsImg1}
+                    alt='JAIPURIA'
+                />
             </a>
           </div>
           <div className="ads">
             <a href="https://timesofcollege.com/college/bimtech-greater-noida">
-              {/* <img src={adsImg2} alt="BIMTECH" /> */}
+                <Image 
+                    src={adsImg2}
+                    alt='BIMTECH'
+                />
             </a>
           </div>
+
         </div>
       </section>
 

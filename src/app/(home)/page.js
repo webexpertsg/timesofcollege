@@ -449,7 +449,7 @@ function Home(props) {
       <section className="container admissions">
         <div className="head-line">Admission 2025</div>
         <div className="admission-links-list">
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>JEE Mains Admission 2025</span>
               <span>
@@ -460,7 +460,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>CUET Admission 2025</span>
               <span>
@@ -471,7 +471,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>MBA Admission 2025</span>
               <span>
@@ -482,7 +482,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>LLB Admission 2025</span>
               <span>
@@ -493,7 +493,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>B.Sc Admission 2025</span>
               <span>
@@ -504,7 +504,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>MBBS Admission 2025</span>
               <span>
@@ -515,7 +515,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>PhD Admission 2025</span>
               <span>
@@ -526,7 +526,7 @@ function Home(props) {
               </span>
             </div>
           </a>
-          <a href={"/listing"}>
+          <a href={"/college"}>
             <div className="chips-link">
               <span>B Ed Admission 2025</span>
               <span>
@@ -544,7 +544,7 @@ function Home(props) {
         <div className="admission-links-list">
           {tradingarr.length > 0 &&
             tradingarr.map((trd, keyid) => (
-              <a href={"/listing"}>
+              <a href={"/college"}>
                 <div className="chips-link" key={keyid}>
                   <span>{trd.trading_name}</span>
                   <span>

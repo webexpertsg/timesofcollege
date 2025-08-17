@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Link from 'next/link'
+import Image from 'next/image';
 import axios from "axios";
 
 import mapIcon from "../../../../public/images/map-icon.png";
@@ -23,7 +24,7 @@ function Relatedcolleges(props) {
   //const { cms_url } = useParams();
   useEffect(() => {
     axios
-      .get("/api/relatedcollges/" + courses)
+      .get(`/api/relatedcolleges/${courses}`)
       .then((response) => {
         setDispcolleges(response.data);
       })
@@ -40,28 +41,32 @@ function Relatedcolleges(props) {
       <div className="related-colleges mt-5 mb-5">
         {dispcolleges.length > 0 &&
           dispcolleges.map((item, id) => (
-            <div id={item.cid} key={id}>
+            <div id={item.cid} key={`Related-collegs-${id}`}>
               <div className="related-colleges-box">
                 <div className="details">
                   <div className="img-box">
-                    <img src={getImageURL(item.logo)} alt="" />
+                    {/* <img src={getImageURL(item.logo)} alt="" /> */}
+                    {/* <Image 
+                      src={Star}
+                      alt=''
+                    /> */}
                   </div>
                   <div className="info">
-                    <a href={"../college/" + item.college_url}>
+                    <Link href={"../college/" + item.college_url}>
                       <p className="underline">{item.college_name}</p>
-                    </a>
+                    </Link>
                     <div>
                       <span className="location">
                         <img src={mapIcon} alt="" />
                         <span>
-                          <a href={"./../studybycity/" + item.city_url}>
+                          <Link href={"./../studybycity/" + item.city_url}>
                             {item.city_name}
-                          </a>
+                          </Link>
                         </span>
                       </span>
                       <span className="view-more">
-                        <a href={"./" + item.college_url}>Placement</a>
-                        <a href={"./" + item.college_url}>Apply</a>
+                        <Link href={"./" + item.college_url}>Placement</Link>
+                        <Link href={"./" + item.college_url}>Apply</Link>
                       </span>
                     </div>
                   </div>
@@ -70,7 +75,7 @@ function Relatedcolleges(props) {
             </div>
           ))}
       </div>
-      <Link className="viewAll-btn" to={"/listing"}>
+      <Link className="viewAll-btn" href={"/listing"}>
         View All Related Collages
       </Link>
     </>

@@ -1,26 +1,32 @@
 import React, { useState, useEffect, useLayoutEffect } from "react";
 //import { Link } from "react-router-dom";
-import { Link, useNavigate } from "react-router-dom";
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
 
 function CollegeHeaders(props) {
-  const navigate = useNavigate();
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { tabName, collageUrl } = props;
+  
   const [detailsUrl, setDetailsUrl] = useState(
-    location.pathname.split("+")[0]?.replace(/%20/g, "")
+    pathname.split("+")[0]?.replace(/%20/g, "")
   );
+
+  // console.log('detailsUrl=-=--=--=>', detailsUrl);
+  
   const adminssinyear = new Date();
 
   useEffect(() => {
-    const detailsUrl = location.pathname.split("+")[0]?.replace(/%20/g, "");
-    setDetailsUrl(detailsUrl);
+    // const detailsUrl = pathname.split("+")[0]?.replace(/%20/g, "");
+    // setDetailsUrl(detailsUrl);
 
-    setTimeout(() => {
-      navigate(`${location.pathname.replace(/%20/g, "")}`);
-    }, 500);
+    // setTimeout(() => {
+    //   router.push(`${pathname.replace(/%20/g, "")}`);
+    // }, 500);
 
-    return () => false;
-  }, [location.pathname]);
+    // return () => false;
+  }, [pathname]);
 
   return (
     <>
@@ -28,41 +34,41 @@ function CollegeHeaders(props) {
         <ul>
           <li
             className={
-              tabName === "overview" || tabName == undefined ? "active" : ""
+              tabName === "overview" || tabName == '' || tabName == undefined ? "active" : ""
             }
           >
-            <Link to={`${detailsUrl}`}>Overview</Link>
+            <Link href={`${detailsUrl}`}>Overview</Link>
           </li>
           <li className={tabName === "courses-and-fees" ? "active" : ""}>
-            <Link to={`${detailsUrl}+courses-and-fees`}>Courses & Fees</Link>
+            <Link href={`${detailsUrl}+courses-and-fees`}>Courses & Fees</Link>
           </li>
           <li className={tabName === "admissions" ? "active" : ""}>
-            <Link to={`${detailsUrl}+admissions`}>
+            <Link href={`${detailsUrl}+admissions`}>
               Admission {adminssinyear.getFullYear()}
             </Link>
           </li>
           <li className={tabName === "placements" ? "active" : ""}>
-            <Link to={`${detailsUrl}+placements`}>
+            <Link href={`${detailsUrl}+placements`}>
               Placements {adminssinyear.getFullYear()}
             </Link>
           </li>
           <li className={tabName === "scholarships" ? "active" : ""}>
-            <Link to={`${detailsUrl}+scholarships`}>Scholarships</Link>
+            <Link href={`${detailsUrl}+scholarships`}>Scholarships</Link>
           </li>
           <li className={tabName === "faculties" ? "active" : ""}>
-            <Link to={`${detailsUrl}+faculties`}>Faculties</Link>
+            <Link href={`${detailsUrl}+faculties`}>Faculties</Link>
           </li>
           <li className={tabName === "gallery" ? "active" : ""}>
-            <Link to={`${detailsUrl}+gallery`}>Gallery</Link>
+            <Link href={`${detailsUrl}+gallery`}>Gallery</Link>
           </li>
           <li className={tabName === "reviews" ? "active" : ""}>
-            <Link to={`${detailsUrl}+reviews`}>Reviews</Link>
+            <Link href={`${detailsUrl}+reviews`}>Reviews</Link>
           </li>
           <li className={tabName === "news" ? "active" : ""}>
-            <Link to={`${detailsUrl}+news`}>News</Link>
+            <Link href={`${detailsUrl}+news`}>News</Link>
           </li>
           <li className={tabName === "question-answer" ? "active" : ""}>
-            <Link to={`${detailsUrl}+question-answer`}>Q&A</Link>
+            <Link href={`${detailsUrl}+question-answer`}>Q&A</Link>
           </li>
         </ul>
       </div>

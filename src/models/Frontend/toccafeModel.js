@@ -1,31 +1,6 @@
-const { query } = require("express");
-const config = require("../../config/config.js");
+import pool from "@/lib/db";
 
-const Pool = require("pg").Pool;
-/* const pool = new Pool({
-  user: "postgres", //timeofcollege
-  host: "localhost",
-  database: "edupotal", //tocdatabase
-  password: "password", //Navi2212
-  port: 5432,
-}); 
-const pool = new Pool({
-  user: "tocadmin", //timeofcollege
-  host: "164.121.168.184.host.secureserver.net",
-  database: "tocprddb", //tocdatabase
-  password: "Avi@1985", //Navi2212
-  port: 5432,
-});*/
-
-const pool = new Pool({
-  user: config.dbuser,
-  host: config.dbhost,
-  database: config.dbname,
-  password: config.dbpassword,
-  port: config.dbport,
-});
-
-const toccafelisting = async () => {
+export async function toccafelisting() {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -47,7 +22,8 @@ const toccafelisting = async () => {
     throw new Error("Internal server error");
   }
 };
-const examdetail = (na_url) => {
+
+export async function examdetail(na_url) {
   return new Promise(function (resolve, reject) {
     pool.query(
       "SELECT *,TO_CHAR(na_date, 'dd-Mon-yyyy') disp_date FROM newsarticles WHERE na_url = $1",
@@ -62,9 +38,4 @@ const examdetail = (na_url) => {
       }
     );
   });
-};
-
-module.exports = {
-  toccafelisting,
-  examdetail,
 };

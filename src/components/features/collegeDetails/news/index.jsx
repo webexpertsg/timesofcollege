@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import Link from 'next/link'
+import { useRouter, usePathname } from "next/navigation";
+// import { Helmet } from "react-helmet";
+
 import Relatedcolleges from "../../college/relatedcolleges";
 import Relatednews from "../../college/relatednews";
-import Rating from "../../commonComps/ratings";
-import Contact from "../../commonComps/contact";
-import Facilities from "../../commonComps/facilities";
-import { getImageURL } from "../../../../utils/utils-image";
+import Rating from "@/components/ui/ratings";
+import Contact from "@/components/ui/contact";
+import Facilities from "@/components/ui/facilities";
 
 function CollegeNews(props) {
   const {
@@ -28,7 +29,7 @@ function CollegeNews(props) {
   const metakeyword = `${college_name} news, ${college_name} latest news, ${college_name} notifications, ${college_name} articles, ${college_name} news, ${college_name} updates & notifications`;
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={metakeyword} />
@@ -50,7 +51,7 @@ function CollegeNews(props) {
           content={metaDescription}
         />
         <meta property="og:image" key="og:image" content={getImageURL(logo)} />
-      </Helmet>
+      </Helmet> */}
       <div className="container detailsTab">
         <h1>News</h1>
         <h2 className="font-bold text-2xl mb-5">{`${college_name} News`}</h2>
@@ -87,7 +88,7 @@ function CollegeNews(props) {
             vtype="h"
           />
         )}
-        <Link className="viewAll-btn" to={""}>
+        <Link className="viewAll-btn" href={""}>
           View All News and Events
         </Link>
       </section>

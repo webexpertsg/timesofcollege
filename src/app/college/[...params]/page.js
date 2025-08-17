@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, usePathname } from "next/navigation";
+import Image from 'next/image';
 
 import axios from "axios";
 import PropTypes from "prop-types";
@@ -15,18 +16,18 @@ import adsImg1 from "../../../../public/images/ads/ads1.gif";
 import adsImg2 from "../../../../public/images/ads/ads2.gif";
 import star from "../../../../public/images/star.png";
 
-// import Tabs from "@/components/features/collegeDetails/header";
+import Tabs from "@/components/features/collegeDetails/header";
 
 import CollegeOverview from "@/components/features/collegeDetails/overview";
-// import CollegeCoursesFees from "@/components/features/collegeDetails/coursesAndFees";
-// import CollegeAdmissions from "@/components/features/collegeDetails/admissions";
-// import CollegePlacements from "@/components/features/collegeDetails/placements";
-// import CollegeScholarships from "@/components/features/collegeDetails/scholarships";
-// import CollegeFaculties from "@/components/features/collegeDetails/faculties";
-// import CollegeGallery from "@/components/features/collegeDetails/gallery";
-// import CollegeReviews from "@/components/features/collegeDetails/reviews";
-// import CollegeNews from "@/components/features/collegeDetails/news";
-// import CollegeQuesAns from "@/components/features/collegeDetails/questionAnswer";
+import CollegeCoursesFees from "@/components/features/collegeDetails/coursesAndFees";
+import CollegeAdmissions from "@/components/features/collegeDetails/admissions";
+import CollegePlacements from "@/components/features/collegeDetails/placements";
+import CollegeScholarships from "@/components/features/collegeDetails/scholarships";
+import CollegeFaculties from "@/components/features/collegeDetails/faculties";
+import CollegeGallery from "@/components/features/collegeDetails/gallery";
+import CollegeReviews from "@/components/features/collegeDetails/reviews";
+import CollegeNews from "@/components/features/collegeDetails/news";
+import CollegeQuesAns from "@/components/features/collegeDetails/questionAnswer";
 
 import Address from "@/components/ui/address";
 // import Relatednews from "@/components/features/college/relatednews";
@@ -35,11 +36,10 @@ import Login from "@/components/ui/login";
 import Modal from "@/components/ui/modal";
 
 function CollegeDetails(props) {
-  const pathname = usePathname();
-    // const router = useRouter();
-    // const { params } = router.query;
-    
-
+  // const router = useRouter();
+  // const { params } = router.query;
+  
+  
   const [nameUrl, setNameUrl] = useState("");
   const [tabName, setTabName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,10 +52,13 @@ function CollegeDetails(props) {
     btnName: "",
     btnTitle: ""
   });
-  const { college_url } = useParams();
+  const pathname = usePathname();
+  // const { college_url } = useParams();
+  const collegeKey = pathname.split('/college/')[1]?.split('/'); 
+  // console.log('collegeKey======>', collegeKey[0]);
 
   // console.log('params======>', router);
-  console.log('college_url======>', pathname, college_url);
+  // console.log('college_url======>', pathname, college_url);
   
   //const topCourselinks = ""
 
@@ -76,25 +79,30 @@ function CollegeDetails(props) {
         data: { cid: cid },
       });
     };
-     displaycollegdetail.cid && updatecollegeviews(displaycollegdetail.cid);
+    //  displaycollegdetail.cid && updatecollegeviews(displaycollegdetail.cid);
   }, [displaycollegdetail]);
 
   useEffect(() => {
 
-    // const detailsUrl = pathname.split("+")[0];
-    // const detailsTabs = pathname.split("+")[1];
+    const detailsUrl = pathname.split("+")[0];
+    const detailsTabs = pathname.split("+")[1];
 
-    const detailsUrl = pathname;
-    const detailsTabs = pathname;
-
+    // const detailsUrl = pathname;
+    // const detailsTabs = pathname;
+    
     setNameUrl(detailsUrl);
     setTabName(detailsTabs);
-
+    
   }, [pathname]);
-
+  // console.log('detailsUrl=-=--=->', collegeKey[0]);
+  
   useEffect(() => {
     axios
-      .get("/api/college/" + college_url)
+      .get(`/api/college/${collegeKey[0]}`, {  headers: {
+        'Cache-Control': 'no-cache, no-store, must-revalidate', // no-cache requires revalidation, no-store prevents caching
+        'Pragma': 'no-cache', // For backward compatibility with HTTP/1.0
+        'Expires': '0' // Forces the browser to treat the response as expired
+      }})
       .then((response) => {
         setIsLoader(false)
         setDisplaycollegdetail(response.data[0])
@@ -102,31 +110,52 @@ function CollegeDetails(props) {
       .catch((error) => {
         console.error(error);
       });
+      
     //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
     axios
       .get("/api/college/getsubcoursestypecollegelist")
       .then((response) => {
-        setSubcoursestypearr(response.data);
+        const returnResponse = {}
+        response.data.forEach((repo) => {
+          returnResponse[repo.coursetype_id] = repo.course_type_name;
+        })
+        setSubcoursestypearr(returnResponse)
       })
       .catch((error) => {
         console.error(error);
       });
+
     axios
       .get("/api/college/getsubcoursecollegelist")
       .then((response) => {
-        setSubcoursearr(response.data);
+        const returnResponse = {}
+        response.data.forEach((repo) => {
+          returnResponse[repo.courb_id] = repo.branch_name;
+        })
+        setSubcoursearr(returnResponse)
       })
       .catch((error) => {
         console.error(error);
       });
+
+    // axios
+    //   .get("/api/college/getsubcoursecollegearr")
+    //   .then((response) => {
+    //     setSubcoursearr(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+
     axios
-      .get("/api/getcollegetitleappend")
+      .get("/api/college/getcollegetitleappend")
       .then((response) => {
         setCollegetitleappend(response.data[0]["college_title_append"]);
       })
       .catch((error) => {
         console.error(error);
       });
+
   }, [nameUrl]);
 
   const openModal = (event) => {
@@ -152,7 +181,7 @@ function CollegeDetails(props) {
         //  console.log("coursse****", cor);
         if (c < 3) {
           links.push(
-            <div>
+            <div key={`top-courses-${c}`}>
               <p>
                 <b>
                   <a href={"../course/" + cor.split("~")[0]}>
@@ -181,6 +210,9 @@ function CollegeDetails(props) {
     );
   };
 
+
+  // console.log('displaycollegdetail--------', displaycollegdetail);
+  
   return (
     <>
       <section
@@ -189,6 +221,7 @@ function CollegeDetails(props) {
           // backgroundImage: `url(${getImageURL(displaycollegdetail.banner ? displaycollegdetail.banner : "")})`,
         }}
       >
+        {/* {console.log('subcoursearr======>', subcoursearr)} */}
         <div className="bgColor">
           <div className="container detaisHead">
             <div className="image">
@@ -196,10 +229,14 @@ function CollegeDetails(props) {
                 src={getImageURL(displaycollegdetail.logo)}
                 alt="college logo"
               /> */}
+              {/* <Image 
+                src={getImageURL(displaycollegdetail.logo)}
+                alt="college logo"
+              /> */}
             </div>
             <div className="title">
               <h1>
-                {(tabName === "overview" || tabName == undefined) &&
+                {(tabName === "overview" || tabName == '' || tabName == undefined) &&
                   collegetitleappend &&
                   `${displaycollegdetail.college_name + collegetitleappend}`}
 
@@ -233,7 +270,10 @@ function CollegeDetails(props) {
             <ul className="rankInfo">
               <li>
                 <span className="location">
-                  <img src={mapIcon} alt="" />
+                  <Image 
+                    src={mapIcon}
+                    alt=""
+                  />
                   <span>
                     {displaycollegdetail.city_name},{" "}
                     {displaycollegdetail.state_name}
@@ -247,7 +287,10 @@ function CollegeDetails(props) {
               </li>
               <li>
                 <span className="clg-rating">
-                  <img src={star} alt="" />
+                  <Image 
+                    src={star}
+                    alt=""
+                  />                  
                   <span>
                     <b>
                       {displaycollegdetail.total_rating
@@ -314,7 +357,7 @@ function CollegeDetails(props) {
         </div>
       </section>
 
-      {/* <Tabs tabName={tabName} collageUrl={nameUrl} /> */}
+      <Tabs tabName={tabName} collageUrl={nameUrl} />
 
       <section className="container detailsWrapper">
         <div className="contentWrapper">
@@ -363,14 +406,14 @@ function CollegeDetails(props) {
           </>
           :   
           <>
-          {(tabName === "overview" || tabName == undefined) && (
+          {(tabName === "overview" || tabName == '' || tabName == undefined) && (
             <CollegeOverview
               data={displaycollegdetail}
               courses={subcoursearr}
               openModal={openModal}
             />
           )}
-          {/* {tabName === "courses-and-fees" && (
+          {tabName === "courses-and-fees" && (
             <CollegeCoursesFees
               data={displaycollegdetail}
               courses={subcoursearr}
@@ -412,7 +455,7 @@ function CollegeDetails(props) {
           )}
           {tabName === "question-answer" && (
             <CollegeQuesAns data={displaycollegdetail} openModal={openModal} />
-          )} */}
+          )}
           {/* {displaycollegdetail.courses && (
             <Relatedcolleges data={displaycollegdetail} vtype="v" />
           )} */}
@@ -539,9 +582,9 @@ function CollegeDetails(props) {
         </div>
       </div>
 
-      {/* <Modal isModalOpen={isModalOpen} onClose={closeModal}>
+      <Modal isModalOpen={isModalOpen} onClose={closeModal}>
         <Login heading={"Get Notify !"} data={Object.assign({}, popupEvents, {collageName: displaycollegdetail.college_name, logo: displaycollegdetail.logo})} />
-      </Modal> */}
+      </Modal>
       <span className="sticky-help" onClick={(e) => openModal(e)}>
         Help?
       </span>

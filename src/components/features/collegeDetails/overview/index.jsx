@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from 'next/link'
-// import { Helmet } from "react-helmet";
+import { useRouter, usePathname } from "next/navigation";
 
 import Relatedcolleges from "@/components/features/college/relatedcolleges";
 import Relatednews from "@/components/features/college/relatednews";
@@ -13,6 +13,9 @@ import Facilities from "@/components/ui/facilities";
 import star from "../../../../../public/images/star.png";
 
 function CollegeOverview(props) {
+  const router = useRouter()
+  const pathname = usePathname()
+  
   const {
     college_name,
     college_descripton,
@@ -29,8 +32,11 @@ function CollegeOverview(props) {
     total_rating,
   } = props.data;
 
+  // console.log('props--------', props);
+  
+  
   const { courses, openModal } = props;
-  const detailsUrl = location.pathname.split("+")[0];
+  const detailsUrl = pathname;
 
   const [showDescription, setShowDescription] = useState("");
   const [isShowMore, setShowMore] = useState(false);
@@ -67,9 +73,10 @@ function CollegeOverview(props) {
         />
         <meta property="og:image" key="og:image" content={getImageURL(logo)} />
       </Helmet> */}
-      {college_url && (
-        <Navigate to={`/college/${college_url}`} replace={true} />
-      )}
+      {/* {college_url && (
+        // <Navigate to={`/college/${college_url}`} replace={true} />
+        router.push(`${`/college/${college_url}`}`)
+      )} */}
 
       <div className="overview-details">
         {/* <section className="latestNews">
@@ -115,29 +122,29 @@ function CollegeOverview(props) {
           <h2 className="font-bold text-2xl">Table of Content</h2>
           <ul>
             <li>
-              <Link rel="stylesheet" herf={`${detailsUrl}+courses-and-fees`}>
+              <Link rel="stylesheet" href={`${detailsUrl}+courses-and-fees`}>
                 {college_name} {city_name} Courses and Fees{" "}
                 {new Date().getFullYear()}
               </Link>
             </li>
             <li>
-              <Link rel="stylesheet" herf={`${detailsUrl}+admissions`}>
+              <Link rel="stylesheet" href={`${detailsUrl}+admissions`}>
                 {college_name} {city_name} Admissions {new Date().getFullYear()}
               </Link>
             </li>
             <li>
-              <Link rel="stylesheet" herf={`${detailsUrl}+placements`}>
+              <Link rel="stylesheet" href={`${detailsUrl}+placements`}>
                 {college_name} {city_name} Placements {new Date().getFullYear()}
               </Link>
             </li>
             <li>
-              <Link rel="stylesheet" herf={`${detailsUrl}+scholarships`}>
+              <Link rel="stylesheet" href={`${detailsUrl}+scholarships`}>
                 {college_name} {city_name} Scholarships{" "}
                 {new Date().getFullYear()}
               </Link>
             </li>
             <li>
-              <Link rel="stylesheet" herf={`${detailsUrl}+faculties`}>
+              <Link rel="stylesheet" href={`${detailsUrl}+faculties`}>
                 {college_name} {city_name} Faculties {new Date().getFullYear()}
               </Link>
             </li>
@@ -152,7 +159,7 @@ function CollegeOverview(props) {
             }
           >
             {highlights?.map((item, i) => (
-              <li>
+              <li key={`overview-${i}`}>
                 <span>{item.highParameter}</span>
                 <span>{item.highDetails}</span>
               </li>
@@ -165,7 +172,7 @@ function CollegeOverview(props) {
             {college_name} Top Programs
           </h2>
           {sub_course_details?.map((item, i) => (
-            <div className="college-list-card" id="34">
+            <div className="college-list-card" id="34" key={`key-cdetails-${i}`}>
               <div className="title-section">
                 <div className="heart"></div>
                 <div className="title-details">
@@ -236,12 +243,12 @@ function CollegeOverview(props) {
             </div>
           ))}
 
-          <Link
+          {/* <Link
             className="viewAll-btn"
             herf={`/college/${college_url}+courses-and-fees`}
           >
             View All Courses
-          </Link>
+          </Link> */}
         </section>
 
       <section className="admissions">
@@ -253,9 +260,9 @@ function CollegeOverview(props) {
             __html: props.data.adminssiondetails,
           }}
         ></div>
-          <Link className="viewAll-btn" herf={`/college/${college_url}+admissions`}>
+          {/* <Link className="viewAll-btn" herf={`/college/${college_url}+admissions`}>
             View Details
-          </Link>
+          </Link> */}
         </section>
 
       <section className="mb-12">
@@ -265,9 +272,9 @@ function CollegeOverview(props) {
         <div className={`mb-2 h-20 overflow-hidden`}
         dangerouslySetInnerHTML={{ __html: props.data.placement_overview}}>
         </div>
-          <Link className="viewAll-btn" herf={`/college/${college_url}+placements`}>
+          {/* <Link className="viewAll-btn" herf={`/college/${college_url}+placements`}>
             View Details
-          </Link>
+          </Link> */}
         </section>
 
 
@@ -278,9 +285,9 @@ function CollegeOverview(props) {
         <div className={`mb-2 h-20 overflow-hidden`}
           dangerouslySetInnerHTML={{ __html: props.data.scholarshipoffer}}
         ></div>
-          <Link className="viewAll-btn" herf={`/college/${college_url}+scholarships`}>
+          {/* <Link className="viewAll-btn" herf={`/college/${college_url}+scholarships`}>
             View Details
-          </Link>
+          </Link> */}
         </section>
 
       <section className="faculties mb-12">
@@ -290,9 +297,9 @@ function CollegeOverview(props) {
             __html: props.data.facultyprofile,
           }}
         ></div>
-          <Link className="viewAll-btn" herf={`/college/${college_url}+faculties`}>
+          {/* <Link className="viewAll-btn" herf={`/college/${college_url}+faculties`}>
             View Details
-          </Link>
+          </Link> */}
         </section>
 
         <Facilities data={facilities && facilities} clgName={college_name} />
@@ -334,7 +341,7 @@ function CollegeOverview(props) {
               vtype="h"
             />
           )}
-          <Link className="viewAll-btn" herf={"/exams"}>
+          <Link className="viewAll-btn" href={"/exams"}>
             View All News and Events
           </Link>
         </section>

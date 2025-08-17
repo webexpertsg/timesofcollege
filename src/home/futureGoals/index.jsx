@@ -45,10 +45,10 @@ function FutureGoals({}) {
           item.courses.split(",").map((c, i) => i <= 2 && <li>{c}</li>)}
       </ul>
       <div className="link">
-        <a href={"categorywise/" + item.category_url}>
+        <a href={"college/"}>
           Find By Location
         </a>
-        <a href={"categorywise/" + item.category_url}>Top Colleges</a>
+        <a href={"college/"}>Top Colleges</a>
       </div>
     </div>
   </div>

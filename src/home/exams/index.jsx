@@ -34,7 +34,7 @@ function Exams({ clgSmallImg }) {
   }, []);
 
   const renderExams = (eitem) => (
-    <a href={"exam/" + eitem.na_url}>
+    <a href={"exams/" + eitem.na_url}>
       <div className="exam-card" id={eitem.na_id}>
         <div className="exam-meta">
           {/* <img src={clgSmallImg} alt="" /> */}

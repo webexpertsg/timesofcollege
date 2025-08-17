@@ -26,11 +26,11 @@ export default function RootLayout({
       </head>
       <body className={`dark:bg-gray-900`}>
          <Provider store={store}>
-              <div className="website-wrapper">
-                <div className="main-contents">
-                  {children}                
-                </div>
-              </div>                        
+            {/* <div className="website-wrapper">
+              <div className="main-contents"> */}
+                {children}                
+              {/* </div>
+            </div>                         */}
          </Provider>
       </body>
     </html>

@@ -22,7 +22,7 @@ function Relatednews(props) {
   //const { cms_url } = useParams();
   useEffect(() => {
     axios
-      .get("/api/relatednews/" + courses)
+      .get(`/api/relatednews/${courses}`)
       .then((response) => {
         setNewslist(response.data);
       })
@@ -31,6 +31,7 @@ function Relatednews(props) {
       });
     //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
   }, []);
+  
   return (
     <div className="related-collegesss">
       <h2 className="font-bold text-2xl mb-5">

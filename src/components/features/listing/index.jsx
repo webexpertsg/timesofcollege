@@ -1,38 +1,47 @@
+"use client"
+
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "next/navigation";
 import axios from "axios";
 import PropTypes from "prop-types";
-import { getImageURL } from "../../../utils/utils-image";
+import Image from 'next/image';
 
-import arrowUpIcon from "/images/arrowUp.svg";
-import clgSmallImg from "/images/img-dummy-sm.png";
-import mapIcon from "/images/map-icon.png";
-import star from "/images/star.png";
-import downlaod from "/images/downloads.svg";
-import compare from "/images/compare.svg";
-import searchIcon from "/images/search.svg";
-import arrowTilt from "/images/arrow-tilt.svg";
-import studentIcon from "/images/students-icon.svg";
-import emailIcon from "/images/email-icon.svg";
-import phoneIcon from "/images/phone-icon.svg";
-import adsImg from "/images/ads.svg";
-import adsImg1 from "/images/ads/ads1.gif";
-import adsImg2 from "/images/ads/ads2.gif";
+import NavLink from "@/components/ui/navlink";
 
-import NewsAndUpdates from "./../home/newsAndUpdates";
-import Filter from "../listing/filter";
-import GetHelp from "../commonComps/getNotify";
-import Relatedcolleges from "../college/relatedcolleges";
-import Modal from "../commonComps/modal";
-import Login from "../commonComps/login";
+// import { getImageURL } from "../../../utils/utils-image";
+
+
+import arrowUpIcon from "../../../../public/images/arrowUp.svg";
+import clgSmallImg from "../../../../public/images/img-dummy-sm.png";
+import mapIcon from "../../../../public/images/map-icon.png";
+import star from "../../../../public/images/star.png";
+import downlaod from "../../../../public/images/downloads.svg";
+import compare from "../../../../public/images/compare.svg";
+import searchIcon from "../../../../public/images/search.svg";
+import arrowTilt from "../../../../public/images/arrow-tilt.svg";
+import studentIcon from "../../../../public/images/students-icon.svg";
+import emailIcon from "../../../../public/images/email-icon.svg";
+import phoneIcon from "../../../../public/images/phone-icon.svg";
+import adsImg from "../../../../public/images/ads.svg";
+import adsImg1 from "../../../../public/images/ads/ads1.gif";
+import adsImg2 from "../../../../public/images/ads/ads2.gif";
+
+
+// import Relatedcolleges from "../college/relatedcolleges";
+import NewsAndUpdates from "@/home/newsAndUpdates";
+import GetHelp from "@/components/ui/getNotify";
+import Modal from "@/components/ui/modal";
+import Login from "@/components/ui/login";
+import Filter from "@/components/features/listing/filter";
+
+// import Filter from "../listing/filter";
 
 function Listing(props) {
   const { courfilter } = useParams();
   //const params = useParams();
-  console.log(
-    "path link-->",
-    new URLSearchParams(location.search).get("courfilter")
-  );
+//   console.log(
+//     new URLSearchParams(location.search).get("courfilter")
+//   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [popupEvents, setPopupEvents] = useState({
@@ -56,36 +65,58 @@ function Listing(props) {
     approved_by: "",
     college_types: "",
   });
+
   const [filterct, setFilterct] = useState({
     col_type: "",
     college_type: "",
     total_count: "",
   });
+
   const [filtercourse, setFiltercourse] = useState({
     col_type: "",
     college_type: "",
     total_count: "",
   });
+
   const [filterstate, setFilterstate] = useState({
     sta_id: "",
     state_name: "",
   });
+
   const [filtercity, setFiltercity] = useState({
     cit_id: "",
     city_name: "",
   });
+
   useEffect(() => {
+    const params = {
+      city_url: props.city_url,
+      category_url: props.category_url,
+      course_url: props.course_url,
+      search_parameter: props.search_parameter,
+      coursefilter: new URLSearchParams(location.search).get("courfilter"),
+    }
+    const queryString = new URLSearchParams(params).toString();
+
+    // axios
+    //   .get("/api/courses/collegelisting/", {
+    //     params: {
+    //       city_url: props.city_url,
+    //       category_url: props.category_url,
+    //       course_url: props.course_url,
+    //       search_parameter: props.search_parameter,
+    //       coursefilter: new URLSearchParams(location.search).get("courfilter"),
+    //     },
+    //   })
+    //   .then((response) => {
+    //     setCollegelisting(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+
     axios
-      //.get("/api/cmsdetails/" + cms_url)
-      .get("/api/collegelisting/", {
-        params: {
-          city_url: props.city_url,
-          category_url: props.category_url,
-          course_url: props.course_url,
-          search_parameter: props.search_parameter,
-          coursefilter: new URLSearchParams(location.search).get("courfilter"),
-        },
-      })
+    .get(`/api/college/collegelisting`)
       .then((response) => {
         setCollegelisting(response.data);
       })
@@ -93,41 +124,47 @@ function Listing(props) {
         console.error(error);
       });
     //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
+
     axios
       //.get("/api/cmsdetails/" + cms_url)
-      .get("/api/filtercollegetypes/")
+      .get("/api/college/collegetypes")
       .then((response) => {
         setFilterct(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
+
     axios
       //.get("/api/cmsdetails/" + cms_url)
-      .get("/api/filtercourses/")
+      .get("/api/college/collegecourses")
       .then((response) => {
         setFiltercourse(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
+
     axios
-      .get("/api/filterstate/")
+      .get("/api/college/states")
       .then((response) => {
         setFilterstate(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
+
     axios
-      .get("/api/filtercity/")
+      .get("/api/college/cities")
       .then((response) => {
         setFiltercity(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
+
   }, []);
+
   //console.log("collegelisting", collegelisting.length);
   //console.log("props", props.city_url);
   const filterurl = "/listing?filter=college";
@@ -363,7 +400,7 @@ function Listing(props) {
           <div className="applied-filters"></div>
           {collegelisting.length > 0
             ? collegelisting.map((item, id) => (
-                <a href={"./../college/" + item.college_url}>
+                <a key={`key-collegelisting-${id}`} href={"./../college/" + item.college_url}>
                   <div
                     className="college-list-card"
                     id={item.cid}
@@ -371,9 +408,9 @@ function Listing(props) {
                   >
                     <div className="title-section">
                       <div className="img-box">
-                        <img
-                          src={getImageURL(item.logo)}
-                          alt={item.college_name}
+                        <Image 
+                            src={location.hostname !== 'localhost' ? item.logo : adsImg}
+                            alt={item.college_name}
                         />
                       </div>
 
@@ -490,14 +527,21 @@ function Listing(props) {
 
           <div className="ads">
             <a href="https://timesofcollege.com/college/jaipuria-school-of-business-ghaziabad">
-              <img src={adsImg1} alt="JAIPURIA" />
+                <Image 
+                    src={adsImg1}
+                    alt='JAIPURIA'
+                />
             </a>
           </div>
           <div className="ads">
             <a href="https://timesofcollege.com/college/bimtech-greater-noida">
-              <img src={adsImg2} alt="BIMTECH" />
+                <Image 
+                    src={adsImg2}
+                    alt='BIMTECH'
+                />
             </a>
           </div>
+
         </div>
       </section>
 

@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import Link from 'next/link'
+import { useRouter, usePathname } from "next/navigation";
+// import { Helmet } from "react-helmet";
 
 import Relatedcolleges from "../../college/relatedcolleges";
 import Relatednews from "../../college/relatednews";
-import Rating from "../../commonComps/ratings";
-import Contact from "../../commonComps/contact";
-import Facilities from "../../commonComps/facilities";
-import { getImageURL } from "../../../../utils/utils-image";
+import Rating from "@/components/ui/ratings";
+import Contact from "@/components/ui/contact";
+import Facilities from "@/components/ui/facilities";
+
 
 function CollegeGallery(props) {
   const {
@@ -28,7 +29,7 @@ function CollegeGallery(props) {
   const metakeyword = `${college_name} Campus, ${college_name} ${city_name} campus, ${college_name} instrastructure, ${college_name} library, ${college_name} classroom, ${college_name} hostel, ${college_name} accomodation`;
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title>{`Gallery ${metaTitle}`}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={metakeyword} />
@@ -50,7 +51,7 @@ function CollegeGallery(props) {
           content={metaDescription}
         />
         <meta property="og:image" key="og:image" content={getImageURL(logo)} />
-      </Helmet>
+      </Helmet> */}
       <div className="container detailsTab">
         <h1>Gallery</h1>
         <h2 className="font-bold text-2xl mb-5">{`${college_name} Gallery`}</h2>
@@ -86,7 +87,7 @@ function CollegeGallery(props) {
             vtype="h"
           />
         )}
-        <Link className="viewAll-btn" to={""}>
+        <Link className="viewAll-btn" href={""}>
           View All News and Events
         </Link>
       </section>

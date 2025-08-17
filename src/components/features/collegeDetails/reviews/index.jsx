@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import Link from 'next/link'
+import { useRouter, usePathname } from "next/navigation";
+import Image from 'next/image';
+// import { Helmet } from "react-helmet";
 
-import star from "/images/star.png";
 import Relatedcolleges from "../../college/relatedcolleges";
 import Relatednews from "../../college/relatednews";
-import Rating from "../../commonComps/ratings";
-import Contact from "../../commonComps/contact";
-import Facilities from "../../commonComps/facilities";
-import { getImageURL } from "../../../../utils/utils-image";
+import Rating from "@/components/ui/ratings";
+import Contact from "@/components/ui/contact";
+import Facilities from "@/components/ui/facilities";
+
+import Star from "../../../../../public/images/star.png";
 
 function CollegeReviews(props) {
   const {
@@ -30,7 +32,7 @@ function CollegeReviews(props) {
   const metakeyword = `${college_name} ${city_name} review, ${college_name} student review, ${college_name} student feedback, ${college_name} campus review, ${college_name} placement review, ${college_name} faculty review, ${college_name} infrastructure review, ${college_name} accomodation`;
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={metakeyword} />
@@ -52,14 +54,17 @@ function CollegeReviews(props) {
           content={metaDescription}
         />
         <meta property="og:image" key="og:image" content={getImageURL(logo)} />
-      </Helmet>
+      </Helmet> */}
 
       <div className="container reviews">
         {/* <h1 className="">Reviews</h1> */}
         <h2 className="font-bold text-2xl mb-5 text-center	">{`${college_name} Reviews`}</h2>
 
         <span className="clg-rating-avg">
-          <img src={star} alt="" />
+          <Image 
+            src={Star}
+            alt=''
+          />
           <span>
             <b>{total_rating ? total_rating.slice(0, 3) : "0"}</b> /10
           </span>
@@ -96,7 +101,7 @@ function CollegeReviews(props) {
             vtype="h"
           />
         )}
-        <Link className="viewAll-btn" to={""}>
+        <Link className="viewAll-btn" href={""}>
           View All News and Events
         </Link>
       </section>

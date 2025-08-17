@@ -53,7 +53,7 @@ function Header(props) {
             </li>
             <li>
               <NavLink
-                to={`/listing`}
+                to={`/college`}
                 className={`text-sm ${({ isActive }) => (isActive ? "active" : "")}`}
               >
                 Colleges

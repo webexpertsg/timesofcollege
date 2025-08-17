@@ -35,7 +35,9 @@ function Citywise({ imglite }) {
   const renderCity = (citem) => (
     <div className="city-card" id={citem.cit_id}>
       <div>
-        <a href={"studybycity/" + citem.city_url}>
+        {/* <a href={"studybycity/" + citem.city_url}> */}
+        <a href={"college/"}>
+
           {/* <img src={imglite} alt="" style={{margin:'0 auto'}}/> */}
           <LocationCityIcon style={{fontSize: '35px', color: '#402756', width: '100%'}} />
           <p>{citem.city_name}</p>

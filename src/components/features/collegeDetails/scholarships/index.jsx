@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import Link from 'next/link'
+import { useRouter, usePathname } from "next/navigation";
+// import { Helmet } from "react-helmet";
 
 import Relatedcolleges from "../../college/relatedcolleges";
 import Relatednews from "../../college/relatednews";
-import Rating from "../../commonComps/ratings";
-import Contact from "../../commonComps/contact";
-import Facilities from "../../commonComps/facilities";
-import { getImageURL } from "../../../../utils/utils-image";
+import Rating from "@/components/ui/ratings";
+import Contact from "@/components/ui/contact";
+import Facilities from "@/components/ui/facilities";
 
 function CollegeScholarships(props) {
+  const pathname = usePathname()
+  
   const {
     openModal,
     data: {
@@ -24,7 +26,6 @@ function CollegeScholarships(props) {
     },
   } = props;
 
-  const { pathname } = useLocation();
   useEffect(() => {
     window.scroll(0, 0);
   }, [pathname]);
@@ -33,7 +34,7 @@ function CollegeScholarships(props) {
   const metakeyword = `${college_name} scholarships, ${college_name} ${city_name} schloarship, ${college_name} scholarship eligibility, ${college_name} scholarship amount, ${college_name} scholarship exams, ${college_name} schloarship types, ${college_name} scholarship process`;
   return (
     <>
-      <Helmet>
+      {/* <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDescription} />
         <meta name="keywords" content={metakeyword} />
@@ -55,7 +56,7 @@ function CollegeScholarships(props) {
           content={metaDescription}
         />
         <meta property="og:image" key="og:image" content={getImageURL(logo)} />
-      </Helmet>
+      </Helmet> */}
       <section>
         <h2 className="font-bold text-2xl mb-5">
           {`${college_name} Scholarships`}
@@ -95,7 +96,7 @@ function CollegeScholarships(props) {
             vtype="h"
           />
         )}
-        <Link className="viewAll-btn" to={""}>
+        <Link className="viewAll-btn" href={""}>
           View All News and Events
         </Link>
       </section>
