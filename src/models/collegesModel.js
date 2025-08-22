@@ -28,7 +28,7 @@ export const getColleges = async (req) => {
   }
 }
 
-const Login = async (body) => {
+export const Login = async (body) => {
   try {
     return await new Promise(function (resolve, reject) {
       const { admin_email, admin_password } = body;
@@ -125,7 +125,7 @@ const college = (body) => {
 }; */
 //delete a merchant
 
-const deleteVehicle = (id) => {
+export const deleteVehicle = (id) => {
   return new Promise(function (resolve, reject) {
     pool.query(
       "DELETE FROM colleges WHERE cid = $1",
@@ -140,7 +140,7 @@ const deleteVehicle = (id) => {
   });
 }
 
-const editroles = (rol_id) => {
+export const editroles = (rol_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -161,7 +161,7 @@ const editroles = (rol_id) => {
   });
 } 
 
-const getstatewisecity = (stat_id) => {
+export const getstatewisecity = (stat_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -182,7 +182,7 @@ const getstatewisecity = (stat_id) => {
   });
 }
 
-const fetchSubcourese = async (course_id) => {
+export const fetchSubcourese = async (course_id) => {
   try {
     return await new Promise(function (resolve, reject) {
       //const { course_id } = body;
@@ -233,7 +233,7 @@ const fetchSubcourese = async (course_id) => {
   }
 }; */
 
-const editcollege = (cid) => {
+export const editcollege = (cid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -254,7 +254,7 @@ const editcollege = (cid) => {
   });
 }
 
-const faqcollege = (cid) => {
+export const faqcollege = (cid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -275,7 +275,7 @@ const faqcollege = (cid) => {
   });
 }
 
-const editquestion = (cid) => {
+export const editquestion = (cid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -296,7 +296,7 @@ const editquestion = (cid) => {
   });
 }
 
-const editcms = (cmsid) => {
+export const editcms = (cmsid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -317,7 +317,7 @@ const editcms = (cmsid) => {
   });
 }
 
-const editnewsarticle = (na_id) => {
+export const editnewsarticle = (na_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -338,7 +338,7 @@ const editnewsarticle = (na_id) => {
   });
 }
 
-const insertCollegebasicinformation = (body) => {
+export const insertCollegebasicinformation = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       college_name,
@@ -409,7 +409,7 @@ const insertCollegebasicinformation = (body) => {
   });
 }
 
-const updateCollegebasicinformation = (body) => {
+export const updateCollegebasicinformation = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       cid,
@@ -479,7 +479,7 @@ const updateCollegebasicinformation = (body) => {
   });
 }
 
-const updateGallery = (body) => {
+export const updateGallery = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       cid,
@@ -519,7 +519,7 @@ const updateGallery = (body) => {
   });
 }
 
-const updateContactus = (body) => {
+export const updateContactus = (body) => {
   //console.log("contact us body-->", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -568,7 +568,7 @@ const updateContactus = (body) => {
   });
 }
 
-const updateRating = (body) => {
+export const updateRating = (body) => {
   //console.log("contact us body-->", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -609,7 +609,7 @@ const updateRating = (body) => {
   });
 }
 
-const updateHighlight = (body) => {
+export const updateHighlight = (body) => {
   console.log("Highlight body-->", body);
   return new Promise(function (resolve, reject) {
     const { cid, display_type, highlights } = body;
@@ -632,7 +632,7 @@ const updateHighlight = (body) => {
   });
 }
 
-const updateCourses = (body) => {
+export const updateCourses = (body) => {
   console.log("Highlight body-->", body);
   return new Promise(function (resolve, reject) {
     const { cid, courses, sub_course_details } = body;
@@ -655,7 +655,7 @@ const updateCourses = (body) => {
   });
 }
 
-const updateAdmission = (body) => {
+export const updateAdmission = (body) => {
   //console.log("contact us body-->", body);
   return new Promise(function (resolve, reject) {
     const { cid, adminssiondetails, scholarshipoffer } = body;
@@ -678,7 +678,7 @@ const updateAdmission = (body) => {
   });
 }
 
-const updatePlacement = (body) => {
+export const updatePlacement = (body) => {
   //console.log("Placement body-->", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -721,7 +721,7 @@ const updatePlacement = (body) => {
   });
 }
 
-const updateFaq = (body) => {
+export const updateFaq = (body) => {
   //console.log("Placement body-->", body);
   return new Promise(function (resolve, reject) {
     const { cid, faq } = body;
@@ -744,7 +744,7 @@ const updateFaq = (body) => {
   });
 }
 
-const updateCollege = (cid, body) => {
+export const updateCollege = (cid, body) => {
   return new Promise(function (resolve, reject) {
     const {
       cid,
@@ -848,7 +848,7 @@ const updateCollege = (cid, body) => {
   });
 }
 
-const updateCMS = (cmsid, body) => {
+export const updateCMS = (cmsid, body) => {
   return new Promise(function (resolve, reject) {
     const {
       cmsid,
@@ -884,7 +884,7 @@ const updateCMS = (cmsid, body) => {
   });
 }
 
-const addNewsarticle = (body) => {
+export const addNewsarticle = (body) => {
   return new Promise(function (resolve, reject) {
     console.log("body", body);
     const {
@@ -937,8 +937,8 @@ const addNewsarticle = (body) => {
   });
 }
 
-//const updateNewsarticles = (na_id, body) => {
-const updateNewsarticles = (body) => {
+//export const updateNewsarticles = (na_id, body) => {
+export const updateNewsarticles = (body) => {
   // console.log("body", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -994,7 +994,7 @@ const updateNewsarticles = (body) => {
 }
 
 //update a merchant record
-const updateVehicle = (id, body) => {
+export const updateVehicle = (id, body) => {
   return new Promise(function (resolve, reject) {
     const { name, email } = body;
     pool.query(
@@ -1016,7 +1016,7 @@ const updateVehicle = (id, body) => {
 
 //get all merchants our database
 
-const getCourses = async () => {
+export const getCourses = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1039,7 +1039,7 @@ const getCourses = async () => {
   }
 }
 
-const getExamlist = async () => {
+export const getExamlist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1062,7 +1062,7 @@ const getExamlist = async () => {
   }
 }
 
-const getTrendinglist = async () => {
+export const getTrendinglist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1085,7 +1085,7 @@ const getTrendinglist = async () => {
   }
 }
 
-const edittrending = (tid) => {
+export const edittrending = (tid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -1106,7 +1106,7 @@ const edittrending = (tid) => {
   });
 }
 
-const updatetrending = (body) => {
+export const updatetrending = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const { tid, trading_name, trading_url, trading_status } = body;
@@ -1131,7 +1131,7 @@ const updatetrending = (body) => {
   });
 }
 
-const addNewTrending = (body) => {
+export const addNewTrending = (body) => {
   return new Promise(function (resolve, reject) {
     const { trading_name, trading_url, trading_status } = body;
     pool.query(
@@ -1155,7 +1155,7 @@ const addNewTrending = (body) => {
   });
 }
 
-const editexam = (exam_id) => {
+export const editexam = (exam_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -1176,7 +1176,7 @@ const editexam = (exam_id) => {
   });
 }
 
-const editcollegefaq = (cfaq_id) => {
+export const editcollegefaq = (cfaq_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -1197,7 +1197,7 @@ const editcollegefaq = (cfaq_id) => {
   });
 }
 
-const addNewexam = (body) => {
+export const addNewexam = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       exam_name,
@@ -1235,7 +1235,7 @@ const addNewexam = (body) => {
   });
 }
 
-const updateexam = (body) => {
+export const updateexam = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -1278,7 +1278,7 @@ const updateexam = (body) => {
   });
 }
 
-const addNewCollegefaq = (body) => {
+export const addNewCollegefaq = (body) => {
   return new Promise(function (resolve, reject) {
     const { cid, cfaq_section, cfaq_question, cfaq_answer, cfaq_status } = body;
     pool.query(
@@ -1300,7 +1300,7 @@ const addNewCollegefaq = (body) => {
   });
 }
 
-const updatecollegefaqs = (body) => {
+export const updatecollegefaqs = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -1357,7 +1357,7 @@ export const getMenurolewise = async (login_id) => {
 }
 
 //get country array
-const getCountryarr = async () => {
+export const getCountryarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1379,7 +1379,7 @@ const getCountryarr = async () => {
     throw new Error("Internal server error");
   }
 };
-const getStatearr = async () => {
+export const getStatearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1401,7 +1401,7 @@ const getStatearr = async () => {
     throw new Error("Internal server error");
   }
 };
-const getCityarr = async () => {
+export const getCityarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1424,7 +1424,7 @@ const getCityarr = async () => {
   }
 };
 //get all course arra our database
-const getCoursesarr = async () => {
+export const getCoursesarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1471,7 +1471,7 @@ export const getSubcoursestypearr = async () => {
   }
 }
 
-const getModulearr = async () => {
+export const getModulearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1494,7 +1494,7 @@ const getModulearr = async () => {
   }
 };
 
-const getCollegetypearr = async () => {
+export const getCollegetypearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1517,7 +1517,7 @@ const getCollegetypearr = async () => {
   }
 };
 
-const getExamlistarr = async () => {
+export const getExamlistarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1540,7 +1540,7 @@ const getExamlistarr = async () => {
   }
 };
 
-const getFeetypearr = async () => {
+export const getFeetypearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1563,7 +1563,7 @@ const getFeetypearr = async () => {
   }
 };
 
-const getCategoriesarr = async () => {
+export const getCategoriesarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1585,7 +1585,7 @@ const getCategoriesarr = async () => {
     throw new Error("Internal server error");
   }
 };
-const getApprovedbyarr = async () => {
+export const getApprovedbyarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1607,7 +1607,7 @@ const getApprovedbyarr = async () => {
     throw new Error("Internal server error");
   }
 };
-const getCoursearr = async () => {
+export const getCoursearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1653,7 +1653,7 @@ export const getSubcoursearr = async () => {
   }
 }
 
-const getRolesrr = async () => {
+export const getRolesrr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1675,7 +1675,7 @@ const getRolesrr = async () => {
     throw new Error("Internal server error");
   }
 };
-const getTradingarr = async () => {
+export const getTradingarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1697,7 +1697,7 @@ const getTradingarr = async () => {
     throw new Error("Internal server error");
   }
 };
-const getFacilityarr = async () => {
+export const getFacilityarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1720,7 +1720,7 @@ const getFacilityarr = async () => {
   }
 };
 
-const getAdminusers = async () => {
+export const getAdminusers = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       //pool.query("SELECT *,case when branch_status = 'A' then 'Active'else 'Inactive' end as status FROM coursebranches ORDER BY courb_id ASC", (error, results) => {
@@ -1743,7 +1743,7 @@ const getAdminusers = async () => {
     throw new Error("Internal server error");
   }
 };
-const getRolelist = async () => {
+export const getRolelist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1765,7 +1765,7 @@ const getRolelist = async () => {
     throw new Error("Internal server error");
   }
 };
-const getCoursebranchs = async () => {
+export const getCoursebranchs = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       //pool.query("SELECT *,case when branch_status = 'A' then 'Active'else 'Inactive' end as status FROM coursebranches ORDER BY courb_id ASC", (error, results) => {
@@ -1790,7 +1790,7 @@ const getCoursebranchs = async () => {
 };
 
 //get all course type our database
-const getCoursetype = async () => {
+export const getCoursetype = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1813,7 +1813,7 @@ const getCoursetype = async () => {
   }
 };
 //get all college type our database
-const getCollegetype = async () => {
+export const getCollegetype = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -1837,7 +1837,7 @@ const getCollegetype = async () => {
 };
 
 //create a new course branch record in the databsse
-const addCoursebrach = (body) => {
+export const addCoursebrach = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       course_id,
@@ -1877,7 +1877,7 @@ const addCoursebrach = (body) => {
   });
 };
 //create a new users record in the databsse
-const addNewusers = (body) => {
+export const addNewusers = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       admin_id,
@@ -1915,7 +1915,7 @@ const addNewusers = (body) => {
   });
 };
 //create add new role record in the databsse
-const addRoles = (body) => {
+export const addRoles = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const { role_name, modules_access_ids, role_status } = body;
@@ -1937,7 +1937,7 @@ const addRoles = (body) => {
     );
   });
 };
-const updateRoles = (body) => {
+export const updateRoles = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const { rol_id, role_name, modules_access_ids, role_status } = body;
@@ -1962,7 +1962,7 @@ const updateRoles = (body) => {
   });
 };
 
-const addNewcourses = (body) => {
+export const addNewcourses = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       course_name,
@@ -1999,7 +1999,7 @@ const addNewcourses = (body) => {
     );
   });
 };
-const editfacility = (cour_id) => {
+export const editfacility = (cour_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -2019,7 +2019,7 @@ const editfacility = (cour_id) => {
     console.log(query);
   });
 };
-const addNewfacility = (body) => {
+export const addNewfacility = (body) => {
   return new Promise(function (resolve, reject) {
     const { facility_name, facility_status } = body;
     pool.query(
@@ -2040,7 +2040,7 @@ const addNewfacility = (body) => {
     );
   });
 };
-const updatefacility = (body) => {
+export const updatefacility = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const { facility_id, facility_name, facility_status } = body;
@@ -2064,7 +2064,7 @@ const updatefacility = (body) => {
     );
   });
 };
-const addQuestion = (body) => {
+export const addQuestion = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       question,
@@ -2105,7 +2105,7 @@ const addQuestion = (body) => {
     );
   });
 };
-const updateQuestion = (qid, body) => {
+export const updateQuestion = (qid, body) => {
   return new Promise(function (resolve, reject) {
     const {
       qid,
@@ -2147,7 +2147,7 @@ const updateQuestion = (qid, body) => {
   });
 };
 
-const addCms = (body) => {
+export const addCms = (body) => {
   console.log("body->", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -2184,7 +2184,7 @@ const addCms = (body) => {
   });
 };
 
-const addNewcategories = (body) => {
+export const addNewcategories = (body) => {
   console.log("add category", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -2227,7 +2227,7 @@ const addNewcategories = (body) => {
   });
 };
 
-const updateCategory = (body) => {
+export const updateCategory = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -2271,7 +2271,7 @@ const updateCategory = (body) => {
     );
   });
 };
-const updatecourse = (body) => {
+export const updatecourse = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -2314,7 +2314,7 @@ const updatecourse = (body) => {
   });
 };
 //get all facility our database
-const getFacility = async () => {
+export const getFacility = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2337,7 +2337,7 @@ const getFacility = async () => {
   }
 };
 //get all question and answer our database
-const getQuestionlisting = async () => {
+export const getQuestionlisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2360,7 +2360,7 @@ const getQuestionlisting = async () => {
   }
 };
 //get all news and articles our database
-const getNewsarticleslisting = async () => {
+export const getNewsarticleslisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2383,7 +2383,7 @@ const getNewsarticleslisting = async () => {
   }
 };
 //get all facility our database
-const getCategories = async () => {
+export const getCategories = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2405,7 +2405,7 @@ const getCategories = async () => {
     throw new Error("Internal server error");
   }
 };
-const editcategory = (cat_id) => {
+export const editcategory = (cat_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -2425,7 +2425,7 @@ const editcategory = (cat_id) => {
     console.log(query);
   });
 };
-const editcourse = (cour_id) => {
+export const editcourse = (cour_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -2447,7 +2447,7 @@ const editcourse = (cour_id) => {
 };
 //get all facility our database
 
-const getApprovedby = async () => {
+export const getApprovedby = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2469,7 +2469,7 @@ const getApprovedby = async () => {
     throw new Error("Internal server error");
   }
 };
-const editapproved = (approv_id) => {
+export const editapproved = (approv_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -2489,7 +2489,7 @@ const editapproved = (approv_id) => {
     //console.log(query);
   });
 };
-const addnewapprovedby = (body) => {
+export const addnewapprovedby = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       approved_name,
@@ -2528,7 +2528,7 @@ const addnewapprovedby = (body) => {
     );
   });
 };
-const updateapprovedby = (body) => {
+export const updateapprovedby = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -2568,7 +2568,7 @@ const updateapprovedby = (body) => {
     );
   });
 };
-const getCMSListing = async () => {
+export const getCMSListing = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query("SELECT * FROM cms ORDER BY cmsid DESC", (error, results) => {
@@ -2587,7 +2587,7 @@ const getCMSListing = async () => {
     throw new Error("Internal server error");
   }
 };
-const getNotificationlisting = async () => {
+export const getNotificationlisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2609,7 +2609,7 @@ const getNotificationlisting = async () => {
     throw new Error("Internal server error");
   }
 };
-const collegeenquirylisting = async () => {
+export const collegeenquirylisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -2635,86 +2635,5 @@ module.exports = {
   Login,
   getColleges,
   //college,
-  updateCollege,
-  insertCollegebasicinformation,
-  updateCollegebasicinformation,
-  updateGallery,
-  updateContactus,
-  updateHighlight,
-  updateCourses,
-  updateAdmission,
-  updatePlacement,
-  updateFaq,
-  updateQuestion,
-  updateNewsarticles,
-  deleteVehicle,
-  updateVehicle,
-  getCourses,
-  getCoursesarr,
-  getCountryarr,
-  getStatearr,
-  getCityarr,
-  getCoursebranchs,
-  addCoursebrach,
-  getCategories,
-  editcategory,
-  updateCategory,
-  updatecourse,
-  getCoursetype,
-  getCollegetype,
-  getFacility,
-  getQuestionlisting,
-  getNewsarticleslisting,
-  getApprovedby,
-  editapproved,
-  addnewapprovedby,
-  updateapprovedby,
-  getAdminusers,
-  getRolelist,
-  addNewusers,
-  addRoles,
-  updateRoles,
-  addNewcourses,
-  getModulearr,
-  getCollegetypearr,
-  getExamlistarr,
-  getExamlist,
-  editexam,
-  addNewexam,
-  updateexam,
-  addNewCollegefaq,
-  updatecollegefaqs,
-  getTrendinglist,
-  edittrending,
-  updatetrending,
-  addNewTrending,
-  getFeetypearr,
-  getCategoriesarr,
-  getApprovedbyarr,
-  getTradingarr,
-  getRolesrr,
-  addNewcategories,
-  addNewfacility,
-  updatefacility,
-  editfacility,
-  addQuestion,
-  addNewsarticle,
-  editroles,
-  editcollege,
-  faqcollege,
-  editcollegefaq,
-  editquestion,
-  editnewsarticle,
-  editcourse,
-  getCoursearr,
-  getFacilityarr,
-  fetchSubcourese,
-  getstatewisecity,
-  getCMSListing,
-  addCms,
-  editcms,
-  updateCMS,
-  getNotificationlisting,
-  updateRating,
-  collegeenquirylisting,
+  
 };

@@ -1,31 +1,5 @@
-const { query } = require("express");
-const config = require("../config/config.js");
-
-const Pool = require("pg").Pool;
-/* const pool = new Pool({
-  user: "postgres", //timeofcollege
-  host: "localhost",
-  database: "edupotal", //tocdatabase
-  password: "password", //Navi2212
-  port: 5432,
-}); 
-const pool = new Pool({
-  user: "tocadmin", //timeofcollege
-  host: "164.121.168.184.host.secureserver.net",
-  database: "tocprddb", //tocdatabase
-  password: "Avi@1985", //Navi2212
-  port: 5432,
-});*/
-
-const pool = new Pool({
-  user: config.dbuser,
-  host: config.dbhost,
-  database: config.dbname,
-  password: config.dbpassword,
-  port: config.dbport,
-});
-
-const countrylisting = async () => {
+import pool from "@/lib/db";
+export const countrylisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -47,7 +21,7 @@ const countrylisting = async () => {
     throw new Error("Internal server error");
   }
 };
-const countrydetail = (cout_id) => {
+export const countrydetail = (cout_id) => {
   return new Promise(function (resolve, reject) {
     pool.query(
       "SELECT * FROM countrylist WHERE cout_id = $1",
@@ -63,7 +37,7 @@ const countrydetail = (cout_id) => {
     );
   });
 };
-const updatecountry = (body) => {
+export const updatecountry = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -103,7 +77,7 @@ const updatecountry = (body) => {
     );
   });
 };
-const addcountry = (body) => {
+export const addcountry = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -142,7 +116,7 @@ const addcountry = (body) => {
   });
 };
 
-const statelisting = async () => {
+export const statelisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -164,7 +138,7 @@ const statelisting = async () => {
     throw new Error("Internal server error");
   }
 };
-const citylisting = async () => {
+export const citylisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -185,13 +159,4 @@ const citylisting = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
-
-module.exports = {
-  countrylisting,
-  countrydetail,
-  updatecountry,
-  addcountry,
-  statelisting,
-  citylisting,
 };

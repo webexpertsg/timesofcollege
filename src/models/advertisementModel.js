@@ -1,17 +1,5 @@
-const { query } = require("express");
-const config = require("../config/config.js");
-
-const Pool = require("pg").Pool;
-
-const pool = new Pool({
-  user: config.dbuser,
-  host: config.dbhost,
-  database: config.dbname,
-  password: config.dbpassword,
-  port: config.dbport,
-});
-
-const getWebsiteconfig = async () => {
+import pool from "@/lib/db";
+export const getWebsiteconfigdetails = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query("SELECT * FROM website_config", (error, results) => {
@@ -30,7 +18,7 @@ const getWebsiteconfig = async () => {
     throw new Error("Internal server error");
   }
 };
-const getAvertisementlisting = async () => {
+export const getAvertisementlisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
@@ -53,7 +41,7 @@ const getAvertisementlisting = async () => {
   }
 };
 
-const getAvertisement = (ad_id) => {
+export const getAvertisement = (ad_id) => {
   //const notif_id = notif_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -73,7 +61,7 @@ const getAvertisement = (ad_id) => {
     console.log(query);
   });
 };
-const updateAvertisementlisting = (body) => {
+export const updateAvertisementlisting = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       ad_id,
@@ -110,7 +98,7 @@ const updateAvertisementlisting = (body) => {
     );
   });
 };
-const updateWebconfig = (body) => {
+export const updateWebconfig = (body) => {
   console.log("body-->", body);
   return new Promise(function (resolve, reject) {
     const { college_title_append } = body;
@@ -130,7 +118,7 @@ const updateWebconfig = (body) => {
     );
   });
 };
-const addAdvertisement = (body) => {
+export const addAdvertisement = (body) => {
   console.log("body->", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -167,12 +155,4 @@ const addAdvertisement = (body) => {
       }
     );
   });
-};
-module.exports = {
-  getAvertisementlisting,
-  getAvertisement,
-  updateAvertisementlisting,
-  addAdvertisement,
-  getWebsiteconfig,
-  updateWebconfig,
 };
