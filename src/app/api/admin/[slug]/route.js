@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, getApprovedbyarr, getNewsarticleslisting, getFacility } from '@/models/collegesModel';
+import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility } from '@/models/collegesModel';
 import { getMegamenulist, megamenuarrlist, menudetail, addNewmenudetails,updateMenudetails, editmenu } from '@/models/megamenuModel';
 import {getWebsiteconfigdetails,updateWebconfig,getAvertisementlisting } from '@/models/advertisementModel';
 import { countrylisting, statelisting, citylisting} from '@/models/locationModel';
@@ -8,7 +7,8 @@ import { countrylisting, statelisting, citylisting} from '@/models/locationModel
 
 export async function GET(request, {params}) {
     const { slug } = params;
-    
+    const searchParams = request.nextUrl.searchParams;
+
     if(slug === 'getmenulisting'){
         const menuList = await getMenurolewise(1);
         return NextResponse.json(menuList)
@@ -102,6 +102,11 @@ export async function GET(request, {params}) {
         const returnresponse = await getCMSListing(); 
         return NextResponse.json(returnresponse)
     }
+    if(slug === 'editcms'){
+        const cms_id = searchParams.get('cmsid'); // 
+        const returnresponse = await editCms(cms_id); 
+        return NextResponse.json(returnresponse)
+    }
     if(slug === 'getadvertisementlisting'){
         const returnresponse = await getAvertisementlisting(); 
         return NextResponse.json(returnresponse)
@@ -133,3 +138,16 @@ export async function GET(request, {params}) {
     
 
 }
+export async function POST(request) {
+    // Parse the request body
+    const body = await request.JSON();
+  //   console.log('body=-==-=--->', body);
+   
+    // e.g. Insert new user into your DB
+  //   const newUser = { id: Date.now(), name };
+   
+  //   return new Response(JSON.stringify(newUser), {
+  //     status: 201,
+  //     headers: { 'Content-Type': 'application/json' }
+  //   });
+  }

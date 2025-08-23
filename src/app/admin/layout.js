@@ -18,6 +18,7 @@ export default function AdminLayout({
   return (
     <html lang="en">
       <head>
+        <title>Timesofcollege admin section</title>
       </head>
       <body className={`dark:bg-gray-900`}>
          <Provider store={store}>

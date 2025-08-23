@@ -296,7 +296,7 @@ export const editquestion = (cid) => {
   });
 }
 
-export const editcms = (cmsid) => {
+export const editCms = (cmsid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -313,7 +313,7 @@ export const editcms = (cmsid) => {
         //resolve(`Edit college ID: ${id}`);
       }
     );
-    console.log(query);
+    //console.log(query);
   });
 }
 
