@@ -87,10 +87,18 @@ function Addcms() {
     };
     if (cmsid.value > 0) {
       //update form data
-      axios({
-        method: "PUT",
-        url: "/api/getupdatecms/${cmsid}",
-        data: payload,
+      // axios({
+      //   method: "POST",
+      //   url: "/api/admin/getupdatecms/",
+      //   data: payload,
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      // })
+      axios.post('/api/admin/getupdatecms/', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       })
         .then(function (response) {
           //console.log(response);
@@ -119,7 +127,7 @@ function Addcms() {
     } else {
       axios({
         method: "post",
-        url: "/api/addnewcms",
+        url: "/api/admin/addnewcms",
         data: payload,
       })
         .then(function (response) {

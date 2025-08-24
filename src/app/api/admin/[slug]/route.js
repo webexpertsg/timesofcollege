@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr} from '@/models/collegesModel';
+
+import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr, updateCMS} from '@/models/collegesModel';
 
 import { getMegamenulist, megamenuarrlist, menudetail, addNewmenudetails,updateMenudetails, editmenu } from '@/models/megamenuModel';
 import {getWebsiteconfigdetails,updateWebconfig,getAvertisementlisting } from '@/models/advertisementModel';
@@ -163,10 +164,32 @@ export async function GET(request, {params}) {
     
 
 }
-export async function POST(request) {
+export async function POSTS(request) {
     // Parse the request body
     const body = await request.JSON();
   //   console.log('body=-==-=--->', body);
+   
+    // e.g. Insert new user into your DB
+  //   const newUser = { id: Date.now(), name };
+   
+  //   return new Response(JSON.stringify(newUser), {
+  //     status: 201,
+  //     headers: { 'Content-Type': 'application/json' }
+  //   });
+  }
+  //export async function PUT(request,{}) {
+    export async function POST(request, { params }) {
+        const { slug } = params;  
+    if(slug === 'getupdatecms'){
+        const body = await request.json();
+        try {
+           const returnresponse = await updateCMS(body); 
+           return NextResponse.json(returnresponse)
+          } catch (error) {
+            return NextResponse.json({ error: 'Failed to update cms' }, { status: 500 });
+          }
+    }
+    
    
     // e.g. Insert new user into your DB
   //   const newUser = { id: Date.now(), name };
