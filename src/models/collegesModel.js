@@ -301,7 +301,6 @@ export const editCms = (cmsid) => {
   return new Promise(function (resolve, reject) {
     pool.query(
       "SELECT * FROM cms WHERE cmsid = $1",
-      [cmsid],
       (error, results) => {
         if (error) {
           reject(error);
@@ -848,7 +847,7 @@ export const updateCollege = (cid, body) => {
   });
 }
 
-export const updateCMS = (cmsid, body) => {
+export const updateCMS = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       cmsid,
