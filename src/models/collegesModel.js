@@ -301,6 +301,7 @@ export const editCms = (cmsid) => {
   return new Promise(function (resolve, reject) {
     pool.query(
       "SELECT * FROM cms WHERE cmsid = $1",
+      [cmsid],
       (error, results) => {
         if (error) {
           reject(error);
