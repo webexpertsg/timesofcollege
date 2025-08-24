@@ -1,26 +1,14 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import dynamic from 'next/dynamic';
 import { useParams, usePathname } from "next/navigation";
-//import React, { useState, useEffect } from "react";
-//import { Link, useParams } from "react-router-dom";
-import { CKEditor, wysiwyg } from "@ckeditor/ckeditor5-react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  ClassicEditor,
-  Bold,
-  Essentials,
-  Italic,
-  Mention,
-  Paragraph,
-  List,
-  Table,
-  Heading,
-  BlockQuote,
-  Alignment,
-} from "ckeditor5";
-
+const TocClientSideCustomEditor = dynamic(
+  () => import('@/components/ui/atoms/tocCkEditor'),
+  { ssr: false }
+);
 import axios from "axios";
 
 function Addcms() {
@@ -169,6 +157,9 @@ function Addcms() {
     var cmsurl = cmstitle.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
     editdata.cms_url = cmsurl.toLowerCase();
   };
+  const handleEditorChange = (data) => {
+    setCmsdescvalue(data);
+  };
 
   return (
     <>
@@ -255,65 +246,7 @@ function Addcms() {
             >
               Description
             </label>
-            <CKEditor
-              editor={ClassicEditor}
-              config={{
-                plugins: [
-                  Essentials,
-                  Heading,
-                  Paragraph,
-                  Bold,
-                  Italic,
-                  BlockQuote,
-                  Alignment,
-                  List,
-                  Mention,
-                  Table,
-                  Number,
-                ],
-                toolbar: [
-                  "Heading",
-                  "|",
-                  "Essentials",
-                  "Paragraph",
-
-                  "Bold",
-                  "Italic",
-                  "Alignment",
-                  "Link",
-                  "ListUI",
-                  "BlockQuote",
-                  "Undo",
-                  "Redo",
-                  "Mention",
-                  "Table",
-                  "|",
-                  "numberedList",
-                  "bulletedList",
-                  ,
-                ],
-                removePlugins: [
-                  "Image",
-                  "ImageCaption",
-                  "ImageStyle",
-                  "ImageToolbar",
-                  "ImageUpload",
-                ],
-                menuBar: {
-                  isVisible: true,
-                },
-              }}
-              data={editdata.cms_description ? editdata.cms_description : ""}
-              onReady={(editor) => {
-                // You can store the "editor" and use when it is needed.
-                // console.log("Editor 1 is ready to use!", editor);
-              }}
-              onChange={(event, editor) => {
-                const cms_desc = editor.getData();
-                setCmsdescvalue(cms_desc);
-                //console.log({ event, editor, college_descripton_data });
-              }}
-            />
+            <TocClientSideCustomEditor data={editdata.cms_description ? editdata.cms_description : ""} onChange={handleEditorChange} />
           </div>
           
           <div className="mt-2">
