@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility } from '@/models/collegesModel';
+import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr} from '@/models/collegesModel';
+
 import { getMegamenulist, megamenuarrlist, menudetail, addNewmenudetails,updateMenudetails, editmenu } from '@/models/megamenuModel';
 import {getWebsiteconfigdetails,updateWebconfig,getAvertisementlisting } from '@/models/advertisementModel';
 import { countrylisting, statelisting, citylisting} from '@/models/locationModel';
@@ -10,49 +11,61 @@ export async function GET(request, {params}) {
     const searchParams = request.nextUrl.searchParams;
 
     if(slug === 'getmenulisting'){
-        const menuList = await getMenurolewise(1);
-        return NextResponse.json(menuList)
+        const data = await getMenurolewise(1);
+        return NextResponse.json(data)
     }
 
     if(slug === 'getcollegeslisting'){
-        const menuList = await getColleges(1);
-        return NextResponse.json(menuList)
+        const data = await getColleges(1);
+        return NextResponse.json(data)
     }
     if(slug === 'getcategories'){
-        const menuList = await getCategories();
-        return NextResponse.json(menuList)
+        const data = await getCategories();
+        return NextResponse.json(data)
     }
     if(slug === 'getcourses'){
-        const menuList = await getCourses();
-        return NextResponse.json(menuList)
+        const data = await getCourses();
+        return NextResponse.json(data)
     }
     if(slug === 'getcategoriesarr'){
-        const menuList = await getCategoriesarr();
-        return NextResponse.json(menuList)
+        const data = await getCategoriesarr();
+        return NextResponse.json(data)
     }
-    if(slug === 'getmegamenulist'){
-        const menuList = await getMegamenulist();
-        return NextResponse.json(menuList)
+    if(slug === 'getmenulisting'){
+        const data = await getMegamenulist();
+        return NextResponse.json(data)
     }
     if(slug === 'megamenuarrlist'){
-        const menuList = await megamenuarrlist();
-        return NextResponse.json(menuList)
+        const data = await megamenuarrlist();
+        return NextResponse.json(data)
     }
     if(slug === 'getcoursebranchs'){
-        const menuList = await getCoursebranchs();
-        return NextResponse.json(menuList)
+        const data = await getCoursebranchs();
+        return NextResponse.json(data)
     }
     if(slug === 'getcoursesarr'){
-        const menuList = await getCoursesarr();
-        return NextResponse.json(menuList)
+        const data = await getCoursesarr();
+        return NextResponse.json(data)
+    }
+    if(slug === 'getsubcoursestypearr'){
+        const data = await getSubcoursestypearr();
+        return NextResponse.json(data)
+    }
+    if(slug === 'getsubcoursearr'){
+        const data = await getSubcoursearr();
+        return NextResponse.json(data)
+    }
+    if(slug === 'gettradingarr'){
+        const data = await getTradingarr();
+        return NextResponse.json(data)
     }
     if(slug === 'getcoursetype'){
-        const menuList = await getCoursetype(); 
-        return NextResponse.json(menuList)
+        const data = await getCoursetype(); 
+        return NextResponse.json(data)
     }
     if(slug === 'getcollegetype'){
-        const menuList = await getCollegetype(); 
-        return NextResponse.json(menuList)
+        const data = await getCollegetype(); 
+        return NextResponse.json(data)
     }
     if(slug === 'getroleslist'){
         const returnresponse = await getRolelist(); 
@@ -88,6 +101,18 @@ export async function GET(request, {params}) {
     }
     if(slug === 'getexamlisting'){
         const returnresponse = await getExamlist(); 
+        return NextResponse.json(returnresponse)
+    }
+    if(slug === 'getfeetypearr'){
+        const returnresponse = await getFeetypearr(); 
+        return NextResponse.json(returnresponse)
+    }
+    if(slug === 'getfacilityarr'){
+        const returnresponse = await getFacilityarr(); 
+        return NextResponse.json(returnresponse)
+    }
+    if(slug === 'getcollegetypearr'){
+        const returnresponse = await getCollegetypearr(); 
         return NextResponse.json(returnresponse)
     }
     if(slug === 'gettrending'){

@@ -21,7 +21,7 @@ function AdminSideBar(props) {
 
   return (
     <>
-        <div className="sidebar relative flex flex-col bg-white text-gray-700 h-100vh shadow-xl shadow-blue-gray-900/5">
+        <div className="sidebar relative flex flex-col bg-white text-gray-700 h-100vh shadow-xl shadow-blue-gray-900/5 border-r-1">
           <aside id="sidebar">
             <ul>
               {menulist.map((item, i) => (

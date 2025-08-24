@@ -22,7 +22,7 @@ export default function AdminLayout({
       </head>
       <body className={`dark:bg-gray-900`}>
          <Provider store={store}>
-            <header className="bg-white shadow-md">
+            <header className="bg-white shadow-md border-b-1 border-[#d1ccd5]">
                 <div className="logo">
                     <Image 
                         src={logo}

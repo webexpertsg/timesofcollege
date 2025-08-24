@@ -1585,6 +1585,7 @@ export const getCategoriesarr = async () => {
     throw new Error("Internal server error");
   }
 };
+
 export const getApprovedbyarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
