@@ -40,7 +40,7 @@ function Megamenu() {
   });
   useEffect(() => {
     axios
-      .get("/api/admin/getmegamenulist")
+      .get("/api/admin/getmegamenulisting")
       .then((response) => {
         setDatas(response.data);
       })

@@ -27,24 +27,7 @@ function Addcms() {
     cms_meta_description: "",
     cms_meta_keyword: "",
   });
-  //const { cmsid } = useParams();
-  const parameters = useParams();
-  const cmsid = parameters['cmsid']
-  //const { id } = router.query; // 'id' matches the filename [id].js
-  //console.log('test cmsid-->',parameters['cmsid']);
-  useEffect(() => {
-    if (cmsid > 0) {
-      axios
-        .get("/api/admin/editcms/?cmsid=" + cmsid)
-        .then((response) => {
-          setEditdata(response.data[0]);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
-    }
-  }, []);
+  
   const handleChangeFormdata = (e) => {
     const { name, value } = e.target;
     setEditdata((prevState) => ({
@@ -56,7 +39,6 @@ function Addcms() {
   const addcms = (e) => {
     e.preventDefault();
     const {
-      cmsid,
       cms_title,
       cms_url,
       cms_meta_title,
@@ -64,20 +46,7 @@ function Addcms() {
       cms_meta_description,
     } = e.target.elements;
 
-    //let errorsForm = [];
-
-    /* f (facility_name.value === "") {
-      errorsForm.push(
-        <div key="branameErr">Facility Name cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
-    }
-
-    console.log("errorsForm", errorsForm); */
-    //if (errorsForm.length === 0) {
     const payload = {
-      cmsid: cmsid.value,
       cms_title: cms_title.value,
       cms_url: cms_url.value,
       cms_description: cmsdescvalue,
@@ -85,53 +54,14 @@ function Addcms() {
       cms_meta_description: cms_meta_description.value,
       cms_meta_keyword: cms_meta_keyword.value,
     };
-    if (cmsid.value > 0) {
-      //update form data
-      // axios({
-      //   method: "POST",
-      //   url: "/api/admin/getupdatecms/",
-      //   data: payload,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // })
-      axios.post('/api/admin/getupdatecms/', payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then(function (response) {
-          //console.log(response);
-          //console.log(response.statusText);
-          if (response.statusText === "OK") {
-            toast.success("Successfully Updated.", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              // transition: Bounce,
-            });
-            setTimeout(function () {
-              window.location.replace("../../cms");
-            }, 3000);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      //end update form data
-    } else {
+   
       axios({
         method: "post",
         url: "/api/admin/addnewcms",
         data: payload,
       })
         .then(function (response) {
-          console.log(response);
+         // console.log(response);
           if (response.statusText === "OK") {
             //window.location.href = "../../questionanswerlist";
             toast.success("Successfully Added.", {
@@ -153,13 +83,9 @@ function Addcms() {
         .catch(function (error) {
           console.log(error);
         });
-    }
-
-    /*  } else {
-      setErrorMsg(errorsForm);
-    } */
   };
   // end add new Cms
+  
   const createUrl = (e) => {
     var cmstitle = e.target.value;
     var cmsurl = cmstitle.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
@@ -174,7 +100,7 @@ function Addcms() {
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">
-            {cmsid > 0 ? "Edit" : "Add New"} CMS
+          Add New CMS
           </h1>
           <div className="actions">
             <Link
@@ -214,11 +140,6 @@ function Addcms() {
             >
               Title *
             </label>
-            <input
-              type="hidden"
-              name="cmsid"
-              value={editdata.cmsid && editdata.cmsid}
-            />
             <input
               type="text"
               name="cms_title"
