@@ -170,7 +170,7 @@ export async function GET(request, {params}) {
 
 }
   //export async function PUT(request,{}) {
-    export async function POST(request, { params }) {
+    export async function POST(request, { params }) { 
         const { slug } = params;  
     if(slug === 'getupdatecms'){
         const body = await request.json();
@@ -191,7 +191,7 @@ export async function GET(request, {params}) {
             return NextResponse.json({ error: 'Failed to Insert Colleges' }, { status: 500 });
           }
     }
-    
+      
    
     // e.g. Insert new user into your DB
   //   const newUser = { id: Date.now(), name };
