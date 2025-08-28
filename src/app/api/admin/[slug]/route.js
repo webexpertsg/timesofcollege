@@ -171,7 +171,7 @@ export async function GET(request, {params}) {
 }
   //export async function PUT(request,{}) {
     export async function POST(request, { params }) { 
-        const { slug } = params;  
+    const { slug } = params;  
     if(slug === 'getupdatecms'){
         const body = await request.json();
         try {
@@ -181,15 +181,7 @@ export async function GET(request, {params}) {
             return NextResponse.json({ error: 'Failed to update cms' }, { status: 500 });
           }
     }
-    if(slug === 'addnewcms'){
-        const body = await request.json();
-        try {
-           const returnresponse = await addCms(body); 
-           return NextResponse.json(returnresponse)
-          } catch (error) {
-            return NextResponse.json({ error: 'Failed to update cms' }, { status: 500 });
-          }
-    }
+
     if(slug === 'addnewcms'){
         const body = await request.json();
         try {
