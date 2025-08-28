@@ -1378,7 +1378,8 @@ export const getCountryarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getStatearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1400,7 +1401,8 @@ export const getStatearr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getCityarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1422,7 +1424,8 @@ export const getCityarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 //get all course arra our database
 export const getCoursesarr = async () => {
   try {
@@ -1445,7 +1448,7 @@ export const getCoursesarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 //get all sud course array our database
 export const getSubcoursestypearr = async () => {
@@ -1492,7 +1495,7 @@ export const getModulearr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getCollegetypearr = async () => {
   try {
@@ -1515,7 +1518,7 @@ export const getCollegetypearr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getExamlistarr = async () => {
   try {
@@ -1538,7 +1541,7 @@ export const getExamlistarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getFeetypearr = async () => {
   try {
@@ -1561,7 +1564,7 @@ export const getFeetypearr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getCategoriesarr = async () => {
   try {
@@ -1584,7 +1587,7 @@ export const getCategoriesarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getApprovedbyarr = async () => {
   try {
@@ -1607,7 +1610,8 @@ export const getApprovedbyarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getCoursearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1629,7 +1633,7 @@ export const getCoursearr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getSubcoursearr = async () => {
   try {
@@ -1675,7 +1679,8 @@ export const getRolesrr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getTradingarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1697,7 +1702,8 @@ export const getTradingarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getFacilityarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1719,7 +1725,7 @@ export const getFacilityarr = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 export const getAdminusers = async () => {
   try {
@@ -1743,7 +1749,8 @@ export const getAdminusers = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getRolelist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1765,7 +1772,8 @@ export const getRolelist = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getCoursebranchs = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -1788,7 +1796,7 @@ export const getCoursebranchs = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 //get all course type our database
 export const getCoursetype = async () => {
@@ -1812,7 +1820,7 @@ export const getCoursetype = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 //get all college type our database
 export const getCollegetype = async () => {
   try {
@@ -1835,7 +1843,7 @@ export const getCollegetype = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 
 //create a new course branch record in the databsse
 export const addCoursebrach = (body) => {
@@ -1876,7 +1884,7 @@ export const addCoursebrach = (body) => {
       }
     );
   });
-};
+}
 //create a new users record in the databsse
 export const addNewusers = (body) => {
   return new Promise(function (resolve, reject) {
@@ -1914,7 +1922,7 @@ export const addNewusers = (body) => {
       }
     );
   });
-};
+}
 //create add new role record in the databsse
 export const addRoles = (body) => {
   return new Promise(function (resolve, reject) {
@@ -1937,7 +1945,8 @@ export const addRoles = (body) => {
       }
     );
   });
-};
+}
+
 export const updateRoles = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
@@ -1961,7 +1970,7 @@ export const updateRoles = (body) => {
       }
     );
   });
-};
+}
 
 export const addNewcourses = (body) => {
   return new Promise(function (resolve, reject) {
@@ -1999,7 +2008,8 @@ export const addNewcourses = (body) => {
       }
     );
   });
-};
+}
+
 export const editfacility = (cour_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
@@ -2019,7 +2029,8 @@ export const editfacility = (cour_id) => {
     );
     console.log(query);
   });
-};
+}
+
 export const addNewfacility = (body) => {
   return new Promise(function (resolve, reject) {
     const { facility_name, facility_status } = body;
@@ -2040,7 +2051,8 @@ export const addNewfacility = (body) => {
       }
     );
   });
-};
+}
+
 export const updatefacility = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
@@ -2064,7 +2076,8 @@ export const updatefacility = (body) => {
       }
     );
   });
-};
+}
+
 export const addQuestion = (body) => {
   return new Promise(function (resolve, reject) {
     const {
@@ -2105,7 +2118,8 @@ export const addQuestion = (body) => {
       }
     );
   });
-};
+}
+
 export const updateQuestion = (qid, body) => {
   return new Promise(function (resolve, reject) {
     const {
@@ -2146,7 +2160,7 @@ export const updateQuestion = (qid, body) => {
       }
     );
   });
-};
+}
 
 export const addCms = (body) => {
   console.log("body->", body);
@@ -2183,7 +2197,7 @@ export const addCms = (body) => {
       }
     );
   });
-};
+}
 
 export const addNewcategories = (body) => {
   console.log("add category", body);
@@ -2226,7 +2240,7 @@ export const addNewcategories = (body) => {
       }
     );
   });
-};
+}
 
 export const updateCategory = (body) => {
   return new Promise(function (resolve, reject) {
@@ -2271,7 +2285,8 @@ export const updateCategory = (body) => {
       }
     );
   });
-};
+}
+
 export const updatecourse = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
@@ -2313,7 +2328,7 @@ export const updatecourse = (body) => {
       }
     );
   });
-};
+}
 //get all facility our database
 export const getFacility = async () => {
   try {
@@ -2336,7 +2351,7 @@ export const getFacility = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 //get all question and answer our database
 export const getQuestionlisting = async () => {
   try {
@@ -2359,7 +2374,7 @@ export const getQuestionlisting = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 //get all news and articles our database
 export const getNewsarticleslisting = async () => {
   try {
@@ -2382,7 +2397,7 @@ export const getNewsarticleslisting = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
 //get all facility our database
 export const getCategories = async () => {
   try {
@@ -2405,7 +2420,8 @@ export const getCategories = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const editcategory = (cat_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
@@ -2425,7 +2441,8 @@ export const editcategory = (cat_id) => {
     );
     console.log(query);
   });
-};
+}
+
 export const editcourse = (cour_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
@@ -2445,7 +2462,7 @@ export const editcourse = (cour_id) => {
     );
     console.log(query);
   });
-};
+}
 //get all facility our database
 
 export const getApprovedby = async () => {
@@ -2469,7 +2486,8 @@ export const getApprovedby = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const editapproved = (approv_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
@@ -2489,7 +2507,8 @@ export const editapproved = (approv_id) => {
     );
     //console.log(query);
   });
-};
+}
+
 export const addnewapprovedby = (body) => {
   return new Promise(function (resolve, reject) {
     const {
@@ -2528,7 +2547,8 @@ export const addnewapprovedby = (body) => {
       }
     );
   });
-};
+}
+
 export const updateapprovedby = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
@@ -2568,7 +2588,8 @@ export const updateapprovedby = (body) => {
       }
     );
   });
-};
+}
+
 export const getCMSListing = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -2587,7 +2608,8 @@ export const getCMSListing = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const getNotificationlisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -2609,7 +2631,8 @@ export const getNotificationlisting = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
 export const collegeenquirylisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
@@ -2631,10 +2654,152 @@ export const collegeenquirylisting = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
-};
+}
+
+
+export const insertCollegeBasicInfoNew = (body) => {
+  return new Promise(function (resolve, reject) {
+    const {
+      college_name,
+      college_url,
+      tag_line,
+      usp_remark,
+      found_year,
+      intake,
+      hostel_available,
+      college_descripton,
+      facultyprofile,
+      ctype,
+      trading,
+      approvedby,
+      facilities,
+      categories,
+      exams,
+      meta_title,
+      meta_keyword,
+      meta_description,
+      coupon_code,
+      nirg_ranking,
+      application_open,
+      logo,
+      banner,
+      added_by,
+    } = body;
+    pool.query(
+      "INSERT INTO colleges(college_name,college_url,tag_line,usp_remark,found_year,intake,hostel_available,college_descripton,facultyprofile,ctype,trading,approvedby,facilities,categories,exams,meta_title,meta_keyword,meta_description, coupon_code,nirg_ranking,application_open,logo,banner,added_by,added_at) VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,CURRENT_DATE) RETURNING *",
+      [
+        college_name,
+        college_url,
+        tag_line,
+        usp_remark,
+        found_year,
+        intake,
+        hostel_available,
+        college_descripton,
+        facultyprofile,
+        ctype,
+        trading,
+        approvedby,
+        facilities,
+        categories,
+        exams,
+        meta_title,
+        meta_keyword,
+        meta_description,
+        coupon_code,
+        nirg_ranking,
+        application_open,
+        logo,
+        banner,
+        added_by,
+      ],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          //resolve(`College basic insert: ${JSON.stringify(results.rows[0])}`);
+          resolve(JSON.stringify(results.rows[0]));
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+}
+
+export const updateCollegeBasicInfoNew = (body) => {
+  return new Promise(function (resolve, reject) {
+    const {
+      cid,
+      college_name,
+      college_url,
+      tag_line,
+      usp_remark,
+      found_year,
+      intake,
+      hostel_available,
+      college_descripton,
+      facultyprofile,
+      ctype,
+      trading,
+      approvedby,
+      facilities,
+      categories,
+      exams,
+      meta_title,
+      meta_keyword,
+      meta_description,
+      logo,
+      banner,
+      coupon_code,
+      nirg_ranking,
+      application_open,
+    } = body;
+    pool.query(
+      "UPDATE colleges SET college_name = $2, college_url = $3,tag_line=$4,usp_remark=$5,found_year=$6,intake=$7,hostel_available=$8,college_descripton=$9,facultyprofile=$10,ctype=$11,trading=$12,approvedby=$13,facilities=$14,categories=$15,exams=$16,meta_title=$17,meta_keyword=$18,meta_description=$19,logo=$20,banner=$21,coupon_code=$22,nirg_ranking=$23,application_open=$24,updated_at=CURRENT_DATE WHERE cid = $1 RETURNING *",
+      [
+        cid,
+        college_name,
+        college_url,
+        tag_line,
+        usp_remark,
+        found_year,
+        intake,
+        hostel_available,
+        college_descripton,
+        facultyprofile,
+        ctype,
+        trading,
+        approvedby,
+        facilities,
+        categories,
+        exams,
+        meta_title,
+        meta_keyword,
+        meta_description,
+        logo,
+        banner,
+        coupon_code,
+        nirg_ranking,
+        application_open,
+      ],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(`College basic updated: ${JSON.stringify(results.rows[0])}`);
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+}
+
 module.exports = {
   Login,
   getColleges,
   //college,
-  
-};
+}

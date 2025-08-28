@@ -1,5 +1,8 @@
 import React, { useContext, useState } from 'react';
 import dynamic from 'next/dynamic';
+import axios from "axios";
+import { useParams } from 'next/navigation';
+
 import { MultiStepFormContext } from '@/components/ui/containers/context';
 
 import TocInputWithLabel from '@/components/ui/atoms/tocInputWithLabel';
@@ -8,21 +11,17 @@ import TocTextarea from '@/components/ui/atoms/tocTextarea';
 import TocImageUploader from '@/components/ui/atoms/tocImageUploader';
 import TocButton from '@/components/ui/atoms/tocButtom';
 
-
-
 const TocClientSideCustomEditor = dynamic(
   () => import('@/components/ui/atoms/tocCkEditor'),
   { ssr: false }
-);
+)
 
 const StepOne = ({ data, onNext }) => {
   const { formState  } = useContext(MultiStepFormContext)
   console.log('formState------->', formState);
   
-  
   const [clgName, setClgName] = useState(data.clgName);
   const [clgUrl, setClgUrl] = useState(data.clgUrl);
-
   const [clgTagLine, setClgTagLine] = useState(data.clgTagLine);
   const [clgUspRemark, setClgUspRemark] = useState(data.clgUspRemark);
   const [clgFoundationYear , setClgFoundationYear ] = useState(data.clgFoundationYear );
@@ -35,13 +34,12 @@ const StepOne = ({ data, onNext }) => {
   const [clgNIRF, setClgNIRF] = useState(data.clgNIRF);
 
   const [editorData, setEditorData] = useState('<p>Hello from CKEditor 5!</p>');
-
   const [isChecked, setIsChecked] = useState(false);
+  const { cid } = useParams();
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
-  };
-
+  }
 
   const [selectClgType, setSelectClgType] = useState([]);
   const handleCheckboxClgType = (event) => {
@@ -54,7 +52,6 @@ const StepOne = ({ data, onNext }) => {
     }
   }
 
-
   const [selectTrending, setSelectTrending] = useState([]);
   const handleCheckboxTrending = (event) => {
     const checkedId = event.target.value;
@@ -65,7 +62,6 @@ const StepOne = ({ data, onNext }) => {
       setSelectTrending(selectTrending.filter(id=>id !== checkedId))
     }
   }
-
 
   const [selectApproved, setSelectApproved] = useState([]);
   const handleCheckboxApproved = (event) => {
@@ -78,7 +74,6 @@ const StepOne = ({ data, onNext }) => {
     }
   }
 
-
   const [selectFacility, setSelectFacility] = useState([]);
   const handleCheckboxFacility = (event) => {
     const checkedId = event.target.value;
@@ -89,7 +84,6 @@ const StepOne = ({ data, onNext }) => {
       setSelectFacility(selectFacility.filter(id=>id !== checkedId))
     }
   }
-
   
   const [selectCategory, setSelectCategory] = useState([]);
   const handleCheckboxCategory = (event) => {
@@ -101,8 +95,6 @@ const StepOne = ({ data, onNext }) => {
       setSelectCategory(selectCategory.filter(id=>id !== checkedId))
     }
   }
-  
-
   
   const [selectExam, setSelectExam] = useState([]);
   const handleCheckboxExam = (event) => {
@@ -120,12 +112,151 @@ const StepOne = ({ data, onNext }) => {
     setEditorData(data);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) =>  {
+    event.preventDefault();
     // onNext({ clgName, clgUrl, clgTagLine });
     const formData = new FormData();
-    console.log('formdata---->', formData);
     
+    formData.append("cid", cid);
+    // formData.append("logo", logo);
+    // formData.append("banner", banner);
+    formData.append("college_name", clgName);
+    formData.append("college_url", clgUrl);
+    formData.append("tag_line", clgTagLine);
+    formData.append("usp_remark", clgUspRemark);
+    formData.append("found_year", clgFoundationYear);
+    formData.append("intake", clgIntake);
+    formData.append("hostel_available", clgHostelAvl);
+    formData.append("college_descripton", clgMetaDescription);
+    // formData.append("facultyprofile", facultyprofilevalue);
+    formData.append("ctype", selectClgType.join(","));
+    formData.append("trading", selectTrending.join(","));
+    formData.append("approvedby", selectApproved.join(","));
+    formData.append("facilities", selectFacility.join(","));
+    formData.append("categories", selectCategory.join(","));
+    formData.append("exams", selectExam.join(","));
+    formData.append("meta_title", clgMetaTile);
+    formData.append("meta_keyword", clgMetaKeywords);
+    formData.append("coupon_code", clgCoupon);
+    formData.append("nirg_ranking", clgNIRF ? clgNIRF : 0);
+    // formData.append("application_open", appopenvalue);
+    // formData.append("meta_description", event.target.meta_description.value);
+    // formData.append("old_logo", event.target.old_logo.value);
+    // formData.append("old_banner", event.target.old_banner.value);
+    // formData.append("added_by", localStorage.login_id);
+
+
+    console.log('formdata---->', Object.fromEntries(formData.entries()));
+    // return;
+    // const newErrors = basicifovalidateForm(
+    //   Object.fromEntries(formData.entries())
+    // )
+
+    
+
+    // setErrors(newErrors);
+
+    if (true) {
+      if (cid > 0) {
+        //update form data
+        console.log("update query ");
+        await axios({
+          method: "post",
+          url: "/api/admin/updatebasicinformation",
+          data: formData,
+          headers: { "Content-Type": "multipart/form-data" },
+        })
+          .then(function (response) {
+            //console.log(response);
+            // console.log(response.statusText);
+            if (response.statusText === "OK") {
+              toast.success("Basic info. sucessfully updated", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+              //return;
+              //setSuccessmsg("Successfully Updated.");
+              /*  setTimeout(function () {
+              window.location.replace("../../collegelisting");
+            }, 3000); */
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        //end update form data
+      } else {
+        //console.log("insert query ");
+        await axios({
+          method: "post",
+          url: "/api/admin/insertbasicinformation",
+          data: formData,
+          headers: { "Content-Type": "application/json" },
+        })
+          .then(function (response) {
+            if (response.data["cid"] > 0 && response.statusText === "OK") {
+              //setSuccessmsg("Successfully Updated.");
+              toast.success("Basic info. sucessfully inserted", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+              window.location.href =
+                "/admin/collegelisting/college/" + response.data["cid"];
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        //end basicinformation form data
+      }
+    }
+  };
+
+  const basicifovalidateForm = (data) => {
+    const errors = {};
+    console.log(" college_name -->", data.college_name);
+    if (!data.college_name.trim()) {
+      errors.college_name = "College name is required.";
+    }
+    if (!data.college_url.trim()) {
+      errors.college_url = "College url is required.";
+    }
+    if (!data.tag_line.trim()) {
+      errors.tag_line = "Tag line is required.";
+    }
+    if (!data.usp_remark.trim()) {
+      errors.usp_remark = "USP remark is required.";
+    }
+    if (!data.found_year.trim()) {
+      errors.found_year = "Foundation Year is required.";
+    }
+    if (!data.college_descripton.trim()) {
+      errors.college_descripton = "Description is required.";
+    }
+    if (!data.meta_title.trim()) {
+      errors.meta_title = "Meta title is required.";
+    }
+    if (!data.meta_description.trim()) {
+      errors.meta_description = "Meta description is required.";
+    }
+    if (!data.meta_keyword.trim()) {
+      errors.meta_keyword = "Meta keyword is required.";
+    }
+    return errors;
   };
 
   return (

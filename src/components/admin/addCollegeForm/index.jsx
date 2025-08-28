@@ -1,6 +1,7 @@
 // components/MultiStepForm.js
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
+
 import { MultiStepFormContext } from '@/components/ui/containers/context';
 import StepOne from './stepOne';
 import StepTwo from './stepTwo';
@@ -49,7 +50,6 @@ const MultiStepForm = () => {
     statearr, setStatearr,
     cityarr, setCityarr,
   }
-
 
   const [formData, setFormData] = useState({
     clgName: '',
