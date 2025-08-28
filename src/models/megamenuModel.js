@@ -22,7 +22,7 @@ export const getMegamenulist = async () => {
     throw new Error("Internal server error");
   }
 };
-export const megamenuarrlist = async () => {
+export const megaMenuarrlist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(

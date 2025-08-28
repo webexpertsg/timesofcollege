@@ -1,5 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Link from "next/link";
 import {
   MaterialReactTable,
@@ -84,25 +86,68 @@ function Cms() {
           </IconButton>
         </Tooltip>
         <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
+          <IconButton color="error" >
             <DeleteIcon
-              onClick={() => {
-                console.log("Delete======------>", row.original.cmsid);
-
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
+              onClick={() => openDeleteConfirmModal(row)}
             />
           </IconButton>
         </Tooltip>
       </Box>
     ),
   });
+  const openDeleteConfirmModal = (row) => {
+    if (window.confirm("Are you sure you want to delete this user?")) {
+      deleteCMS(row.original.cmsid);
+      //console.log("Delete======------>", row.original.cmsid);
+    }
+  };
   const editDetails = (editval) => {
     console.log("Edit college id:", editval);
     if (editval > 0) {
       window.location.href = "/admin/cms/addcms/" + editval;
     }
   };
+  const deleteCMS = (cmsid) =>{
+    if(cmsid > 0){
+      axios
+        .get("/api/admin/deletecms/?cmsid=" + cmsid)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            //window.location.href = "../../questionanswerlist";
+            toast.success("Deleted successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            setTimeout(function () {
+              //render cms listing
+              axios
+                .get("/api/admin/getcmslisting")
+                .then((response) => {
+                  setDatas(response.data);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+              //end render cms listing
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
+      }
+    
+  }
 
   return (
     <>
@@ -111,7 +156,7 @@ function Cms() {
           <h1 className="text-2xl font-semibold">CMS Listing</h1>
           <div className="actions">
             <span onClick={() => setIsEditOpen(true)}>
-              <Link href={"addcms"} alt="Add New Cms" title="Add New Cms">
+              <Link href={"/admin/cms/addcms"} alt="Add New Cms" title="Add New Cms">
                 <svg
                   className="h-6 w-6 text-stone-600"
                   width="24"
@@ -186,6 +231,7 @@ function Cms() {
           </div>
         </DialogContent>
       )}
+      <ToastContainer />
     </>
   );
 }

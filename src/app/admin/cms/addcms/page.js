@@ -17,6 +17,12 @@ function Addcms() {
   // }
   const [returndspmsg, setReturndspmsg] = useState();
   const [cmsdescvalue, setCmsdescvalue] = useState();
+  const [errForm, setErrForm] = useState(true);
+  const [errTitle, setErrTitle] = useState('');
+  const [errURL, setErrURL] = useState('');
+  const [errmetatitle, setErrmetatitle] = useState('');
+  const [errmetakeyword, setErrmetakeyword] = useState('');
+  const [errmetadescription, setErrmetadescription] = useState('');
 
   const [editdata, setEditdata] = useState({
     cmsid: "",
@@ -27,24 +33,7 @@ function Addcms() {
     cms_meta_description: "",
     cms_meta_keyword: "",
   });
-  //const { cmsid } = useParams();
-  const parameters = useParams();
-  const cmsid = parameters['cmsid']
-  //const { id } = router.query; // 'id' matches the filename [id].js
-  //console.log('test cmsid-->',parameters['cmsid']);
-  useEffect(() => {
-    if (cmsid > 0) {
-      axios
-        .get("/api/admin/editcms/?cmsid=" + cmsid)
-        .then((response) => {
-          setEditdata(response.data[0]);
-        })
-        .catch((error) => {
-          console.error(error);
-        });
-      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
-    }
-  }, []);
+  
   const handleChangeFormdata = (e) => {
     const { name, value } = e.target;
     setEditdata((prevState) => ({
@@ -56,110 +45,85 @@ function Addcms() {
   const addcms = (e) => {
     e.preventDefault();
     const {
-      cmsid,
       cms_title,
       cms_url,
       cms_meta_title,
       cms_meta_keyword,
       cms_meta_description,
     } = e.target.elements;
-
-    //let errorsForm = [];
-
-    /* f (facility_name.value === "") {
-      errorsForm.push(
-        <div key="branameErr">Facility Name cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if(cms_title.value == ""){
+      setErrTitle('Title can not be blank!');
+    }else{
+      setErrTitle('');
+      setErrForm(false);
     }
-
-    console.log("errorsForm", errorsForm); */
-    //if (errorsForm.length === 0) {
-    const payload = {
-      cmsid: cmsid.value,
-      cms_title: cms_title.value,
-      cms_url: cms_url.value,
-      cms_description: cmsdescvalue,
-      cms_meta_title: cms_meta_title.value,
-      cms_meta_description: cms_meta_description.value,
-      cms_meta_keyword: cms_meta_keyword.value,
-    };
-    if (cmsid.value > 0) {
-      //update form data
-      // axios({
-      //   method: "POST",
-      //   url: "/api/admin/getupdatecms/",
-      //   data: payload,
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      // })
-      axios.post('/api/admin/getupdatecms/', payload, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then(function (response) {
-          //console.log(response);
-          //console.log(response.statusText);
-          if (response.statusText === "OK") {
-            toast.success("Successfully Updated.", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              // transition: Bounce,
-            });
-            setTimeout(function () {
-              window.location.replace("../../cms");
-            }, 3000);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      //end update form data
-    } else {
-      axios({
-        method: "post",
-        url: "/api/admin/addnewcms",
-        data: payload,
-      })
-        .then(function (response) {
-          console.log(response);
-          if (response.statusText === "OK") {
-            //window.location.href = "../../questionanswerlist";
-            toast.success("Successfully Added.", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              // transition: Bounce,
-            });
-            setTimeout(function () {
-              window.location.replace("../cms");
-            }, 3000);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    if(cms_url.value == ""){
+      setErrURL('URL can not be blank!');
+    }else{
+      setErrURL('');
+      setErrForm(false);
     }
-
-    /*  } else {
-      setErrorMsg(errorsForm);
-    } */
+    if(cms_meta_title.value == ""){
+      setErrmetatitle('Meta title can not be blank!');
+    }else{
+      setErrmetatitle('');
+      setErrForm(false);
+    } 
+    if(cms_meta_keyword.value == ""){
+      setErrmetakeyword('Meta keyword can not be blank!');
+    }else{
+      setErrmetakeyword('');
+      setErrForm(false);
+    }
+    if(cms_meta_description.value == ""){
+      setErrmetadescription('Meta description can not be blank!');
+    }else{
+      setErrmetadescription('');
+      setErrForm(false);
+    }
+    if(!errForm){
+      const payload = {
+        cms_title: cms_title.value,
+        cms_url: cms_url.value,
+        cms_description: cmsdescvalue,
+        cms_meta_title: cms_meta_title.value,
+        cms_meta_description: cms_meta_description.value,
+        cms_meta_keyword: cms_meta_keyword.value,
+      };
+     
+        axios({
+          method: "post",
+          url: "/api/admin/addnewcms",
+          data: payload,
+        })
+          .then(function (response) {
+           // console.log(response);
+            if (response.statusText === "OK") {
+              //window.location.href = "../../questionanswerlist";
+              toast.success("Successfully Added.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+              setTimeout(function () {
+                window.location.replace("../cms");
+              }, 3000);
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+    }
+    
   };
   // end add new Cms
+  
   const createUrl = (e) => {
     var cmstitle = e.target.value;
     var cmsurl = cmstitle.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
@@ -174,7 +138,7 @@ function Addcms() {
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">
-            {cmsid > 0 ? "Edit" : "Add New"} CMS
+          Add New CMS
           </h1>
           <div className="actions">
             <Link
@@ -215,20 +179,16 @@ function Addcms() {
               Title *
             </label>
             <input
-              type="hidden"
-              name="cmsid"
-              value={editdata.cmsid && editdata.cmsid}
-            />
-            <input
               type="text"
               name="cms_title"
               value={editdata.cms_title ? editdata.cms_title : ""}
-              required="required"
+              //required="required"
               onChange={handleChangeFormdata}
               onChangeCapture={createUrl}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-          </div>{" "}
+            <hint className="text-red-700">{errTitle}</hint>
+          </div>
           <div className="mt-2">
             <label
               htmlFor="college_url"
@@ -241,10 +201,11 @@ function Addcms() {
               type="text"
               name="cms_url"
               value={editdata.cms_url ? editdata.cms_url : ""}
-              required="required"
+              //required="required"
               onChange={handleChangeFormdata}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
+            <hint className="text-red-700">{errURL}</hint>
           </div>
 
           <div className="mt-2">
@@ -268,10 +229,11 @@ function Addcms() {
               type="text"
               name="cms_meta_title"
               value={editdata.cms_meta_title ? editdata.cms_meta_title : ""}
-              required="required"
+              //required="required"
               onChange={handleChangeFormdata}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
+            <hint className="text-red-700">{errmetatitle}</hint>
           </div>
           <div className="mt-2">
             <label
@@ -288,10 +250,11 @@ function Addcms() {
                   ? editdata.cms_meta_description
                   : ""
               }
-              required="required"
+              //required="required"
               onChange={handleChangeFormdata}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
+            <hint className="text-red-700">{errmetadescription}</hint>
           </div>
           <div className="mt-2">
             <label
@@ -304,10 +267,11 @@ function Addcms() {
               type="text"
               name="cms_meta_keyword"
               value={editdata.cms_meta_keyword ? editdata.cms_meta_keyword : ""}
-              required="required"
+              //required="required"
               onChange={handleChangeFormdata}
               className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
+            <hint className="text-red-700">{errmetakeyword}</hint>
           </div>
           <div className="btn-section">
             <button type="button">Cancle</button>

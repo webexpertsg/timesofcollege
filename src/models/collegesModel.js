@@ -316,6 +316,20 @@ export const editCms = (cmsid) => {
     //console.log(query);
   });
 }
+export const deleteCMS = (cmsid) => {
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "DELETE FROM cms WHERE cmsid = $1",
+      [cmsid],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`Cms Deleted: ${cmsid}`);
+      }
+    );
+  });
+}
 
 export const editnewsarticle = (na_id) => {
   //const rol_id = rol_id;

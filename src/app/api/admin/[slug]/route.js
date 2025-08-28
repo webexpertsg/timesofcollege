@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr, updateCMS, insertCollegeBasicInfoNew, updateCollegeBasicInfoNew } from '@/models/collegesModel';
+import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr, updateCMS, addCms,deleteCMS, insertCollegeBasicInfoNew, updateCollegeBasicInfoNew } from '@/models/collegesModel';
 
-import { getMegamenulist, megamenuarrlist, menudetail, addNewmenudetails,updateMenudetails, editmenu } from '@/models/megamenuModel';
+import { getMegamenulist, megaMenuarrlist, menudetail, addNewmenudetails,updateMenudetails, editmenu } from '@/models/megamenuModel';
 import {getWebsiteconfigdetails,updateWebconfig,getAvertisementlisting } from '@/models/advertisementModel';
 import { countrylisting, statelisting, citylisting} from '@/models/locationModel';
 
@@ -32,12 +32,12 @@ export async function GET(request, {params}) {
         const data = await getCategoriesarr();
         return NextResponse.json(data)
     }
-    if(slug === 'getmenulisting'){
+    if(slug === 'getmegamenulisting'){
         const data = await getMegamenulist();
         return NextResponse.json(data)
     }
     if(slug === 'megamenuarrlist'){
-        const data = await megamenuarrlist();
+        const data = await megaMenuarrlist();
         return NextResponse.json(data)
     }
     if(slug === 'getcoursebranchs'){
@@ -133,6 +133,11 @@ export async function GET(request, {params}) {
         const returnresponse = await editCms(cms_id); 
         return NextResponse.json(returnresponse)
     }
+    if(slug === 'deletecms'){
+        const cms_id = searchParams.get('cmsid'); // 
+        const returnresponse = await deleteCMS(cms_id); 
+        return NextResponse.json(returnresponse)
+    }
     if(slug === 'getadvertisementlisting'){
         const returnresponse = await getAvertisementlisting(); 
         return NextResponse.json(returnresponse)
@@ -177,7 +182,7 @@ export async function GET(request, {params}) {
           }
     }
 
-        if(slug === 'insertbasicinformation'){
+    if(slug === 'insertbasicinformation'){
         const body = await request.json();
         try {
            const returnresponse = await insertCollegeBasicInfoNew(body); 
