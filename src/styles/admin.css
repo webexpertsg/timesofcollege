@@ -83,7 +83,7 @@ input:where(:not([type])),
 [type="week"],
 [multiple],
 textarea {
-  -webkit-appearance: none;
+  /* -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
   background-color: #fff;
@@ -95,7 +95,7 @@ textarea {
   padding-bottom: 0.5rem;
   padding-left: 0.75rem;
   font-size: 1rem;
-  line-height: 1.5rem;
+  line-height: 1.5rem; */
   --tw-shadow: 0 0 #0000;
 }
 .bg-indigo-600 {

@@ -11,6 +11,8 @@ import TocTextarea from '@/components/ui/atoms/tocTextarea';
 import TocImageUploader from '@/components/ui/atoms/tocImageUploader';
 import TocButton from '@/components/ui/atoms/tocButtom';
 
+import { hasNotEmptyValue } from '../../../utils'
+
 const TocClientSideCustomEditor = dynamic(
   () => import('@/components/ui/atoms/tocCkEditor'),
   { ssr: false }
@@ -18,7 +20,7 @@ const TocClientSideCustomEditor = dynamic(
 
 const StepOne = ({ data, onNext }) => {
   const { formState  } = useContext(MultiStepFormContext)
-  console.log('formState------->', formState);
+  // console.log('formState------->', formState);
   
   const [clgName, setClgName] = useState(data.clgName);
   const [clgUrl, setClgUrl] = useState(data.clgUrl);
@@ -28,10 +30,14 @@ const StepOne = ({ data, onNext }) => {
   const [clgIntake, setClgIntake] = useState(data.clgIntake);
   const [clgHostelAvl, setClgHostelAvl] = useState(data.clgHostelAvl);
   const [clgMetaTile, setClgMetaTile] = useState(data.clgMetaTile);
+  const [clgDescription, setMetaDescription] = useState('test');
+
   const [clgMetaDescription, setClgMetaDescription] = useState(data.clgMetaDescription);
   const [clgMetaKeywords, setSlgMetaKeywords] = useState(data.clgMetaKeywords);
   const [clgCoupon, setClgCoupon] = useState(data.clgCoupon);
   const [clgNIRF, setClgNIRF] = useState(data.clgNIRF);
+
+  const [error, setErrors] = useState({})
 
   const [editorData, setEditorData] = useState('<p>Hello from CKEditor 5!</p>');
   const [isChecked, setIsChecked] = useState(false);
@@ -127,7 +133,7 @@ const StepOne = ({ data, onNext }) => {
     formData.append("found_year", clgFoundationYear);
     formData.append("intake", clgIntake);
     formData.append("hostel_available", clgHostelAvl);
-    formData.append("college_descripton", clgMetaDescription);
+    formData.append("college_descripton", clgDescription);
     // formData.append("facultyprofile", facultyprofilevalue);
     formData.append("ctype", selectClgType.join(","));
     formData.append("trading", selectTrending.join(","));
@@ -140,23 +146,19 @@ const StepOne = ({ data, onNext }) => {
     formData.append("coupon_code", clgCoupon);
     formData.append("nirg_ranking", clgNIRF ? clgNIRF : 0);
     // formData.append("application_open", appopenvalue);
-    // formData.append("meta_description", event.target.meta_description.value);
+    formData.append("meta_description", clgMetaDescription);
     // formData.append("old_logo", event.target.old_logo.value);
     // formData.append("old_banner", event.target.old_banner.value);
     // formData.append("added_by", localStorage.login_id);
 
 
-    console.log('formdata---->', Object.fromEntries(formData.entries()));
-    // return;
-    // const newErrors = basicifovalidateForm(
-    //   Object.fromEntries(formData.entries())
-    // )
+    const newErrors = basicifovalidateForm(
+      Object.fromEntries(formData.entries())
+    )
+  
+    setErrors(newErrors);
 
-    
-
-    // setErrors(newErrors);
-
-    if (true) {
+    if (!hasNotEmptyValue(newErrors)) {
       if (cid > 0) {
         //update form data
         console.log("update query ");
@@ -228,7 +230,7 @@ const StepOne = ({ data, onNext }) => {
 
   const basicifovalidateForm = (data) => {
     const errors = {};
-    console.log(" college_name -->", data.college_name);
+    // console.log(" college_name -->", data);
     if (!data.college_name.trim()) {
       errors.college_name = "College name is required.";
     }
@@ -269,31 +271,39 @@ const StepOne = ({ data, onNext }) => {
       <div className='flex gap-10'>
         <TocInputWithLabel
           id="clgName"
-          label="College Name *"
+          label="College Name"
           placeholder="Please Enter College Name."
           value={clgName}
+          required={true}
+          errmsg={error.college_name}
           onChange={(e) => setClgName(e.target.value)}
         />
 
         <TocInputWithLabel
           id="clgUrl"
-          label="College URL *"
+          label="College URL"
           placeholder="Please Enter College URL."
           value={clgUrl}
+          required={true}
+          errmsg={error.college_url}
           onChange={(e) => setClgUrl(e.target.value)}
         />
 
         <TocInputWithLabel
           id="clgTagLine"
-          label="Tag Line *"
+          label="Tag Line"
           value={clgTagLine}
+          required={true}
+          errmsg={error.tag_line}
           onChange={(e) => setClgTagLine(e.target.value)}
         />
 
         <TocInputWithLabel
           id="clgUspRemark"
-          label="USP Remark *"
+          label="USP Remark"
           value={clgUspRemark}
+          required={true}
+          errmsg={error.usp_remark}
           onChange={(e) => setClgUspRemark(e.target.value)}
         />
       </div>
@@ -301,8 +311,10 @@ const StepOne = ({ data, onNext }) => {
       <div className='flex gap-10'>
         <TocInputWithLabel
           id="clgFoundationYear"
-          label="Foundation Year *"
+          label="Foundation Year"
           value={clgFoundationYear}
+          required={true}
+          errmsg={error.found_year}
           onChange={(e) => setClgFoundationYear(e.target.value)}
         />
 
@@ -436,16 +448,18 @@ const StepOne = ({ data, onNext }) => {
     
     <TocInputWithLabel
       id="clgMetaTile"
-      label="Meta Title *"
+      label="Meta Title"
       value={clgMetaTile}
+      required={true}
       onChange={(e) => setClgMetaTile(e.target.value)}
     />
 
     <TocTextarea
       id="clgMetaDescription"
-      label="Meta Description *"
+      label="Meta Description"
       placeholder="Enter your message here..."
       value={clgMetaDescription}
+      required={true}
       onChange={(e) => setClgMetaDescription(e.target.value)}
       rows={4}
     />
@@ -453,8 +467,9 @@ const StepOne = ({ data, onNext }) => {
     <div className='flex gap-10'>
       <TocInputWithLabel
         id="clgMetaKeywords"
-        label="Meta Keyword *"
+        label="Meta Keyword"
         value={clgMetaKeywords}
+        required={true}
         onChange={(e) => setSlgMetaKeywords(e.target.value)}
       />
 
