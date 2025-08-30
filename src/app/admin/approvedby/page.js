@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { hasNotEmptyValue } from "@/utils";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -16,8 +17,12 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocButton from "@/components/ui/atoms/tocButtom";
 
 function Approvedby() {
   if (localStorage.getItem("login_id") <= 0) {
@@ -26,6 +31,7 @@ function Approvedby() {
   const [datas, setDatas] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
+  const [errForm, setErrForm] = useState({});
   const [editdata, setEditdata] = useState({
     approv_id: "",
     approved_name: "",
@@ -37,7 +43,7 @@ function Approvedby() {
     approved_url: "",
     user_id: "",
   });
-  const [errorMsg, setErrorMsg] = useState([]);
+
   useEffect(() => {
     axios
       .get("/api/admin/getapprovedby")
@@ -70,14 +76,22 @@ function Approvedby() {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            cell.getValue()
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
   const editDetails = (editval) => {
-    console.log("Edit course id:", editval);
+    console.log("Edit approved by id:", editval);
     axios
-      .get("/api/admin/editapproval/" + editval)
+      .get("/api/admin/editapprovedby/?appbyid=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
       })
@@ -109,27 +123,36 @@ function Approvedby() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.app_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon onClick={() => openDeleteConfirmModal(row)} />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
+  const openDeleteConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      deleteRecord(row.original.approv_id);
+      //console.log("Delete======------>", row.original.cmsid);
+    }
+  };
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
   };
+  const openpopup = () => {
+    setIsEditOpen(true);
+    setEditdata("");
+  };
   // add edit approval by
-  const addapprovedby = (e) => {
+  const submitApprovedby = (e) => {
+    const newErrors = {};
     e.preventDefault();
     const {
       approv_id,
@@ -141,39 +164,28 @@ function Approvedby() {
       approved_description,
     } = e.target.elements;
 
-    let errorsForm = [];
-
-    if (approved_name.value === "") {
-      errorsForm.push(<div key="branameErr">Approved by cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!approved_name.value.trim()) {
+      newErrors.name = "Approved by cann't be blank!";
     }
-    if (approved_url.value === "") {
-      errorsForm.push(<div key="branurlErr">Approved by cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!approved_url.value.trim()) {
+      newErrors.url = "Approved by url cann't be blank!";
     }
-    if (app_meta_title.value === "") {
-      errorsForm.push(<div key="metatitErr">Meta Title cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!approved_description.value.trim()) {
+      newErrors.description = "Approved by description cann't be blank!";
     }
-    if (app_meta_keyword.value === "") {
-      errorsForm.push(
-        <div key="metakeyErr">Meta Keyword cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!app_meta_title.value.trim()) {
+      newErrors.metatitle = "Meta Title cann't be blank!";
     }
-    if (app_meta_description.value === "") {
-      errorsForm.push(
-        <div key="metadescErr">Meta Description cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!app_meta_keyword.value.trim()) {
+      newErrors.metakeyword = "Meta Keyword cann't be blank!";
     }
-    console.log("errorsForm", errorsForm);
-    if (errorsForm.length === 0) {
+    if (!app_meta_description.value.trim()) {
+      newErrors.metadescription = "Meta Description cann't be blank!";
+    }
+    setErrForm(newErrors);
+    //console.log('errForm-->',errForm);
+    //if(errForm.length === 0){
+    if (!hasNotEmptyValue(newErrors)) {
       const payload = {
         approv_id: approv_id.value,
         approved_name: approved_name.value,
@@ -234,15 +246,26 @@ function Approvedby() {
         })
           .then(function (response) {
             console.log(response);
-            approv_id.value = "";
-            approved_name.value = "";
-            approved_url.value = "";
-            app_meta_title.value = "";
-            app_meta_description.value = "";
-            app_meta_keyword.value = "";
-            setReturndspmsg(
-              "<div className={sussmsg}>Record successfully added</div>"
-            );
+            if (response.statusText == "OK") {
+              approv_id.value = "";
+              approved_name.value = "";
+              approved_url.value = "";
+              app_meta_title.value = "";
+              app_meta_description.value = "";
+              app_meta_keyword.value = "";
+              setIsEditOpen(false);
+              toast.success("Approved by details added!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            }
             //get results
             axios
               .get("/api/admin/getapprovedby")
@@ -256,16 +279,46 @@ function Approvedby() {
           })
           .catch(function (error) {
             console.log(error);
-            setReturndspmsg(
-              "<div className={errmsg}>Error in add approved by record</div>"
-            );
           });
       }
-    } else {
-      setErrorMsg(errorsForm);
     }
   };
   // end add edit approval by
+  const deleteRecord = (approv_id) => {
+    if (approv_id > 0) {
+      axios
+        .get("/api/admin/deleteapprovedby/?approv_id=" + approv_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getapprovedby")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
 
   return (
     <>
@@ -273,7 +326,9 @@ function Approvedby() {
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">Approved by Listing</h1>
           <div className="actions">
-            <span onClick={() => setIsEditOpen(true)}>
+            <span //onClick={() => setIsEditOpen(true)}
+              onClick={() => openpopup()}
+            >
               <svg
                 className="h-6 w-6 text-stone-600"
                 width="24"
@@ -285,14 +340,13 @@ function Approvedby() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                {" "}
                 <path stroke="none" d="M0 0h24v24H0z" />{" "}
                 <circle cx="12" cy="12" r="9" />{" "}
                 <line x1="9" y1="12" x2="15" y2="12" />{" "}
                 <line x1="12" y1="9" x2="12" y2="15" />
               </svg>
             </span>
-            <span onClick={() => setIsFilter(true)}>
+            {/* <span onClick={() => setIsFilter(true)}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
@@ -305,7 +359,7 @@ function Approvedby() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
@@ -321,110 +375,123 @@ function Approvedby() {
           <div className="modal-box">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button
+              {/* <button
                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                 onClick={() => setIsEditOpen(false)}
               >
                 ✕
-              </button>
+                </button> */}
+              <IconButton className="bsolute right-2 top-2 toc-popupclosebtnpossition">
+                <HighlightOffIcon
+                  className="bsolute right-2 top-2"
+                  onClick={() => setIsEditOpen(false)}
+                />
+              </IconButton>
             </form>
             <h3 className="font-bold text-lg">
-              {editdata.approv_id > 0 ? "Edit" : "Add"} Approved By{" "}
+              {editdata.approv_id > 0 ? "Edit" : "Add"} Approved By
             </h3>
 
             <form
               action=""
               method="post"
               id="coursebranchForm"
-              onSubmit={addapprovedby}
+              onSubmit={submitApprovedby}
             >
-              <div className="mt-2">
-                <input
-                  type="hidden"
-                  value={editdata.approv_id}
-                  name="approv_id"
-                />
-                <input
-                  type="text"
-                  name="approved_name"
-                  placeholder="Approved By*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.approved_name && editdata.approved_name}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[0]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="approved_url"
-                  placeholder="Approved By URL*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.approved_url && editdata.approved_url}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[1]}</div>
-              </div>{" "}
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="approved_description"
-                  placeholder="Approved By Details*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={
-                    editdata.approved_description &&
-                    editdata.approved_description.trim()
-                  }
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[1]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="app_meta_title"
-                  placeholder="Meta Title*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.app_meta_title && editdata.app_meta_title}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[2]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="app_meta_description"
-                  placeholder="Meta Description*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={
-                    editdata.app_meta_description &&
-                    editdata.app_meta_description
-                  }
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[3]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="app_meta_keyword"
-                  placeholder="Meta Keyword*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.app_meta_keyword && editdata.app_meta_keyword}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[4]}</div>
+              <div className="popupform">
+                <div className="mt-2">
+                  <input
+                    type="hidden"
+                    value={editdata.approv_id}
+                    name="approv_id"
+                  />
+
+                  <TocInputWithLabel
+                    id="approved_name"
+                    label="Approved By Name"
+                    placeholder="Please Enter Approved By Name."
+                    value={editdata.approved_name ? editdata.approved_name : ""}
+                    required={true}
+                    errmsg={errForm.name}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="approved_url"
+                    label="Approved By URL"
+                    placeholder="Please Enter Approved By URL."
+                    value={
+                      editdata.approved_url && editdata.approved_url.trim()
+                    }
+                    required={true}
+                    errmsg={errForm.url}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="approved_description"
+                    label="Approved By Details"
+                    placeholder="Please Enter Approved By Details."
+                    value={
+                      editdata.approved_description &&
+                      editdata.approved_description.trim()
+                    }
+                    required={true}
+                    errmsg={errForm.description}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="app_meta_title"
+                    label="Meta Title"
+                    placeholder="Please Enter Meta Title."
+                    value={
+                      editdata.app_meta_title ? editdata.app_meta_title : ""
+                    }
+                    required={true}
+                    errmsg={errForm.metatitle}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="app_meta_description"
+                    label="Meta Description"
+                    placeholder="Please Enter Meta Description."
+                    value={
+                      editdata.app_meta_description &&
+                      editdata.app_meta_description.trim()
+                    }
+                    required={true}
+                    errmsg={errForm.metadescription}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="app_meta_keyword"
+                    label="Meta Keyword"
+                    placeholder="Please Enter Meta Keyword."
+                    value={
+                      editdata.app_meta_keyword ? editdata.app_meta_keyword : ""
+                    }
+                    required={true}
+                    errmsg={errForm.metakeyword}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
               </div>
               <div className="btn-section">
                 <button type="button" onClick={() => setIsEditOpen(false)}>
                   Cancle
                 </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
+                  {" "}
                   {editdata.approv_id > 0 ? "Update" : "Submit"}
-                </button>
+                </TocButton>
               </div>
             </form>
           </div>

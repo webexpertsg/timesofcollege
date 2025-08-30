@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TocInputWithLabel = ({ id, label, type = 'text', placeholder = '', value, onChange, className, required, errmsg = '' }) => {
+const TocInputWithLabel = ({ id, label, type = 'text', placeholder = '', value, onChange, className, required, errmsg = '',onChangeCapture }) => {
   return (
     <div className="mb-4">
       <label htmlFor={id} className="block text-gray-700 text-sm font-bold mb-2">
@@ -13,6 +13,7 @@ const TocInputWithLabel = ({ id, label, type = 'text', placeholder = '', value, 
         placeholder={placeholder}
         value={value}
         onChange={onChange}
+        onChangeCapture={onChangeCapture}
       />
       {errmsg && <hint className="text-red-700">{errmsg}</hint>}
     </div>

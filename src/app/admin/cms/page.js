@@ -68,7 +68,7 @@ function Cms() {
     data,
     enableColumnOrdering: true, //enable some features
     enableRowSelection: false,
-    enablePagination: false, //disable a default feature
+    enablePagination: true, //disable a default feature
     enableRowActions: true,
     onRowSelectionChange: setRowSelection, //hoist internal state to your own state (optional)
     state: { rowSelection }, //manage your own state, pass it back to the table (optional)
@@ -96,13 +96,13 @@ function Cms() {
     ),
   });
   const openDeleteConfirmModal = (row) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
+    if (window.confirm("Are you sure you want to delete this cms details?")) {
       deleteCMS(row.original.cmsid);
       //console.log("Delete======------>", row.original.cmsid);
     }
   };
   const editDetails = (editval) => {
-    console.log("Edit college id:", editval);
+    //console.log("Edit cms id:", editval);
     if (editval > 0) {
       window.location.href = "/admin/cms/addcms/" + editval;
     }
