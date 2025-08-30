@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import dynamic from 'next/dynamic';
+import axios from "axios";
+import { useSearchParams  } from 'next/navigation';
 
 import TocInputWithLabel from '@/components/ui/atoms/tocInputWithLabel';
 import TocButton from '@/components/ui/atoms/tocButtom';
@@ -13,6 +16,9 @@ const options = [
 ];
 
 const StepTwo = ({ data, onNext, onPrevious }) => {
+
+  console.log('data--->', data);
+  
   const [clgName, setClgName] = useState(data.clgName);
   const [clgUrl, setClgUrl] = useState(data.clgUrl);
 

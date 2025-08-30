@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import dynamic from 'next/dynamic';
 import axios from "axios";
-import { useParams } from 'next/navigation';
+import { useSearchParams  } from 'next/navigation';
 
 import { MultiStepFormContext } from '@/components/ui/containers/context';
 
@@ -11,7 +11,7 @@ import TocTextarea from '@/components/ui/atoms/tocTextarea';
 import TocImageUploader from '@/components/ui/atoms/tocImageUploader';
 import TocButton from '@/components/ui/atoms/tocButtom';
 
-import { hasNotEmptyValue } from '../../../utils'
+import { hasNotEmptyValue } from '@/utils'
 
 const TocClientSideCustomEditor = dynamic(
   () => import('@/components/ui/atoms/tocCkEditor'),
@@ -20,7 +20,6 @@ const TocClientSideCustomEditor = dynamic(
 
 const StepOne = ({ data, onNext }) => {
   const { formState  } = useContext(MultiStepFormContext)
-  // console.log('formState------->', formState);
   
   const [clgName, setClgName] = useState(data.clgName);
   const [clgUrl, setClgUrl] = useState(data.clgUrl);
@@ -30,7 +29,8 @@ const StepOne = ({ data, onNext }) => {
   const [clgIntake, setClgIntake] = useState(data.clgIntake);
   const [clgHostelAvl, setClgHostelAvl] = useState(data.clgHostelAvl);
   const [clgMetaTile, setClgMetaTile] = useState(data.clgMetaTile);
-  const [clgDescription, setMetaDescription] = useState('test');
+  const [clgDescription, setDescription] = useState(data.clgDescription);
+  const [clgFacilityProfile, setClgFacilityProfile] = useState(data.clgFacilityProfile);
 
   const [clgMetaDescription, setClgMetaDescription] = useState(data.clgMetaDescription);
   const [clgMetaKeywords, setSlgMetaKeywords] = useState(data.clgMetaKeywords);
@@ -38,10 +38,9 @@ const StepOne = ({ data, onNext }) => {
   const [clgNIRF, setClgNIRF] = useState(data.clgNIRF);
 
   const [error, setErrors] = useState({})
-
-  const [editorData, setEditorData] = useState('<p>Hello from CKEditor 5!</p>');
   const [isChecked, setIsChecked] = useState(false);
-  const { cid } = useParams();
+  const searchParams = useSearchParams();
+  const cid = searchParams.get('cid')
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
@@ -114,9 +113,13 @@ const StepOne = ({ data, onNext }) => {
   }
   
 
-  const handleEditorChange = (data) => {
-    setEditorData(data);
-  };
+  const handleClgDescriptionChange = (data) => {
+    setDescription(data);
+  }
+
+  const handleFacultyChange = (data) => {
+    setClgFacilityProfile(data)
+  }
 
   const handleSubmit = async (event) =>  {
     event.preventDefault();
@@ -134,7 +137,7 @@ const StepOne = ({ data, onNext }) => {
     formData.append("intake", clgIntake);
     formData.append("hostel_available", clgHostelAvl);
     formData.append("college_descripton", clgDescription);
-    // formData.append("facultyprofile", facultyprofilevalue);
+    formData.append("facultyprofile", clgFacilityProfile);
     formData.append("ctype", selectClgType.join(","));
     formData.append("trading", selectTrending.join(","));
     formData.append("approvedby", selectApproved.join(","));
@@ -156,7 +159,7 @@ const StepOne = ({ data, onNext }) => {
       Object.fromEntries(formData.entries())
     )
   
-    setErrors(newErrors);
+    setErrors(newErrors)
 
     if (!hasNotEmptyValue(newErrors)) {
       if (cid > 0) {
@@ -217,7 +220,7 @@ const StepOne = ({ data, onNext }) => {
                 //transition: Bounce,
               });
               window.location.href =
-                "/admin/collegelisting/college/" + response.data["cid"];
+                `/admin/collegelisting/college/?cid=${response.data["cid"]}`;
             }
           })
           .catch(function (error) {
@@ -226,22 +229,49 @@ const StepOne = ({ data, onNext }) => {
         //end basicinformation form data
       }
     }
-  };
+
+    cid && onNext({});
+
+  }
 
   const basicifovalidateForm = (data) => {
     const errors = {};
-    // console.log(" college_name -->", data);
+    console.log("data -->", data);
     if (!data.college_name.trim()) {
-      errors.college_name = "College name is required.";
+      errors.college_name = "College Name is required.";
     }
     if (!data.college_url.trim()) {
-      errors.college_url = "College url is required.";
+      errors.college_url = "College URL is required.";
     }
     if (!data.tag_line.trim()) {
       errors.tag_line = "Tag line is required.";
     }
+    if (!data.intake.trim()) {
+      errors.intake = "Intake is required.";
+    }
+    if (!data.hostel_available.trim()) {
+      errors.hostel_available = "Hostel Available is required.";
+    }
+    if (!data.ctype.trim()) {
+      errors.ctype = "College Type is required.";
+    }
+    if (!data.trading.trim()) {
+      errors.trading = "Trending is required.";
+    }
+    if (!data.approvedby.trim()) {
+      errors.approvedby = "Approved By is required.";
+    }
+    if (!data.facilities.trim()) {
+      errors.facilities = "Facilities is required.";
+    }
+    if (!data.categories.trim()) {
+      errors.categories = "Categories is required.";
+    }
+    if (!data.exams.trim()) {
+      errors.exams = "Exams is required.";
+    }
     if (!data.usp_remark.trim()) {
-      errors.usp_remark = "USP remark is required.";
+      errors.usp_remark = "USP Remark is required.";
     }
     if (!data.found_year.trim()) {
       errors.found_year = "Foundation Year is required.";
@@ -250,99 +280,104 @@ const StepOne = ({ data, onNext }) => {
       errors.college_descripton = "Description is required.";
     }
     if (!data.meta_title.trim()) {
-      errors.meta_title = "Meta title is required.";
+      errors.meta_title = "Meta Title is required.";
     }
     if (!data.meta_description.trim()) {
-      errors.meta_description = "Meta description is required.";
+      errors.meta_description = "Meta Description is required.";
     }
     if (!data.meta_keyword.trim()) {
-      errors.meta_keyword = "Meta keyword is required.";
+      errors.meta_keyword = "Meta Keyword is required.";
     }
     return errors;
-  };
+  }
 
   return (
     <form onSubmit={handleSubmit}>
       <div className='flex justify-between'>
         <h2 className='text-2xl mb-10 font-bold'>Step 1: Basic Info</h2>
-        <TocButton type="submit" className='pl-10 pr-10 h-10'>Next</TocButton>
+        <TocButton type="submit" disabled={!cid ? true : false} className='pl-10 pr-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Next</TocButton>
       </div>
 
-      <div className='flex gap-10'>
-        <TocInputWithLabel
-          id="clgName"
-          label="College Name"
-          placeholder="Please Enter College Name."
-          value={clgName}
-          required={true}
-          errmsg={error.college_name}
-          onChange={(e) => setClgName(e.target.value)}
-        />
+    <div className='flex gap-10'>
+      <TocInputWithLabel
+        id="clgName"
+        label="College Name"
+        placeholder="Please Enter College Name."
+        value={clgName}
+        required={true}
+        errmsg={error.college_name}
+        onChange={(e) => setClgName(e.target.value)}
+      />
 
-        <TocInputWithLabel
-          id="clgUrl"
-          label="College URL"
-          placeholder="Please Enter College URL."
-          value={clgUrl}
-          required={true}
-          errmsg={error.college_url}
-          onChange={(e) => setClgUrl(e.target.value)}
-        />
+      <TocInputWithLabel
+        id="clgUrl"
+        label="College URL"
+        placeholder="Please Enter College URL."
+        value={clgUrl}
+        required={true}
+        errmsg={error.college_url}
+        onChange={(e) => setClgUrl(e.target.value)}
+      />
 
-        <TocInputWithLabel
-          id="clgTagLine"
-          label="Tag Line"
-          value={clgTagLine}
-          required={true}
-          errmsg={error.tag_line}
-          onChange={(e) => setClgTagLine(e.target.value)}
-        />
+      <TocInputWithLabel
+        id="clgTagLine"
+        label="Tag Line"
+        value={clgTagLine}
+        required={true}
+        errmsg={error.tag_line}
+        onChange={(e) => setClgTagLine(e.target.value)}
+      />
 
-        <TocInputWithLabel
-          id="clgUspRemark"
-          label="USP Remark"
-          value={clgUspRemark}
-          required={true}
-          errmsg={error.usp_remark}
-          onChange={(e) => setClgUspRemark(e.target.value)}
-        />
-      </div>
+      <TocInputWithLabel
+        id="clgUspRemark"
+        label="USP Remark"
+        value={clgUspRemark}
+        required={true}
+        errmsg={error.usp_remark}
+        onChange={(e) => setClgUspRemark(e.target.value)}
+      />
+    </div>
 
-      <div className='flex gap-10'>
-        <TocInputWithLabel
-          id="clgFoundationYear"
-          label="Foundation Year"
-          value={clgFoundationYear}
-          required={true}
-          errmsg={error.found_year}
-          onChange={(e) => setClgFoundationYear(e.target.value)}
-        />
+    <div className='flex gap-10'>
+      <TocInputWithLabel
+        id="clgFoundationYear"
+        label="Foundation Year"
+        value={clgFoundationYear}
+        required={true}
+        errmsg={error.found_year}
+        onChange={(e) => setClgFoundationYear(e.target.value)}
+      />
 
-        <TocInputWithLabel
-          id="clgIntake"
-          label="Intake"
-          value={clgIntake}
-          onChange={(e) => setClgIntake(e.target.value)}
-        />
+      <TocInputWithLabel
+        id="clgIntake"
+        label="Intake"
+        value={clgIntake}
+        required={true}
+        errmsg={error.intake}
+        onChange={(e) => setClgIntake(e.target.value)}
+      />
 
-        <TocInputWithLabel
-          id="clgHostelAvl"
-          label="Hostel Available"
-          value={clgHostelAvl}
-          onChange={(e) => setClgHostelAvl(e.target.value)}
-        />
-      </div>
+      <TocInputWithLabel
+        id="clgHostelAvl"
+        label="Hostel Available"
+        value={clgHostelAvl}
+        required={true}
+        errmsg={error.hostel_available}
+        onChange={(e) => setClgHostelAvl(e.target.value)}
+      />
+    </div>
  
+    <TocClientSideCustomEditor 
+      id="clgDescription"
+      label='Description' 
+      initialData={clgDescription}
+      required={true}
+      errmsg={error.college_descripton}
+      onChange={handleClgDescriptionChange}
+    />
 
-
-
-      <h2 className='pt-5 pb-2 font-semibold'>Description *</h2>
-      <TocClientSideCustomEditor data={editorData} onChange={handleEditorChange} />
-      {/* <h2>Editor Content:</h2> */}
-      {/* <div dangerouslySetInnerHTML={{ __html: editorData }} /> */}
-
-    <h2 className='pt-5 pb-3 font-semibold'>College Type</h2>
-
+  
+    <h2 className='pt-5 pb-3 font-semibold'>College Type <span className='text-red-700'>*</span></h2>
     <div className='flex flex-wrap gap-1'>
       {formState.collegetypearr.map((item, id)=>(
         <div key={`collegeType-${id}`} className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
@@ -356,10 +391,11 @@ const StepOne = ({ data, onNext }) => {
         </div>
       ))}
     </div>
+    {error.ctype && <hint className="text-red-700">{error.ctype}</hint>}
 
 
-    <h2 className='pt-5 pb-2 font-semibold'>Trending</h2>
 
+    <h2 className='pt-5 pb-2 font-semibold'>Trending <span className='text-red-700'>*</span></h2>
     <div className='flex flex-wrap gap-1'>
       {formState.tradingarr.map((item, id)=>(
         <div className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
@@ -373,10 +409,10 @@ const StepOne = ({ data, onNext }) => {
         </div>
       ))}
     </div>
+    {error.trading && <hint className="text-red-700">{error.trading}</hint>}
 
 
-    <h2 className='pt-5 pb-2 font-semibold'>Approved By</h2>
-
+    <h2 className='pt-5 pb-2 font-semibold'>Approved By <span className='text-red-700'>*</span></h2>
     <div className='flex flex-wrap gap-1'>
       {formState.approvedbyarr.map((item, id)=>(
         <div className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
@@ -390,10 +426,10 @@ const StepOne = ({ data, onNext }) => {
         </div>
       ))}
     </div>
+    {error.approvedby && <hint className="text-red-700">{error.approvedby}</hint>}
 
 
-    <h2 className='pt-5 pb-2 font-semibold'>Facility Available</h2>
-    
+    <h2 className='pt-5 pb-2 font-semibold'>Facility Available <span className='text-red-700'>*</span></h2>
     <div className='flex flex-wrap gap-1'>
       {formState.facilityarr.map((item, id)=>(
         <div className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
@@ -407,10 +443,10 @@ const StepOne = ({ data, onNext }) => {
         </div>
       ))}
     </div>
+    {error.facilities && <hint className="text-red-700">{error.facilities}</hint>}
 
     
-    <h2 className='pt-5 pb-2 font-semibold'>Categories</h2>
-    
+    <h2 className='pt-5 pb-2 font-semibold'>Categories <span className='text-red-700'>*</span></h2>
     <div className='flex flex-wrap gap-1'>
       {formState.catgoryarr.map((item, id)=>(
         <div className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
@@ -424,10 +460,10 @@ const StepOne = ({ data, onNext }) => {
         </div>
       ))}
     </div>
+    {error.categories && <hint className="text-red-700">{error.categories}</hint>}
 
     
-    <h2 className='pt-5 pb-2 font-semibold'>Exam</h2>
-
+    <h2 className='pt-5 pb-2 font-semibold'>Exam <span className='text-red-700'>*</span></h2>
     <div className='flex flex-wrap gap-1'>
       {formState.examarr.map((item, id)=>(
         <div className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
@@ -441,9 +477,15 @@ const StepOne = ({ data, onNext }) => {
         </div>
       ))}
     </div>
-
-    <h2 className='pt-5 pb-2 font-semibold'>Faculty Profile</h2>
-    <TocClientSideCustomEditor data={editorData} onChange={handleEditorChange} />
+    {error.exams && <hint className="text-red-700">{error.exams}</hint>}
+    <br />
+    
+    <TocClientSideCustomEditor 
+      id="clgFacilityProfile"
+      label='Faculty Profile' 
+      initialData={clgFacilityProfile} 
+      onChange={handleFacultyChange} 
+    />
     <br/>
     
     <TocInputWithLabel
@@ -451,6 +493,7 @@ const StepOne = ({ data, onNext }) => {
       label="Meta Title"
       value={clgMetaTile}
       required={true}
+      errmsg={error.meta_title}
       onChange={(e) => setClgMetaTile(e.target.value)}
     />
 
@@ -460,18 +503,21 @@ const StepOne = ({ data, onNext }) => {
       placeholder="Enter your message here..."
       value={clgMetaDescription}
       required={true}
+      errmsg={error.meta_description}
       onChange={(e) => setClgMetaDescription(e.target.value)}
       rows={4}
     />
 
+    <TocInputWithLabel
+      id="clgMetaKeywords"
+      label="Meta Keyword"
+      value={clgMetaKeywords}
+      required={true}
+      errmsg={error.meta_keyword}
+      onChange={(e) => setSlgMetaKeywords(e.target.value)}
+    />
+
     <div className='flex gap-10'>
-      <TocInputWithLabel
-        id="clgMetaKeywords"
-        label="Meta Keyword"
-        value={clgMetaKeywords}
-        required={true}
-        onChange={(e) => setSlgMetaKeywords(e.target.value)}
-      />
 
       <TocInputWithLabel
         id="clgCoupon"
@@ -486,7 +532,14 @@ const StepOne = ({ data, onNext }) => {
         value={clgNIRF}
         onChange={(e) => setClgNIRF(e.target.value)}
       />
-      
+    </div>
+
+    <div className='flex gap-10'>    
+      <TocImageUploader />
+      <TocImageUploader />
+    </div>
+
+    <div className='flex gap-10'>
       <TocCheckbox 
         id="myCheckbox"
         label="Application Open"
@@ -495,16 +548,11 @@ const StepOne = ({ data, onNext }) => {
       />
     </div>
 
-    <div className='flex gap-10'>    
-      <TocImageUploader />
-      <TocImageUploader />
-    </div>
-
     <br/>
  
    <div className='flex justify-end'>
-      <TocButton type="submit" className='pl-10 pr-10'>Save & Exit</TocButton>
-      <TocButton type="submit" className='pl-10 pr-10'>Save & Next</TocButton>
+      <TocButton type="submit" className='pl-10 pr-10 mr-2'>Save & Exit</TocButton>
+      <TocButton type="button" disabled={!cid ? true : false} className='pl-10 pr-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Save & Next</TocButton>
    </div>
               
     </form>

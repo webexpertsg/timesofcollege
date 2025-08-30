@@ -1,11 +1,11 @@
 import React from 'react';
 
-const TocTextarea = ({ id, label, placeholder, value, onChange, rows = 3 }) => {
+const TocTextarea = ({ id, label, placeholder, value, onChange, rows = 3, required, errmsg = ''}) => {
   return (
     <div className="mb-4">
       {label && (
         <label htmlFor={id} className="block text-gray-700 text-sm font-bold mb-2">
-          {label}
+          {label} {required && <span className='text-red-700'>*</span>}
         </label>
       )}
       <textarea
@@ -16,6 +16,7 @@ const TocTextarea = ({ id, label, placeholder, value, onChange, rows = 3 }) => {
         onChange={onChange}
         rows={rows}
       ></textarea>
+      {errmsg && <hint className="text-red-700">{errmsg}</hint>}
     </div>
   );
 };

@@ -12,7 +12,6 @@ function AddEditColleges(props) {
   const { courfilter } = useParams();
   return (
     <>
-        {/* <h1>Add Edit Collegs</h1> */}
         <MultiStepForm />
     </>
   );
