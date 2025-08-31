@@ -17,12 +17,12 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import TocButton from "@/components/ui/atoms/tocButtom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
-import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
-import TocButton from "@/components/ui/atoms/tocButtom";
 
 function Approvedby() {
   if (localStorage.getItem("login_id") <= 0) {
@@ -489,7 +489,6 @@ function Approvedby() {
                   Cancle
                 </button>
                 <TocButton type="submit" className="pl-10 pr-10 h-10">
-                  {" "}
                   {editdata.approv_id > 0 ? "Update" : "Submit"}
                 </TocButton>
               </div>

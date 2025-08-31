@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -16,6 +16,10 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import TocButton from "@/components/ui/atoms/tocButtom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
@@ -93,7 +97,15 @@ function Categories() {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            cell.getValue()
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   //edit role details
@@ -134,20 +146,60 @@ function Categories() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.category_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
   // add new course
-
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.cat_id);
+      //console.log("Delete======------>", row.original.cat_id);
+    }
+  };
+  const inactiveRecord = (cat_id) => {
+    if (cat_id > 0) {
+      axios
+        .get("/api/admin/inactivecategory/?cat_id=" + cat_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getcategories")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
   const addcategory = (e) => {
     e.preventDefault();
     const {
