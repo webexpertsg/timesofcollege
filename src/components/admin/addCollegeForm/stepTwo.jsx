@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
-import dynamic from 'next/dynamic';
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+
 import { useSearchParams  } from 'next/navigation';
 
 import { MultiStepFormContext } from '@/components/ui/containers/context';
@@ -9,11 +10,11 @@ import TocInputWithLabel from '@/components/ui/atoms/tocInputWithLabel';
 import TocButton from '@/components/ui/atoms/tocButtom';
 import TocSelectList from '@/components/ui/atoms/tocSelectlist';
 
+import { hasNotEmptyValue } from '@/utils'
 
 const StepTwo = ({ data, onNext, onPrevious }) => {
   const { formState  } = useContext(MultiStepFormContext)
 
-  console.log('formState--->', formState);
   const [clgCountries, setClgCountries] = useState(data.clgCountries);
   const [clgStates, setClgStates] = useState(data.clgStates);
   const [clgCities, setClgCities] = useState(data.clgCities);
@@ -27,10 +28,14 @@ const StepTwo = ({ data, onNext, onPrevious }) => {
   const [clgWebsite, setClgWebsite] = useState(data.clgWebsite);
 
   const [error, setErrors] = useState({})
+  const searchParams = useSearchParams()
+  const cid = searchParams.get('cid')
 
-  const handleSubmit = (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
+
+    formData.append("cid", cid);
     formData.append("country", clgCountries);    
     formData.append("state", clgStates);
     formData.append("city", clgCities);
@@ -49,7 +54,42 @@ const StepTwo = ({ data, onNext, onPrevious }) => {
   
     setErrors(newErrors)
 
-    // onNext({});
+    if (!hasNotEmptyValue(newErrors)) {
+      if (cid > 0) {
+        axios({
+          method: "POST",
+          url: "/api/admin/updatecontacts",
+          data: formData,
+          headers: { "Content-Type": "application/json" },
+        })
+          .then(function (response) {
+            console.log(response.statusText);
+            if (response.statusText === "OK") {
+              toast.success("Contact details sucessfully updated", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+              /*  setSuccessmsg("Successfully Updated.");
+              setTimeout(function () {
+                window.location.replace("../../collegelisting");
+              }, 3000); */
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+        //end update form data
+      }
+    }
+
+    onNext({});
   }
 
   
@@ -83,12 +123,12 @@ const StepTwo = ({ data, onNext, onPrevious }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleContactSubmit}>
       <div className='flex justify-between'>
         <h2 className='text-2xl mb-10 font-bold'>Step 2: Contacts</h2>
         <div className='flex gap-4'>     
           <TocButton type="button" className='pl-10 pr-10 h-10' onClick={() => onPrevious()}>Prev</TocButton>
-          <TocButton type="submit" className='pl-10 pr-10 h-10'>Next</TocButton>
+          <TocButton type="button" onClick={cid && onNext({})} className='pl-10 pr-10 h-10'>Next</TocButton>
         </div>
       </div>
 
@@ -194,7 +234,7 @@ const StepTwo = ({ data, onNext, onPrevious }) => {
       <div className='flex gap-4 justify-end'>
           <TocButton type="button" className='pl-10 pr-10' onClick={() => onPrevious()}>Prev</TocButton>
           <TocButton type="submit" className='pl-10 pr-10 mr-2'>Save & Exit</TocButton>
-          <TocButton type="submit" className='pl-10 pr-10'>Next</TocButton>
+          <TocButton type="button" onClick={cid && onNext({})} className='pl-10 pr-10'>Next</TocButton>
       </div>
 
     </form>

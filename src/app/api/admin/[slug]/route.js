@@ -37,6 +37,9 @@ import {
   deleteCMS,
   insertCollegeBasicInfoNew,
   updateCollegeBasicInfoNew,
+  updateContactus,
+  updateHighlight,
+  updateAdmission,
   deleteFacility,
   editfacility,
   updatefacility,
@@ -48,7 +51,7 @@ import {
   editcollege,
   getCountryarr,
   getStatearr,
-  getCityarr
+  getCityarr,
 } from "@/models/collegesModel";
 
 import {
@@ -347,6 +350,67 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to Insert Colleges" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (slug === "updatebasicinformation") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCollegeBasicInfoNew(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update college" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatebasicinformation") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCollegeBasicInfoNew(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update college" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatecontacts") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateContactus(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Contacts" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatehighlight") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateHighlight(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Contacts" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updateadmission") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateAdmission(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Contacts" },
         { status: 500 }
       );
     }

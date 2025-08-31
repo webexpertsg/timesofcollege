@@ -37,16 +37,15 @@ const StepOne = ({ data, onNext }) => {
   const [clgNIRF, setClgNIRF] = useState(data.clgNIRF);
 
   const [error, setErrors] = useState({})
-  const [isChecked, setIsChecked] = useState(false);
-  const searchParams = useSearchParams();
+  const [isChecked, setIsChecked] = useState(false)
+  const searchParams = useSearchParams()
   const cid = searchParams.get('cid')
 
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   }
-  console.log('data--->', data)
 
-  const [selectClgType, setSelectClgType] = useState([data.clgType]);
+  const [selectClgType, setSelectClgType] = useState(data.clgType);
   const handleCheckboxClgType = (event) => {
     const checkedId = event.target.value;
     
@@ -57,7 +56,7 @@ const StepOne = ({ data, onNext }) => {
     }
   }
 
-  const [selectTrending, setSelectTrending] = useState([]);
+  const [selectTrending, setSelectTrending] = useState(data.clgTrending);
   const handleCheckboxTrending = (event) => {
     const checkedId = event.target.value;
     
@@ -68,7 +67,7 @@ const StepOne = ({ data, onNext }) => {
     }
   }
 
-  const [selectApproved, setSelectApproved] = useState([]);
+  const [selectApproved, setSelectApproved] = useState(data.clgApprovedBy);
   const handleCheckboxApproved = (event) => {
     const checkedId = event.target.value;
     
@@ -79,7 +78,7 @@ const StepOne = ({ data, onNext }) => {
     }
   }
 
-  const [selectFacility, setSelectFacility] = useState([]);
+  const [selectFacility, setSelectFacility] = useState(data.clgFacility);
   const handleCheckboxFacility = (event) => {
     const checkedId = event.target.value;
     
@@ -90,7 +89,7 @@ const StepOne = ({ data, onNext }) => {
     }
   }
   
-  const [selectCategory, setSelectCategory] = useState([]);
+  const [selectCategory, setSelectCategory] = useState(data.clgCategories);
   const handleCheckboxCategory = (event) => {
     const checkedId = event.target.value;
     
@@ -101,7 +100,7 @@ const StepOne = ({ data, onNext }) => {
     }
   }
   
-  const [selectExam, setSelectExam] = useState([]);
+  const [selectExam, setSelectExam] = useState(data.clgExam);
   const handleCheckboxExam = (event) => {
     const checkedId = event.target.value;
     
@@ -121,8 +120,8 @@ const StepOne = ({ data, onNext }) => {
     setClgFacilityProfile(data)
   }
 
-  const handleSubmit = async (event) =>  {
-    event.preventDefault();
+  const handleSubmit = async (e) =>  {
+    e.preventDefault();
     // onNext({ clgName, clgUrl, clgTagLine });
     const formData = new FormData();
     
@@ -163,17 +162,13 @@ const StepOne = ({ data, onNext }) => {
 
     if (!hasNotEmptyValue(newErrors)) {
       if (cid > 0) {
-        //update form data
-        console.log("update query ");
         await axios({
           method: "post",
           url: "/api/admin/updatebasicinformation",
           data: formData,
-          headers: { "Content-Type": "multipart/form-data" },
+          headers: { "Content-Type": "application/json" },
         })
           .then(function (response) {
-            //console.log(response);
-            // console.log(response.statusText);
             if (response.statusText === "OK") {
               toast.success("Basic info. sucessfully updated", {
                 position: "top-right",
@@ -198,7 +193,6 @@ const StepOne = ({ data, onNext }) => {
           });
         //end update form data
       } else {
-        //console.log("insert query ");
         await axios({
           method: "post",
           url: "/api/admin/insertbasicinformation",
@@ -294,9 +288,8 @@ const StepOne = ({ data, onNext }) => {
     <form onSubmit={handleSubmit}>
       <div className='flex justify-between'>
         <h2 className='text-2xl mb-10 font-bold'>Step 1: Basic Info</h2>
-        <TocButton type="submit" disabled={!cid ? true : false} className='pl-10 pr-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Next</TocButton>
+        <TocButton type="button" onClick={cid && onNext({})} disabled={!cid ? true : false} className='pl-10 pr-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Next</TocButton>
       </div>
-    {  console.log('clgName--->', clgName, data)}
     <div className='flex gap-10'>
       <TocInputWithLabel
         id="clgName"
@@ -551,8 +544,9 @@ const StepOne = ({ data, onNext }) => {
  
    <div className='flex justify-end'>
       <TocButton type="submit" className='pl-10 pr-10 mr-2'>Save & Exit</TocButton>
-      <TocButton type="button" disabled={!cid ? true : false} className='pl-10 pr-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Save & Next</TocButton>
+      <TocButton type="button" onClick={cid && onNext({})} disabled={!cid ? true : false} className='pl-10 pr-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Save & Next</TocButton>
    </div>
+   {/* onClick={cid && onNext({})} */}
               
     </form>
   );

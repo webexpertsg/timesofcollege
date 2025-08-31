@@ -563,7 +563,7 @@ export const updateGallery = (body) => {
 };
 
 export const updateContactus = (body) => {
-  //console.log("contact us body-->", body);
+  console.log("contact us body-->", body);
   return new Promise(function (resolve, reject) {
     const {
       cid,

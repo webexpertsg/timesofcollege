@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import { useSearchParams  } from 'next/navigation';
 
+import { hasNotEmptyValue, commaWithSingleQuotes } from '@/utils'
+
 import { MultiStepFormContext } from '@/components/ui/containers/context';
 import StepOne from './stepOne';
 import StepTwo from './stepTwo';
@@ -60,12 +62,12 @@ const MultiStepForm = () => {
     clgIntake: '',
     clgHostelAvl: '',
     clgDescription: '',
-    clgType: '',
-    clgTrending: '',
-    clgApprovedBy: '',
-    clgFacility: '',
-    clgCategories: '',
-    clgExam: '',
+    clgType: [],
+    clgTrending: [],
+    clgApprovedBy: [],
+    clgFacility: [],
+    clgCategories: [],
+    clgExam: [],
     clgFacilityProfile: '',
     clgMetaTile: '',
     clgMetaDescription: '',
@@ -87,6 +89,11 @@ const MultiStepForm = () => {
     clgFax: '',
     clgEmail: '',
     clgWebsite: '',
+
+    clgHighlights: [{ highParameter: "", highDetails: "" }],
+
+    clgAdmission: '',
+    clgScholarship: ''
   })
 
     useEffect(() => {
@@ -208,6 +215,7 @@ const MultiStepForm = () => {
           // setEditdata(response.data[0]);
           const data = response.data[0]
           console.log('data---->', data.ctype);
+          //basic info
           setFormData((prevData) => ({ ...prevData, clgName: data.college_name}));
           setFormData((prevData) => ({ ...prevData, clgName: data.college_name}));
           setFormData((prevData) => ({ ...prevData, clgUrl: data.college_url}));
@@ -216,7 +224,39 @@ const MultiStepForm = () => {
           setFormData((prevData) => ({ ...prevData, clgFoundationYear: data.found_year}));
           setFormData((prevData) => ({ ...prevData, clgIntake: data.intake}));
           setFormData((prevData) => ({ ...prevData, clgHostelAvl: data.hostel_available}));
-          setFormData((prevData) => ({ ...prevData, clgType: data.ctype}));
+          setFormData((prevData) => ({ ...prevData, clgDescription: data.college_descripton}));
+          setFormData((prevData) => ({ ...prevData, clgType: commaWithSingleQuotes(data.ctype)}));
+          setFormData((prevData) => ({ ...prevData, clgTrending: commaWithSingleQuotes(data.trading)}));
+          setFormData((prevData) => ({ ...prevData, clgApprovedBy: commaWithSingleQuotes(data.approvedby)}));
+          setFormData((prevData) => ({ ...prevData, clgFacility: commaWithSingleQuotes(data.facilities)}));
+          setFormData((prevData) => ({ ...prevData, clgCategories: commaWithSingleQuotes(data.categories)}));
+          setFormData((prevData) => ({ ...prevData, clgExam: commaWithSingleQuotes(data.exams)}));
+          setFormData((prevData) => ({ ...prevData, clgFacilityProfile: data.facultyprofile}));
+          setFormData((prevData) => ({ ...prevData, clgMetaTile: data.meta_title}));
+          setFormData((prevData) => ({ ...prevData, clgMetaDescription: data.meta_description}));
+          setFormData((prevData) => ({ ...prevData, clgMetaKeywords: data.meta_keyword}));
+          setFormData((prevData) => ({ ...prevData, clgCoupon: data.coupon_code}));
+          setFormData((prevData) => ({ ...prevData, clgNIRF: data.nirg_ranking}));
+
+          //contacts
+          setFormData((prevData) => ({ ...prevData, clgCountries: data.country}));
+          setFormData((prevData) => ({ ...prevData, clgStates: data.state}));
+          setFormData((prevData) => ({ ...prevData, clgCities: data.city}));
+          setFormData((prevData) => ({ ...prevData, clgAddress: data.address}));
+          setFormData((prevData) => ({ ...prevData, clgAddress2: data.address2}));
+          setFormData((prevData) => ({ ...prevData, clgLandmark: data.landmark}));
+          setFormData((prevData) => ({ ...prevData, clgPincode: data.pincode}));
+          setFormData((prevData) => ({ ...prevData, clgContact: data.contactno}));
+          setFormData((prevData) => ({ ...prevData, clgFax: data.faxno}));
+          setFormData((prevData) => ({ ...prevData, clgEmail: data.email}));
+          setFormData((prevData) => ({ ...prevData, clgWebsite: data.website}));
+
+          //Highlights
+          setFormData((prevData) => ({ ...prevData, clgHighlights: data.highlights}));
+
+          //Admission
+          setFormData((prevData) => ({ ...prevData, clgAdmission: data.adminssiondetails}));
+          setFormData((prevData) => ({ ...prevData, clgScholarship: data.scholarshipoffer}));
 
 
           // setFormData({clgType: data.ctype})   
@@ -245,7 +285,7 @@ const MultiStepForm = () => {
   }, []);
 
   const handleNext = (data) => {
-    setFormData((prevData) => ({ ...prevData, ...data }));
+    // setFormData((prevData) => ({ ...prevData, ...data }));
     setCurrentStep((prevStep) => prevStep + 1);
   };
 
@@ -263,7 +303,7 @@ const MultiStepForm = () => {
   
   return (
     <MultiStepFormContext.Provider value={{ formState }}>
-      {console.log('isLoading-----', isLoading)}
+      {/* {console.log('isLoading-----', isLoading, currentStep)} */}
       { !isLoading 
       ?
       <div className='p-10'>
@@ -284,31 +324,31 @@ const MultiStepForm = () => {
         console.log('formData--->', formData)
         }
         {currentStep === 1 && (
-          <StepOne data={formData} onNext={handleNext} />
+          <StepOne data={formData} onNext={()=>handleNext} />
         )}
         {currentStep === 2 && (
-          <StepTwo data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepTwo data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 3 && (
-          <StepThree data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepThree data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 4 && (
-          <StepFour data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepFour data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 5 && (
-          <StepFive data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepFive data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 6 && (
-          <StepSix data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepSix data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 7 && (
-          <StepSevevn data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepSevevn data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 8 && (
-          <StepEight data={formData} onNext={handleNext} onPrevious={handlePrevious} />
+          <StepEight data={formData} onNext={()=>handleNext} onPrevious={handlePrevious} />
         )}
         {currentStep === 9 && (
-          <StepNine data={formData} onSubmit={handleSubmit} onPrevious={handlePrevious} />
+          <StepNine data={formData} onSubmit={()=>handleSubmit} onPrevious={handlePrevious} />
         )}
 
         {/* Optional: Progress indicator */}
