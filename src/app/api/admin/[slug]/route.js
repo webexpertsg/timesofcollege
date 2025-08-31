@@ -6,6 +6,9 @@ import {
   getCategories,
   getCourses,
   getCategoriesarr,
+  editCategory,
+  addNewcategories,
+  updateCategory,
   getCoursesarr,
   getCoursebranchs,
   getCoursetype,
@@ -265,6 +268,12 @@ export async function GET(request, { params }) {
     const returnresponse = await inactiveCategory(cat_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "editcategory") {
+    const cat_id = searchParams.get("cat_id"); //
+    const returnresponse = await editCategory(cat_id);
+    return NextResponse.json(returnresponse);
+  }
+
   if (slug === "editcolleges") {
     const searchParams = request.nextUrl.searchParams;
     const cid = searchParams.get("cid");
@@ -342,6 +351,30 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to update approved by" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addcategories") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addNewcategories(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add category" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatecategory") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCategory(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add category" },
         { status: 500 }
       );
     }

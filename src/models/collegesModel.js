@@ -2464,7 +2464,7 @@ export const getCategories = async () => {
   }
 };
 
-export const editcategory = (cat_id) => {
+export const editCategory = (cat_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -2481,7 +2481,7 @@ export const editcategory = (cat_id) => {
         //resolve(`Edit roles ID: ${id}`);
       }
     );
-    console.log(query);
+    //console.log(query);
   });
 };
 
