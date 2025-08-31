@@ -1,6 +1,7 @@
 // components/MultiStepForm.js
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
+import { useSearchParams  } from 'next/navigation';
 
 import { MultiStepFormContext } from '@/components/ui/containers/context';
 import StepOne from './stepOne';
@@ -14,8 +15,10 @@ import StepEight from './stepEight';
 import StepNine from './stepNine';
 
 const MultiStepForm = () => {
-  const [currentStep, setCurrentStep] = useState(1);
 
+  const [isLoading, setIsLoading] = useState(false)
+
+  const [currentStep, setCurrentStep] = useState(1);
   const [approvedbyarr, setApprovedbyarr] = useState([]);
   const [catgoryarr, setCatgoryarr] = useState([]);
   const [coursearr, setCoursearr] = useState([]);
@@ -30,11 +33,8 @@ const MultiStepForm = () => {
   const [statearr, setStatearr] = useState([]);
   const [cityarr, setCityarr] = useState([]);
 
-  // const [collegetypevalue, setCollegetypevalue] = useState([]);
-  // const [tradingvalue, setTradingvalue] = useState([]);
-  // const [approvedbyvalue, setApprovedbyvalue] = useState([]);
-  // const [facilityvalue, setFacilityvalue] = useState([]);
-  // const [categoryvalue, setCategoryvalue] = useState([]);
+  const searchParams = useSearchParams()
+  const cid = searchParams.get('cid')
 
   const formState = {
     approvedbyarr, setApprovedbyarr,
@@ -72,15 +72,26 @@ const MultiStepForm = () => {
     clgMetaKeywords: '',
     clgCoupon: '',
     clgNIRF: '',
-    ClgApplicationStatus: '',
+    clgApplicationStatus: '',
     clgLogoImg: '',
-    ClgBannerImg: '',
+    clgBannerImg: '',
 
-    address: '',
-    city: '',
-    state: '',
-    country: ''
-  });
+    clgCountries: '1',
+    clgStates: '',
+    clgCities: '',
+    clgAddress: '',
+    clgAddress2: '',
+    clgLandmark: '',
+    clgPincode: '',
+    clgContact: '',
+    clgFax: '',
+    clgEmail: '',
+    clgWebsite: '',
+  })
+
+    useEffect(() => {
+
+    },[])
 
   useEffect(() => {
     axios
@@ -164,7 +175,7 @@ const MultiStepForm = () => {
         console.error(error);
       });
     axios
-      .get("/api/admin/getcountrylisting")
+      .get("/api/admin/getcountrylists")
       .then((response) => {
         setCountryarr(response.data);
       })
@@ -172,100 +183,64 @@ const MultiStepForm = () => {
         console.error(error);
       });
     axios
-      .get("/api/admin/getstatelisting")
+      .get("/api/admin/getstatelists")
       .then((response) => {
         setStatearr(response.data);
       })
       .catch((error) => {
         console.error(error);
       });
-    /*  axios
-      .get(apiurl+"/getcityarr")
+    axios
+      .get("/api/admin/getcitylists")
       .then((response) => {
         setCityarr(response.data);
       })
       .catch((error) => {
         console.error(error);
-      }); */
+      });
 
-    // if (cid > 0) {
-    //   axios
-    //     .get("/api/admin/editcolleges/" + cid)
-    //     .then((response) => {
-    //       setEditdata(response.data[0]);
-    //       if (response.data[0].highlights) {
-    //         setHighLights(
-    //           response.data[0]?.highlights
-    //             ? response.data[0]?.highlights
-    //             : { highParameter: "", highDetails: "" }
-    //         );
-    //       } else {
-    //         setHighLights([{ highParameter: "", highDetails: "" }]);
-    //       }
-    //       /* */
-    //       if (response.data[0].sub_course_details) {
-    //         setSubcoursesoptions(response.data[0]?.sub_course_details);
-    //       } else {
-    //         setSubcoursesoptions([
-    //           {
-    //             subcourseId: "",
-    //             course_duration: "",
-    //             course_fee: "",
-    //             feetype_id: "",
-    //             course_seats: "",
-    //             subcoursedescription: "",
-    //             subcourseselectioncriteria: "",
-    //             subcourseselectiioneligibility: "",
-    //             subcoursestype: "",
-    //           },
-    //         ]);
-    //       }
 
-    //       //console.log("sd-->", response.data[0].facilities);
-    //       //setFacilityvalue(JSON.stringify(response.data[0].facilities));
-    //       let editfacilityArr = response.data[0].facilities;
-    //       let editcollegetypeArr = response.data[0].ctype;
-    //       let edittradingArr = response.data[0].trading;
-    //       let editapprovedArr = response.data[0].approvedby;
-    //       let editcategoriesArr = response.data[0].categories;
-    //       let editexamsArr = response.data[0].exams;
-    //       let editcourseArr = response.data[0].courses;
-    //       setFacilityvalue(
-    //         editfacilityArr.length > 0 ? editfacilityArr.split(",") : []
-    //       );
-    //       setCollegetypevalue(
-    //         editcollegetypeArr.length > 0 ? editcollegetypeArr.split(",") : []
-    //       );
-    //       setTradingvalue(
-    //         edittradingArr.length > 0 ? edittradingArr.split(",") : []
-    //       );
-    //       setApprovedbyvalue(
-    //         editapprovedArr.length > 0 ? editapprovedArr.split(",") : []
-    //       );
-    //       setCategoryvalue(
-    //         editcategoriesArr.length > 0 ? editcategoriesArr.split(",") : []
-    //       );
-    //       setExamvalue(editexamsArr.length > 0 ? editexamsArr.split(",") : []);
-    //       setCoursevalue(
-    //         editcourseArr.length > 0 ? editcourseArr.split(",") : []
-    //       );
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-    //   //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
-    //   // getting faq
-    //   axios
-    //     .get("/api/admin/getcollegefaq/" + cid)
-    //     .then((response) => {
-    //       setCollegefaqdata(response.data);
-    //       //setDatas(response.data);
-    //     })
-    //     .catch((error) => {
-    //       console.error(error);
-    //     });
-    //   // end getting faq
-    // }
+    if (cid > 0) {
+      setIsLoading(true)
+      axios
+        .get(`/api/admin/editcolleges?cid=${cid}`)
+        .then((response) => {
+          // setEditdata(response.data[0]);
+          const data = response.data[0]
+          console.log('data---->', data.ctype);
+          setFormData((prevData) => ({ ...prevData, clgName: data.college_name}));
+          setFormData((prevData) => ({ ...prevData, clgName: data.college_name}));
+          setFormData((prevData) => ({ ...prevData, clgUrl: data.college_url}));
+          setFormData((prevData) => ({ ...prevData, clgTagLine: data.tag_line}));
+          setFormData((prevData) => ({ ...prevData, clgUspRemark: data.usp_remark}));
+          setFormData((prevData) => ({ ...prevData, clgFoundationYear: data.found_year}));
+          setFormData((prevData) => ({ ...prevData, clgIntake: data.intake}));
+          setFormData((prevData) => ({ ...prevData, clgHostelAvl: data.hostel_available}));
+          setFormData((prevData) => ({ ...prevData, clgType: data.ctype}));
+
+
+          // setFormData({clgType: data.ctype})   
+        setIsLoading(false)
+       
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+
+      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
+      // getting faq
+      // axios
+      //   .get("/api/admin/getcollegefaq/" + cid)
+      //   .then((response) => {
+      //     setCollegefaqdata(response.data);
+      //     //setDatas(response.data);
+      //   })
+      //   .catch((error) => {
+      //     console.error(error);
+      //   });
+      // end getting faq
+    }
 
   }, []);
 
@@ -288,6 +263,9 @@ const MultiStepForm = () => {
   
   return (
     <MultiStepFormContext.Provider value={{ formState }}>
+      {console.log('isLoading-----', isLoading)}
+      { !isLoading 
+      ?
       <div className='p-10'>
         <div className='mb-10'>
           <ul className='flex flex-wrap gap-2 text-sm font-medium text-center text-white border-b border-gray-200 dark:border-gray-700'>
@@ -302,7 +280,9 @@ const MultiStepForm = () => {
             <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Courses</li>
           </ul>
         </div>
-
+        {
+        console.log('formData--->', formData)
+        }
         {currentStep === 1 && (
           <StepOne data={formData} onNext={handleNext} />
         )}
@@ -336,6 +316,8 @@ const MultiStepForm = () => {
           Step {currentStep} of 9
         </div>
       </div>
+      : <div className=''>Hold on few seconds, we are loading form data.</div>
+    }
     </MultiStepFormContext.Provider>
   )
 }

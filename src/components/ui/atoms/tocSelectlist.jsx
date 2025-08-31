@@ -1,12 +1,12 @@
 // components/SelectList.jsx
 import React from 'react';
 
-const TocSelectList = ({ options, label, id, onChange, value }) => {
+const TocSelectList = ({ options, label, id, onChange, value, required, errmsg = '' }) => {
   return (
     <div className="mb-4">
       {label && (
         <label htmlFor={id} className="block text-gray-700 text-sm font-bold mb-2">
-          {label}
+          {label} {required && <span className='text-red-700'>*</span>}
         </label>
       )}
       <select
@@ -22,6 +22,7 @@ const TocSelectList = ({ options, label, id, onChange, value }) => {
           </option>
         ))}
       </select>
+      {errmsg && <hint className="text-red-700">{errmsg}</hint>}
     </div>
   );
 };

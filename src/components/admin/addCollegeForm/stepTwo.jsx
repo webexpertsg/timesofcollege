@@ -1,31 +1,86 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import dynamic from 'next/dynamic';
 import axios from "axios";
 import { useSearchParams  } from 'next/navigation';
 
+import { MultiStepFormContext } from '@/components/ui/containers/context';
+
 import TocInputWithLabel from '@/components/ui/atoms/tocInputWithLabel';
 import TocButton from '@/components/ui/atoms/tocButtom';
-import TocSelectlist from '@/components/ui/atoms/tocSelectlist';
 import TocSelectList from '@/components/ui/atoms/tocSelectlist';
 
 
-const options = [
-  { value: 'apple', label: 'Apple' },
-  { value: 'banana', label: 'Banana' },
-  { value: 'orange', label: 'Orange' },
-];
-
 const StepTwo = ({ data, onNext, onPrevious }) => {
+  const { formState  } = useContext(MultiStepFormContext)
 
-  console.log('data--->', data);
-  
-  const [clgName, setClgName] = useState(data.clgName);
-  const [clgUrl, setClgUrl] = useState(data.clgUrl);
+  console.log('formState--->', formState);
+  const [clgCountries, setClgCountries] = useState(data.clgCountries);
+  const [clgStates, setClgStates] = useState(data.clgStates);
+  const [clgCities, setClgCities] = useState(data.clgCities);
+  const [clgAddress, setClgAddress] = useState(data.clgAddress);
+  const [clgAddress2, setClgAddress2] = useState(data.clgAddress2);
+  const [clgLandmark, setClgLandmark] = useState(data.clgLandmark);
+  const [clgPincode, setClgPincode] = useState(data.clgPincode);
+  const [clgContact, setClgContact] = useState(data.clgContact);
+  const [clgFax, setClgFax] = useState(data.clgFax);
+  const [clgEmail, setClgEmail] = useState(data.clgEmail);
+  const [clgWebsite, setClgWebsite] = useState(data.clgWebsite);
+
+  const [error, setErrors] = useState({})
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onNext({});
-  };
+    const formData = new FormData();
+    formData.append("country", clgCountries);    
+    formData.append("state", clgStates);
+    formData.append("city", clgCities);
+    formData.append("address", clgAddress);
+    formData.append("address2", clgAddress2);    
+    formData.append("landmark", clgLandmark);
+    formData.append("pincode", clgPincode);
+    formData.append("contactno", clgContact);
+    formData.append("faxno", clgFax);    
+    formData.append("email", clgEmail);
+    formData.append("website", clgWebsite);
+
+    const newErrors = basicifovalidateForm(
+      Object.fromEntries(formData.entries())
+    )
+  
+    setErrors(newErrors)
+
+    // onNext({});
+  }
+
+  
+  const basicifovalidateForm = (data) => {
+    const errors = {};
+    if (!data.country.trim()) {
+      errors.country = "Country is required.";
+    }
+    if (!data.state.trim()) {
+      errors.state = "State is required.";
+    }
+    if (!data.city.trim()) {
+      errors.city = "City is required.";
+    }
+    if (!data.address.trim()) {
+      errors.address = "Address is required.";
+    }
+    if (!data.pincode.trim()) {
+      errors.pincode = "Pincode is required.";
+    }
+    if (!data.contactno.trim()) {
+      errors.contactno = "Contact No is required.";
+    }
+    if (!data.email.trim()) {
+      errors.email = "Email is required.";
+    }
+    if (!data.website.trim()) {
+      errors.website = "Website is required.";
+    }
+    return errors;
+  }
 
   return (
     <form onSubmit={handleSubmit}>
@@ -39,95 +94,106 @@ const StepTwo = ({ data, onNext, onPrevious }) => {
 
       <div className='flex gap-10'>
         <TocSelectList
-          id="fruit-select"
+          id="clgCountries"
           label="Country"
-          options={options}
-        // onChange={handleChange}
-        // value={selectedOption}
+          options={formState.countryarr}
+          value={clgCountries}
+          onChange={(e) => setClgCountries(e.target.value)}
         />
 
         <TocSelectList
-          id="fruit-select"
+          id="clgStates"
           label="State"
-          options={options}
-        // onChange={handleChange}
-        // value={selectedOption}
+          options={formState.statearr}
+          value={clgStates}
+          onChange={(e) => setClgStates(e.target.value)}
         />
 
         <TocSelectList
-          id="fruit-select"
+          id="clgCities"
           label="City"
-          options={options}
-        // onChange={handleChange}
-        // value={selectedOption}
+          options={formState.cityarr}
+          value={clgCities}
+          onChange={(e) => setClgCities(e.target.value)}
         />
       </div>
 
       <div className='flex gap-10'>
         <TocInputWithLabel
-          id="clgName"
-          label="Address *"
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          id="clgAddress"
+          label="Address"
+          value={clgAddress}
+          required={true}
+          errmsg={error.address}
+          onChange={(e) => setClgAddress(e.target.value)}
         />
 
         <TocInputWithLabel
-          id="clgName"
+          id="clgAddress1"
           label="Address2"
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgAddress2}
+          onChange={(e) => setClgAddress2(e.target.value)}
         />
 
         <TocInputWithLabel
-          id="clgName"
+          id="clgLandmark"
           label="Landmark"
           placeholder="Please Enter College Name."
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgLandmark}
+          onChange={(e) => setClgLandmark(e.target.value)}
         />
 
         <TocInputWithLabel
-          id="clgName"
+          id="clgPincode"
           label="Pin Code"
           placeholder="Please Enter College Name."
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgPincode}
+          required={true}
+          errmsg={error.pincode}
+          onChange={(e) => setClgPincode(e.target.value)}
         />
       </div>
 
       <div className='flex gap-10'>
         <TocInputWithLabel
-          id="clgName"
+          id="clgContact"
           label="Contact No."
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgContact}
+          required={true}
+          errmsg={error.contactno}
+          onChange={(e) => setClgContact(e.target.value)}
         />
 
         <TocInputWithLabel
-          id="clgName"
+          id="clgFax"
           label="Fax No."
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgFax}
+          onChange={(e) => setClgFax(e.target.value)}
         />
 
         <TocInputWithLabel
-          id="clgName"
+          id="clgEmail"
           label="Email"
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgEmail}
+          required={true}
+          errmsg={error.email}
+          onChange={(e) => setClgEmail(e.target.value)}
         />
 
         <TocInputWithLabel
-          id="clgName"
+          id="clgWebsite"
           label="Website"
-          value={clgName}
-          onChange={(e) => setClgName(e.target.value)}
+          value={clgWebsite}
+          required={true}
+          errmsg={error.website}
+          onChange={(e) => setClgWebsite(e.target.value)}
         />
       </div>
 
 
       <div className='flex gap-4 justify-end'>
           <TocButton type="button" className='pl-10 pr-10' onClick={() => onPrevious()}>Prev</TocButton>
+          <TocButton type="submit" className='pl-10 pr-10 mr-2'>Save & Exit</TocButton>
           <TocButton type="submit" className='pl-10 pr-10'>Next</TocButton>
       </div>
 

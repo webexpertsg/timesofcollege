@@ -21,10 +21,10 @@ import { collegedetails, collegetitleappend } from '@/models/Frontend/collegelis
 
 export async function GET(request, {params}) {
     const { slug } = params;
-    const url = new URL(request.url);
-    const searchParams = request.nextUrl.searchParams;
+    // const url = new URL(request.url);
+    // const searchParams = request.nextUrl.searchParams;
 
-        console.log('slug----->', slug, 'url---', searchParams);
+    //     console.log('slug----->', slug, 'url---', searchParams);
 
     if(slug === 'getcollegetitleappend'){
         const append = await collegetitleappend();

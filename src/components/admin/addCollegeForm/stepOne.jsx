@@ -25,13 +25,12 @@ const StepOne = ({ data, onNext }) => {
   const [clgUrl, setClgUrl] = useState(data.clgUrl);
   const [clgTagLine, setClgTagLine] = useState(data.clgTagLine);
   const [clgUspRemark, setClgUspRemark] = useState(data.clgUspRemark);
-  const [clgFoundationYear , setClgFoundationYear ] = useState(data.clgFoundationYear );
+  const [clgFoundationYear , setClgFoundationYear ] = useState(data.clgFoundationYear);
   const [clgIntake, setClgIntake] = useState(data.clgIntake);
   const [clgHostelAvl, setClgHostelAvl] = useState(data.clgHostelAvl);
   const [clgMetaTile, setClgMetaTile] = useState(data.clgMetaTile);
   const [clgDescription, setDescription] = useState(data.clgDescription);
   const [clgFacilityProfile, setClgFacilityProfile] = useState(data.clgFacilityProfile);
-
   const [clgMetaDescription, setClgMetaDescription] = useState(data.clgMetaDescription);
   const [clgMetaKeywords, setSlgMetaKeywords] = useState(data.clgMetaKeywords);
   const [clgCoupon, setClgCoupon] = useState(data.clgCoupon);
@@ -45,8 +44,9 @@ const StepOne = ({ data, onNext }) => {
   const handleCheckboxChange = (event) => {
     setIsChecked(event.target.checked);
   }
+  console.log('data--->', data)
 
-  const [selectClgType, setSelectClgType] = useState([]);
+  const [selectClgType, setSelectClgType] = useState([data.clgType]);
   const handleCheckboxClgType = (event) => {
     const checkedId = event.target.value;
     
@@ -236,7 +236,6 @@ const StepOne = ({ data, onNext }) => {
 
   const basicifovalidateForm = (data) => {
     const errors = {};
-    console.log("data -->", data);
     if (!data.college_name.trim()) {
       errors.college_name = "College Name is required.";
     }
@@ -297,7 +296,7 @@ const StepOne = ({ data, onNext }) => {
         <h2 className='text-2xl mb-10 font-bold'>Step 1: Basic Info</h2>
         <TocButton type="submit" disabled={!cid ? true : false} className='pl-10 pr-10 h-10 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-400'>Next</TocButton>
       </div>
-
+    {  console.log('clgName--->', clgName, data)}
     <div className='flex gap-10'>
       <TocInputWithLabel
         id="clgName"

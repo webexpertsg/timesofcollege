@@ -250,7 +250,7 @@ export const editcollege = (cid) => {
         //resolve(`Edit college ID: ${id}`);
       }
     );
-    console.log(query);
+    // console.log(query);
   });
 }
 
@@ -1375,7 +1375,7 @@ export const getCountryarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT cout_id,country_name FROM countrylist ORDER BY country_name ASC",
+        "SELECT cout_id value,country_name label FROM countrylist ORDER BY country_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1398,7 +1398,7 @@ export const getStatearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT sta_id,state_name FROM state_list ORDER BY state_name ASC",
+        "SELECT sta_id value,state_name label FROM state_list ORDER BY state_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1421,7 +1421,7 @@ export const getCityarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT cit_id,city_name FROM city_list ORDER BY city_name ASC",
+        "SELECT cit_id value,city_name label FROM city_list ORDER BY city_name ASC",
         (error, results) => {
           if (error) {
             reject(error);

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr, updateCMS, addCms,deleteCMS, insertCollegeBasicInfoNew, updateCollegeBasicInfoNew } from '@/models/collegesModel';
+import { getMenurolewise, getColleges, getCategories, getCourses,getCategoriesarr,getCoursesarr, getCoursebranchs, getCoursetype,getCollegetype,getRolelist,getModulearr,getRolesrr,getAdminusers,collegeenquirylisting,getWebsiteconfig, getQuestionlisting,getExamlist,getTrendinglist,getNotificationlisting,getCMSListing, editCms, getApprovedbyarr, getNewsarticleslisting, getFacility, getSubcoursestypearr, getSubcoursearr, getTradingarr, getFeetypearr, getFacilityarr, getCollegetypearr, updateCMS, addCms,deleteCMS, insertCollegeBasicInfoNew, updateCollegeBasicInfoNew, editcollege, getCountryarr, getStatearr, getCityarr } from '@/models/collegesModel';
 
 import { getMegamenulist, megaMenuarrlist, menudetail, addNewmenudetails,updateMenudetails, editmenu } from '@/models/megamenuModel';
 import {getWebsiteconfigdetails,updateWebconfig,getAvertisementlisting } from '@/models/advertisementModel';
@@ -9,7 +9,12 @@ import { countrylisting, statelisting, citylisting} from '@/models/locationModel
 
 export async function GET(request, {params}) {
     const { slug } = params;
-    const searchParams = request.nextUrl.searchParams;
+    // const searchParams = request.nextUrl.searchParams;
+    // const cid = searchParams.get('cid')
+    // console.log('slug----->', slug, 'url---', cid);
+    // const url = new URL(request.url);
+    // const searchParams = request.nextUrl.searchParams;
+
 
     if(slug === 'getmenulisting'){
         const data = await getMenurolewise(1);
@@ -142,16 +147,16 @@ export async function GET(request, {params}) {
         const returnresponse = await getAvertisementlisting(); 
         return NextResponse.json(returnresponse)
     }
-    if(slug === 'getcountrylisting'){
-        const returnresponse = await countrylisting(); 
+    if(slug === 'getcountrylists'){
+        const returnresponse = await getCountryarr(); 
         return NextResponse.json(returnresponse)
     }
-    if(slug === 'getstatelisting'){
-        const returnresponse = await statelisting(); 
+    if(slug === 'getstatelists'){
+        const returnresponse = await getStatearr(); 
         return NextResponse.json(returnresponse)
     }
-    if(slug === 'getcitylisting'){
-        const returnresponse = await citylisting(); 
+    if(slug === 'getcitylists'){
+        const returnresponse = await getCityarr(); 
         return NextResponse.json(returnresponse)
     }
     if(slug === 'getapprovedby'){
@@ -164,6 +169,13 @@ export async function GET(request, {params}) {
     }
     if(slug === 'getfacilitys'){
         const returnresponse = await getFacility(); 
+        return NextResponse.json(returnresponse)
+    }
+    if(slug === 'editcolleges'){
+        const searchParams = request.nextUrl.searchParams;
+        const cid = searchParams.get('cid')
+        // console.log('url---', cid);
+        const returnresponse = await editcollege(cid); 
         return NextResponse.json(returnresponse)
     }
     
