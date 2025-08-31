@@ -2661,6 +2661,21 @@ export const inactiveApprovedby = (approv_id) => {
     );
   });
 };
+export const inactiveCategory = (cat_id) => {
+  console.log("id--", cat_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE categories SET category_status='D' WHERE cat_id=$1",
+      [cat_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A approved by has been inactived: ${cat_id}`);
+      }
+    );
+  });
+};
 
 export const getCMSListing = async () => {
   try {

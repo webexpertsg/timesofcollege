@@ -48,7 +48,8 @@ import {
   editcollege,
   getCountryarr,
   getStatearr,
-  getCityarr
+  getCityarr,
+  inactiveCategory,
 } from "@/models/collegesModel";
 
 import {
@@ -256,26 +257,30 @@ export async function GET(request, { params }) {
     const returnresponse = await inactiveApprovedby(approv_id);
     return NextResponse.json(returnresponse);
   }
-    if(slug === 'editcolleges'){
-        const searchParams = request.nextUrl.searchParams;
-        const cid = searchParams.get('cid')
-        const returnresponse = await editcollege(cid); 
-        return NextResponse.json(returnresponse)
-    }
-    if(slug === 'getcountrylists'){
-        const returnresponse = await getCountryarr(); 
-        return NextResponse.json(returnresponse)
-    }
-    if(slug === 'getstatelists'){
-        const returnresponse = await getStatearr(); 
-        return NextResponse.json(returnresponse)
-    }
-    if(slug === 'getcitylists'){
-        const returnresponse = await getCityarr(); 
-        return NextResponse.json(returnresponse)
-    }
+  if (slug === "inactivecategory") {
+    const cat_id = searchParams.get("cat_id"); //
+    const returnresponse = await inactiveCategory(cat_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editcolleges") {
+    const searchParams = request.nextUrl.searchParams;
+    const cid = searchParams.get("cid");
+    const returnresponse = await editcollege(cid);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "getcountrylists") {
+    const returnresponse = await getCountryarr();
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "getstatelists") {
+    const returnresponse = await getStatearr();
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "getcitylists") {
+    const returnresponse = await getCityarr();
+    return NextResponse.json(returnresponse);
+  }
 }
-
 
 //export async function PUT(request,{}) {
 export async function POST(request, { params }) {

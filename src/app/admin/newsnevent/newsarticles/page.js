@@ -2,6 +2,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocCheckbox from "@/components/ui/atoms/tocCheckbox";
+import TocSelectList from "@/components/ui/atoms/tocSelectlist";
 import TocButton from "@/components/ui/atoms/tocButtom";
 import dynamic from "next/dynamic";
 const TocClientSideCustomEditor = dynamic(
@@ -34,6 +36,7 @@ function Newsarticles() {
   }
 
   const [errorMsg, setErrorMsg] = useState([]);
+  const [naType, setNaType] = useState();
   const [catgoryarr, setCatgoryarr] = useState([]);
   const [categoryvalue, setCategoryvalue] = useState([]);
   const [tradingarr, setTradingarr] = useState([]);
@@ -62,12 +65,8 @@ function Newsarticles() {
   //const { na_id } = useParams();
   const { na_id } = "";
   useEffect(() => {
-    /*fetch("http://localhost:3001/")
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => console.error(error));*/
     axios
-      .get("/api/getcategoryarr")
+      .get("/api/admin/getcategoriesarr")
       .then((response) => {
         setCatgoryarr(response.data);
       })
@@ -75,7 +74,7 @@ function Newsarticles() {
         console.error(error);
       });
     axios
-      .get("/api/gettradingarr")
+      .get("/api/admin/gettradingarr")
       .then((response) => {
         setTradingarr(response.data);
       })
@@ -84,7 +83,7 @@ function Newsarticles() {
       });
     if (na_id > 0) {
       axios
-        .get("/api/editnewsart/" + na_id)
+        .get("/api/admin/editnewsart/" + na_id)
         .then((response) => {
           setEditdata(response.data[0]);
           setNa_date(response.data[0].exam_date);
@@ -125,6 +124,11 @@ function Newsarticles() {
       [id]: value,
     }));
   };
+  const newsTypearr = [
+    { value: "a", label: "Article" },
+    { value: "a", label: "Exam" },
+    { value: "a", label: "News" },
+  ];
 
   const submit = async (event) => {
     event.preventDefault();
@@ -133,7 +137,8 @@ function Newsarticles() {
     //console.log("formData", formData);
     formData.append("na_image", na_image);
     formData.append("na_id", event.target.na_id.value);
-    formData.append("na_type", event.target.na_type.value);
+    //formData.append("na_type", event.target.na_type.value);
+    formData.append("na_type", naType);
     formData.append("na_title", event.target.na_title.value);
     formData.append("na_url", event.target.na_url.value);
     formData.append(
@@ -160,7 +165,7 @@ function Newsarticles() {
       //update form data
       await axios({
         method: "post",
-        url: "/api/getupdatenewsarticles",
+        url: "/api/admin/getupdatenewsarticles",
         data: formData,
         headers: { "Content-Type": "multipart/form-data" },
       })
@@ -192,7 +197,7 @@ function Newsarticles() {
       //end update form data
     } else {
       const result = await axios
-        .post("/api/addnewsarticle", formData, {
+        .post("/api/admin/addnewsarticle", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         })
         .then(function (response) {
@@ -270,69 +275,63 @@ function Newsarticles() {
         >
           {/* returndspmsg && returndspmsg */}
           <div className="mt-2">
-            <label
+            <div>
+              <TocSelectList
+                id="na_type"
+                label="Type"
+                options={newsTypearr}
+                value={editdata.na_type}
+                required="required"
+                onChange={(e) => setNaType(e.target.value)}
+              />
+
+              {/* 
+              <label
               htmlFor="na_type"
               className="block text-sm font-bold leading-6 text-gray-900"
             >
               Type
             </label>
-            <div>
               <select
                 name="na_type"
                 id="na_type"
                 type="select"
                 className="block w-auto p-2 mb-6 text-sm text-gray-900  rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
               >
-                {/* <option
-                value=""
-                //defaultValue={editdata.na_type == "" ? "selected" : ""}
-              >
-                --Select One--
-              </option>
-              <option
-                value="a"
-                //selected={editdata.na_type == "a" ? "selected" : ""}
-              >
-                Article
-              </option>
-              <option
-                value="e"
-                // selected={editdata.na_type == "e" ? "selected" : ""}
-              >
-                Exam
-              </option>
-              <option
-                value="n"
-                // selected={editdata.na_type == "n" ? "selected" : ""}
-              >
-                News
-              </option> */}
-              </select>
+                <option
+                  value=""
+                  defaultValue={editdata.na_type == "" ? "selected" : ""}
+                >
+                  --Select One--
+                </option>
+                <option
+                  value="a"
+                  selected={editdata.na_type == "a" ? "selected" : ""}
+                >
+                  Article
+                </option>
+                <option
+                  value="e"
+                  selected={editdata.na_type == "e" ? "selected" : ""}
+                >
+                  Exam
+                </option>
+                <option
+                  value="n"
+                  selected={editdata.na_type == "n" ? "selected" : ""}
+                >
+                  News
+                </option>
+              </select> */}
             </div>
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="na_title"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Title
-            </label>
             <div>
               <input
                 type="hidden"
                 name="na_id"
                 value={editdata.na_id && editdata.na_id}
               />
-              {/* <input
-                type="text"
-                name="na_title"
-                id="na_title"
-                value={editdata.na_title ? editdata.na_title : ""}
-                required="required"
-                onChange={handleChangeFormdata}
-                onChangeCapture={createUrl}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              /> */}
               <TocInputWithLabel
                 id="na_title"
                 label="Title"
@@ -408,7 +407,16 @@ function Newsarticles() {
             <div className="flex flex-wrap ">
               {catgoryarr.map((item, i) => (
                 <div key={i} className="mt-2 text-sm">
-                  <input
+                  <TocCheckbox
+                    id={`categories`}
+                    value={item.cat_id}
+                    label={item.category_name}
+                    //  // checked={selectClgType.includes(
+                    //     JSON.stringify(item.cat_id)
+                    //   )}
+                    //   onChange={handleCheckboxClgType}
+                  />
+                  {/* <input
                     type="checkbox"
                     name="categories"
                     value={item.cat_id}
@@ -426,7 +434,7 @@ function Newsarticles() {
                   />
                   <span className="py-2 px-2 text-sm font-normal text-justify">
                     {item.category_name}
-                  </span>
+                  </span> */}
                 </div>
               ))}
             </div>
@@ -438,7 +446,16 @@ function Newsarticles() {
             <div className="flex flex-wrap ">
               {tradingarr.map((item, i) => (
                 <div key={i} className="mt-2 text-sm">
-                  <input
+                  <TocCheckbox
+                    id={`trading`}
+                    value={item.tid}
+                    label={item.trading_name}
+                    //  // checked={selectClgType.includes(
+                    //     JSON.stringify(item.cat_id)
+                    //   )}
+                    //   onChange={handleCheckboxClgType}
+                  />
+                  {/* <input
                     type="checkbox"
                     name="trading"
                     value={item.tid}
@@ -459,7 +476,7 @@ function Newsarticles() {
                   />
                   <span className="py-2 px-2 text-sm font-normal text-justify">
                     {item.trading_name}
-                  </span>
+                  </span> */}
                 </div>
               ))}
             </div>
@@ -570,12 +587,10 @@ function Newsarticles() {
 
           <div className="btn-section flex">
             <button type="button">Cancle</button>
-            <button
-              type="submit"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Submit
-            </button>
+
+            <TocButton type="submit" className="pl-10 pr-10 h-10">
+              {editdata.na_id > 0 ? "Update" : "Submit"}
+            </TocButton>
           </div>
         </form>
       </div>
