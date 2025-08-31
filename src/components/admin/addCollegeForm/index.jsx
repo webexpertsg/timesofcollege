@@ -320,9 +320,6 @@ const MultiStepForm = () => {
             <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Courses</li>
           </ul>
         </div>
-        {
-        console.log('formData--->', formData)
-        }
         {currentStep === 1 && (
           <StepOne data={formData} onNext={()=>handleNext} />
         )}
