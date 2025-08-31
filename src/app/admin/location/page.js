@@ -1,20 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { CKEditor, wysiwyg } from "@ckeditor/ckeditor5-react";
-import {
-  ClassicEditor,
-  Bold,
-  Essentials,
-  Italic,
-  Mention,
-  Paragraph,
-  List,
-  Table,
-  Heading,
-  BlockQuote,
-  Alignment,
-} from "ckeditor5";
+import dynamic from 'next/dynamic';
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -31,6 +18,12 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
+import TocInputWithLabel from '@/components/ui/atoms/tocInputWithLabel';
+import TocButton from '@/components/ui/atoms/tocButtom';
+const TocClientSideCustomEditor = dynamic(
+  () => import('@/components/ui/atoms/tocCkEditor'),
+  { ssr: false }
+);
 import axios from "axios";
 
 function Location() {
@@ -64,6 +57,12 @@ function Location() {
   const [countrybriefvalue, setCountrybriefvalue] = useState();
   const [statebriefvalue, setStatebriefvalue] = useState();
   const [citybriefvalue, setCitybriefvalue] = useState();
+  const [errForm, setErrForm] = useState(true);
+  const [errCname, setErrCname] = useState('');
+  const [errCurl, setErrCurl] = useState('');
+  const [errCmetatitle, setErrCmetatitle] = useState('');
+  const [errCmetakeyword, setErrCmetakeyword] = useState('');
+  const [errCmetadescription, setErrCmetadescription] = useState('');
   useEffect(() => {
 
     axios
@@ -96,13 +95,15 @@ function Location() {
   }, []);
 
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
   };
-
+  const handleEditorChange = (data) => {
+    setCountrybriefvalue(data);
+  };
   //start country listing
   //const data = JSON.parse(datas);
   //const keys = Object.keys(data.length ? data[0] : {});
@@ -283,7 +284,7 @@ function Location() {
   const editCountryDetails = (editval) => {
     console.log("Edit country id:", editval);
     axios
-      .get("/api/countrydetail/" + editval)
+      .get("/api/admin/countrydetail/?countid=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
       })
@@ -306,39 +307,37 @@ function Location() {
     let errorsForm = [];
 
     if (country_name.value === "") {
-      errorsForm.push(
-        <div key="branameErr">Country Name cann't be blank!</div>
-      );
+      setErrCname("Country Name can not be blank!");
     } else {
-      errorsForm.push();
+      setErrCname("");
+      setErrForm(false);
     }
     if (country_url.value === "") {
-      errorsForm.push(<div key="branurlErr">Country URL cann't be blank!</div>);
+      setErrCurl("Country URL can not be blank!");
     } else {
-      errorsForm.push();
+      setErrCurl("");
+      setErrForm(false);
     }
 
     if (meta_title.value === "") {
-      errorsForm.push(<div key="metatitErr">Meta Title cann't be blank!</div>);
+      setErrCmetatitle("Meta Title can not be blank!");
     } else {
-      errorsForm.push();
+      setErrCmetatitle("");
+      setErrForm(false);
     }
     if (meta_keyword.value === "") {
-      errorsForm.push(
-        <div key="metakeyErr">Meta Keyword cann't be blank!</div>
-      );
+      setErrCmetakeyword("Meta Keyword can not be blank!");
     } else {
-      errorsForm.push();
+      setErrCmetakeyword("");
+      setErrForm(false);
     }
     if (meta_description.value === "") {
-      errorsForm.push(
-        <div key="metadescErr">Meta Description cann't be blank!</div>
-      );
+      setErrCmetadescription("Meta Description can not be blank!");
     } else {
-      errorsForm.push();
+      setErrCmetadescription(""); 
+      setErrForm(false);
     }
-    console.log("errorsForm", errorsForm);
-    if (errorsForm.length === 0) {
+    if (!errForm) {
       const payload = {
         cout_id: cout_id.value,
         country_name: country_name.value,
@@ -419,10 +418,21 @@ function Location() {
             //end get results
           })
           .catch(function (error) {
-            console.log(error);
-            setReturndspmsg(
-              "<div className={errmsg}>Error in add country record</div>"
-            );
+            // console.log(error);
+            // setReturndspmsg(
+            //   "<div className={errmsg}>Error in add country record</div>"
+            // );
+            toast.success("Successfully Added.", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
           });
       }
     } else {
@@ -499,7 +509,7 @@ function Location() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  {" "}
+                  
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
               </span>
@@ -537,7 +547,6 @@ function Location() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  {" "}
                   <path stroke="none" d="M0 0h24v24H0z" />{" "}
                   <circle cx="12" cy="12" r="9" />{" "}
                   <line x1="9" y1="12" x2="15" y2="12" />{" "}
@@ -557,7 +566,6 @@ function Location() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  {" "}
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
               </span>
@@ -679,134 +687,69 @@ function Location() {
               {returndspmsg && returndspmsg}
               <div className="mt-2">
                 <input type="hidden" value={editdata.cout_id} name="cout_id" />
-                <input
-                  type="text"
-                  name="country_name"
-                  placeholder="Country Name*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.country_name && editdata.country_name}
+                
+                <TocInputWithLabel
+                  id="country_name"
+                  label="Country Name"
+                  placeholder="Please Enter Country Name."
+                  value={editdata.country_name ? editdata.country_name : ""}
                   onChange={handleChangeFormdata}
                 />
-                <div className="errmsg">{errorMsg[0]}</div>
+                <div className="errmsg">{errCname}</div>
               </div>
               <div className="mt-2">
-                <input
-                  type="text"
-                  name="country_url"
-                  placeholder="Country URL*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.country_url && editdata.country_url}
+                <TocInputWithLabel
+                  id="country_url"
+                  label="Country URL"
+                  placeholder="Please Enter Country URL."
+                  value={editdata.country_url ? editdata.country_url : ""}
                   onChange={handleChangeFormdata}
                 />
-                <div className="errmsg">{errorMsg[1]}</div>
+                <div className="errmsg">{errCurl}</div>
               </div>
               <div className="mt-2">
-                <CKEditor
-                  editor={ClassicEditor}
-                  config={{
-                    plugins: [
-                      Essentials,
-                      Heading,
-                      Paragraph,
-                      Bold,
-                      Italic,
-                      BlockQuote,
-                      Alignment,
-                      List,
-                      Mention,
-                      Table,
-                      Number,
-                    ],
-                    toolbar: [
-                      "Heading",
-                      "|",
-                      "Essentials",
-                      "Paragraph",
-
-                      "Bold",
-                      "Italic",
-                      "Alignment",
-                      "Link",
-                      "ListUI",
-                      "BlockQuote",
-                      "Undo",
-                      "Redo",
-                      "Mention",
-                      "Table",
-                      "|",
-                      "numberedList",
-                      "bulletedList",
-                      ,
-                    ],
-                    removePlugins: [
-                      "Image",
-                      "ImageCaption",
-                      "ImageStyle",
-                      "ImageToolbar",
-                      "ImageUpload",
-                    ],
-                    menuBar: {
-                      isVisible: true,
-                    },
-                  }}
-                  data={editdata.country_brief ? editdata.country_brief : ""}
-                  onReady={(editor) => {
-                    // You can store the "editor" and use when it is needed.
-                    // console.log("Editor 1 is ready to use!", editor);
-                  }}
-                  onChange={(event, editor) => {
-                    const cuntry_desc = editor.getData();
-                    setCountrybriefvalue(cuntry_desc);
-                    //console.log({ event, editor, cuntry_desc });
-                  }}
-                />
-
-                <div className="errmsg">{errorMsg[1]}</div>
+                <TocClientSideCustomEditor data={editdata.country_brief ? editdata.country_brief : ""} onChange={handleEditorChange} />
+                <div className="errmsg"></div>
               </div>
 
               <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_title"
-                  placeholder="Meta Title*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.meta_title && editdata.meta_title}
+                <TocInputWithLabel
+                  id="meta_title"
+                  label="Meta Title"
+                  placeholder="Please Enter Meta Title."
+                  value={editdata.meta_title ? editdata.meta_title : ""}
                   onChange={handleChangeFormdata}
                 />
-                <div className="errmsg">{errorMsg[2]}</div>
+                <div className="errmsg">{errCmetatitle}</div>
               </div>
               <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_description"
-                  placeholder="Meta Description*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.meta_description && editdata.meta_description}
+             
+                <TocInputWithLabel
+                  id="meta_description"
+                  label="Meta Description"
+                  placeholder="Please Enter Meta Description."
+                  value={editdata.meta_description ? editdata.meta_description : ""}
                   onChange={handleChangeFormdata}
                 />
-                <div className="errmsg">{errorMsg[3]}</div>
+                <div className="errmsg">{errCmetadescription}</div>
               </div>
               <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_keyword"
-                  placeholder="Meta Keyword*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.meta_keyword && editdata.meta_keyword}
+                
+                <TocInputWithLabel
+                  id="meta_keyword"
+                  label="Meta Keyword"
+                  placeholder="Please Enter Meta Keyword."
+                  value={editdata.meta_keyword ? editdata.meta_keyword : ""}
                   onChange={handleChangeFormdata}
                 />
-                <div className="errmsg">{errorMsg[4]}</div>
+                <div className="errmsg">{errCmetakeyword}</div>
               </div>
               <div className="btn-section">
                 <button type="button" onClick={() => setIsEditOpencunt(false)}>
                   Cancle
                 </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  {editdata.cout_id > 0 ? "Update" : "Submit"}
-                </button>
+                <TocButton type="submit" className='pl-10 pr-10 h-10'> {editdata.cout_id > 0 ? "Update" : "Submit"}</TocButton>
+                
               </div>
             </form>
           </div>

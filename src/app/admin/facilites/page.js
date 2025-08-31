@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -16,8 +16,12 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocButton from "@/components/ui/atoms/tocButtom";
 
 function Facilites() {
   if (localStorage.getItem("login_id") <= 0) {
@@ -25,6 +29,7 @@ function Facilites() {
   }
   const [datas, setDatas] = useState([]);
   const [returndspmsg, setReturndspmsg] = useState();
+  const [facilityName, setFacilityName] = useState();
   const [errorMsg, setErrorMsg] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
@@ -44,10 +49,10 @@ function Facilites() {
       });
   }, []);
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
   };
   //const data = JSON.parse(datas);
@@ -66,15 +71,27 @@ function Facilites() {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            cell.getValue()
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
-
+  const addnewmenu = () => {
+    setIsEditOpen(true);
+    setEditdata("");
+  };
   const editDetails = (editval) => {
-    console.log("Edit exam id:", editval);
+    console.log("Edit facility id:", editval);
     axios
-      .get("/api/editfacility/" + editval)
+      //.get("/api/admin/editfacility/" + editval)
+      .get("/api/admin/editfacility/?fid=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
       })
@@ -106,20 +123,23 @@ function Facilites() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.facility_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon onClick={() => openDeleteConfirmModal(row)} />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
   // add new facility
-
+  const openDeleteConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      deleteFacilty(row.original.facility_id);
+      //console.log("Delete======------>", row.original.cmsid);
+    }
+  };
   const addfacitly = (e) => {
     e.preventDefault();
     const { facility_id, facility_name, facility_status } = e.target.elements;
@@ -144,7 +164,7 @@ function Facilites() {
       if (facility_id.value > 0) {
         axios({
           method: "post",
-          url: "/api/updatefacility",
+          url: "/api/admin/updatefacility",
           data: payload,
         })
           .then(function (response) {
@@ -167,7 +187,7 @@ function Facilites() {
             }
             //get results
             axios
-              .get("/api/getfacilitys")
+              .get("/api/admin/getfacilitys")
               .then((response) => {
                 setDatas(response.data);
               })
@@ -182,7 +202,7 @@ function Facilites() {
       } else {
         axios({
           method: "post",
-          url: "/api/addfacitly",
+          url: "/api/admin/addfacitly",
           data: payload,
         })
           .then(function (response) {
@@ -205,7 +225,7 @@ function Facilites() {
             }
             //get results
             axios
-              .get("/api/getfacilitys")
+              .get("/api/admin/getfacilitys")
               .then((response) => {
                 setDatas(response.data);
               })
@@ -225,7 +245,43 @@ function Facilites() {
       setErrorMsg(errorsForm);
     }
   };
-  // end add new course
+  // end add new facility
+
+  const deleteFacilty = (facility_id) => {
+    if (facility_id > 0) {
+      axios
+        .get("/api/admin/inactivefacility/?facility_id=" + facility_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load facility listing
+            axios
+              .get("/api/admin/getfacilitys")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
 
   return (
     <>
@@ -233,7 +289,10 @@ function Facilites() {
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">Facilites Listing</h1>
           <div className="actions">
-            <span onClick={() => setIsEditOpen(true)}>
+            <span
+              //</div>onClick={() => setIsEditOpen(true)}
+              onClick={() => addnewmenu()}
+            >
               <svg
                 className="h-6 w-6 text-stone-600"
                 width="24"
@@ -281,12 +340,18 @@ function Facilites() {
           <div className="modal-box">
             <form method="dialog">
               {/* if there is a button in form, it will close the modal */}
-              <button
+              {/* <button
                 className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
                 onClick={() => setIsEditOpen(false)}
               >
                 ✕
-              </button>
+              </button> */}
+              <IconButton className="bsolute right-2 top-2 toc-popupclosebtnpossition">
+                <HighlightOffIcon
+                  className="bsolute right-2 top-2"
+                  onClick={() => setIsEditOpen(false)}
+                />
+              </IconButton>
             </form>
             <h3 className="font-bold text-lg">
               {editdata.facility_id > 0 ? "Edit" : "Add"} Facility
@@ -298,35 +363,32 @@ function Facilites() {
               id="facilitesForm"
               onSubmit={addfacitly}
             >
-              {returndspmsg && returndspmsg}
+              <div className="popupform">
+                <div className="mt-2">
+                  <input
+                    type="hidden"
+                    name="facility_id"
+                    value={editdata.facility_id}
+                  />
 
-              <div className="mt-2">
-                <input
-                  type="hidden"
-                  name="facility_id"
-                  value={editdata.facility_id}
-                />
-                <input
-                  type="text"
-                  name="facility_name"
-                  placeholder="Facility Name*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.facility_name ? editdata.facility_name : ""}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[0]}</div>
+                  <TocInputWithLabel
+                    id="facility_name"
+                    label="Facility Name"
+                    placeholder="Please Enter Facility Name."
+                    value={editdata.facility_name ? editdata.facility_name : ""}
+                    onChange={handleChangeFormdata}
+                  />
+                  <div className="errmsg">{errorMsg[0]}</div>
+                </div>
               </div>
-
               <div className="btn-section">
                 <button type="button" onClick={() => setIsEditOpen(false)}>
                   Cancle
                 </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
+                  {" "}
                   {editdata.facility_id > 0 ? "Update" : "Submit"}
-                </button>
+                </TocButton>
               </div>
             </form>
           </div>
