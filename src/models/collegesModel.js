@@ -359,6 +359,21 @@ export const inactiveFacility = (facility_id) => {
     );
   });
 };
+export const inactiveCourse = (cour_id) => {
+  console.log("id--", cour_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE courses SET cstatus='D' WHERE cour_id=$1",
+      [cour_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A course has been inactived: ${cour_id}`);
+      }
+    );
+  });
+};
 
 export const editnewsarticle = (na_id) => {
   //const rol_id = rol_id;
@@ -1613,7 +1628,7 @@ export const getCategoriesarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT cat_id,category_name FROM categories ORDER BY category_name ASC",
+        "SELECT cat_id value,category_name label FROM categories ORDER BY category_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -2024,9 +2039,10 @@ export const addNewcourses = (body) => {
       cmeta_description,
       cmeta_keyword,
       cstatus,
+      cat_id,
     } = body;
     pool.query(
-      "INSERT INTO courses(course_name,course_url,cmeta_title,cmeta_description,cmeta_keyword,cstatus) VALUES ($1, $2, $3,$4,$5,$6) RETURNING *",
+      "INSERT INTO courses(course_name,course_url,cmeta_title,cmeta_description,cmeta_keyword,cstatus,cat_id) VALUES ($1, $2, $3,$4,$5,$6,$7) RETURNING *",
       [
         course_name,
         course_url,
@@ -2034,6 +2050,7 @@ export const addNewcourses = (body) => {
         cmeta_description,
         cmeta_keyword,
         cstatus,
+        cat_id,
       ],
       (error, results) => {
         if (error) {
@@ -2336,7 +2353,7 @@ export const updatecourse = (body) => {
       cour_id,
       course_name,
       course_url,
-      meta_title,
+      cmeta_title,
       cmeta_description,
       cmeta_keyword,
       cstatus,
@@ -2348,7 +2365,7 @@ export const updatecourse = (body) => {
         cour_id,
         course_name,
         course_url,
-        meta_title,
+        cmeta_title,
         cmeta_description,
         cmeta_keyword,
         cstatus,
@@ -2502,7 +2519,7 @@ export const editcourse = (cour_id) => {
         //resolve(`Edit roles ID: ${id}`);
       }
     );
-    console.log(query);
+    //console.log(query);
   });
 };
 //get all facility our database

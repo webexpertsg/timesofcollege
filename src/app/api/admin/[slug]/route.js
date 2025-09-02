@@ -5,6 +5,9 @@ import {
   getColleges,
   getCategories,
   getCourses,
+  editcourse,
+  addNewcourses,
+  updatecourse,
   getCategoriesarr,
   editCategory,
   addNewcategories,
@@ -51,6 +54,7 @@ import {
   addnewapprovedby,
   inactiveApprovedby,
   inactiveFacility,
+  inactiveCourse,
   editcollege,
   getCountryarr,
   getStatearr,
@@ -248,9 +252,19 @@ export async function GET(request, { params }) {
     const returnresponse = await editfacility(fid);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "editcourse") {
+    const cour_id = searchParams.get("cour_id"); //
+    const returnresponse = await editcourse(cour_id);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "inactivefacility") {
     const facility_id = searchParams.get("facility_id"); //
     const returnresponse = await inactiveFacility(facility_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivecourse") {
+    const cour_id = searchParams.get("cour_id"); //
+    const returnresponse = await inactiveCourse(cour_id);
     return NextResponse.json(returnresponse);
   }
   if (slug === "editapprovedby") {
@@ -375,6 +389,31 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to add category" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addcourse") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addNewcourses(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add course" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (slug === "updatecourse") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updatecourse(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add course" },
         { status: 500 }
       );
     }

@@ -105,7 +105,7 @@ function Categories() {
       Cell: ({ cell }) => (
         <span>
           {cell.getValue() !== "Inactive" ? (
-            cell.getValue()
+            <span className="text-green-700">{cell.getValue()}</span>
           ) : (
             <span className="text-red-700">{cell.getValue()}</span>
           )}
