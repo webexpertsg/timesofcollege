@@ -28,9 +28,9 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 function Courses() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   const [errForm, setErrForm] = useState({});
   const [catarr, setCatarr] = useState([]);
@@ -446,29 +446,6 @@ function Courses() {
                     errmsg={errForm.cat_id}
                     onChange={(e) => setCategoryid(e.target.value)}
                   />
-                  {/* <select
-                    name="cat_id"
-                    id="cat_id"
-                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                  >
-                    <option
-                      value=""
-                      defaultValue={editdata.cat_id == "" ? "selected" : ""}
-                    >
-                      Select Category
-                    </option>
-                    {catarr.map((cour) => (
-                      <option
-                        value={cour.cat_id}
-                        selected={
-                          editdata.cat_id == cour.cat_id ? "selected" : ""
-                        }
-                      >
-                        {cour.category_name}
-                      </option>
-                    ))}
-                    ;
-                  </select> */}
                 </div>
                 <div className="mt-2">
                   <TocInputWithLabel
@@ -530,7 +507,7 @@ function Courses() {
                   />
                 </div>
                 <div className="mt-2">
-                  <label>Status {status}</label>
+                  <label>Status</label>
                   <div className="flex gap-4">
                     <TocRadioInput
                       id="cstatusa"

@@ -166,7 +166,5 @@ export const editmenu = (menu_id) => {
         //resolve(`Edit roles ID: ${id}`);
       }
     );
-    console.log(query);
   });
 };
-

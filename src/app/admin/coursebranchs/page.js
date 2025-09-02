@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { hasNotEmptyValue } from "@/utils";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -16,18 +17,37 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocTextarea from "@/components/ui/atoms/tocTextarea";
+import TocSelectList from "@/components/ui/atoms/tocSelectlist";
+import TocRadioInput from "@/components/ui/atoms/tocRadio";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import TocButton from "@/components/ui/atoms/tocButtom";
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 function Coursebranchs() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
+  const [errForm, setErrForm] = useState({});
   const [courarr, setCourarr] = useState([]);
-  const [returndspmsg, setReturndspmsg] = useState();
+  const [branchstatus, setBranchstatus] = useState("A");
+  const [courseid, setCourseid] = useState("");
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
+  const [editdata, setEditdata] = useState({
+    courb_id: "",
+    course_id: "",
+    branch_name: "",
+    branch_url: "",
+    meta_title: "",
+    meta_keyword: "",
+    meta_description: "",
+    branch_status: "",
+  });
   useEffect(() => {
     axios
       .get("/api/admin/getcoursebranchs")
@@ -83,17 +103,25 @@ function Coursebranchs() {
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
       Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
     },
-    {
-      accessorKey: "meta_description", //simple recommended way to define a column
-      header: "Meta Description",
-      muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
-    },
+    // {
+    //   accessorKey: "meta_description", //simple recommended way to define a column
+    //   header: "Meta Description",
+    //   muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+    //   Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+    // },
     {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
@@ -121,25 +149,79 @@ function Coursebranchs() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.branch_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
-
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.courb_id);
+      //console.log("Delete======------>", row.original.cat_id);
+    }
+  };
+  const inactiveRecord = (courb_id) => {
+    if (courb_id > 0) {
+      axios
+        .get("/api/admin/inactivecoursebrach/?courb_id=" + courb_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getcoursebranchs")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
   // add new course branches
-  const [errorMsg, setErrorMsg] = useState([]);
-  const addcousebranches = (e) => {
+  const editDetails = (editval) => {
+    console.log("Edit course branch id:", editval);
+    axios
+      .get("/api/admin/editcoursebranch/?courb_id=" + editval)
+      .then((response) => {
+        setEditdata(response.data[0]);
+        setCourseid(response.data[0].course_id);
+        setBranchstatus(response.data[0].branch_status);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const submitCousebranches = (e) => {
+    const newErrors = {};
     e.preventDefault();
     const {
-      course_id,
+      courb_id,
       branch_name,
       branch_url,
       meta_title,
@@ -148,87 +230,134 @@ function Coursebranchs() {
     } = e.target.elements;
 
     let errorsForm = [];
-    if (course_id.value === "") {
-      errorsForm.push(<div key="branameErr">Please select course !</div>);
-    } else {
-      errorsForm.push();
+    if (!courseid) {
+      newErrors.course_id = "Please select course name!";
     }
-    if (branch_name.value === "") {
-      errorsForm.push(<div key="branameErr">Branch Name cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!branch_name.value.trim()) {
+      newErrors.branch_name = "Branch name cann't be blank!";
     }
-    if (branch_url.value === "") {
-      errorsForm.push(<div key="branurlErr">Branch URL cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!branch_url.value.trim()) {
+      newErrors.branch_url = "Branch URL cann't be blank!";
     }
-    if (meta_title.value === "") {
-      errorsForm.push(<div key="metatitErr">Meta Title cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!meta_title.value.trim()) {
+      newErrors.meta_title = "Meta title cann't be blank!";
     }
-    if (meta_keyword.value === "") {
-      errorsForm.push(
-        <div key="metakeyErr">Meta Keyword cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!meta_description.value.trim()) {
+      newErrors.meta_description = "Meta description cann't be blank!";
     }
-    if (meta_description.value === "") {
-      errorsForm.push(
-        <div key="metadescErr">Meta Description cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!meta_keyword.value.trim()) {
+      newErrors.meta_keyword = "Meta keyword cann't be blank!";
     }
-    console.log("errorsForm", errorsForm);
-    if (errorsForm.length === 0) {
+    setErrForm(newErrors);
+    if (!hasNotEmptyValue(newErrors)) {
       const payload = {
-        course_id: course_id.value,
+        courb_id: courb_id.value,
+        course_id: courseid,
         branch_name: branch_name.value,
         branch_url: branch_url.value,
         meta_title: meta_title.value,
         meta_description: meta_description.value,
         meta_keyword: meta_keyword.value,
-        branch_status: "A",
+        branch_status: branchstatus,
       };
-      axios({
-        method: "post",
-        url: "/api/addcoursebranches",
-        data: payload,
-      })
-        .then(function (response) {
-          console.log(response);
-          course_id.value = "";
-          branch_name.value = "";
-          branch_url.value = "";
-          meta_title.value = "";
-          meta_description.value = "";
-          meta_keyword.value = "";
-          setReturndspmsg(
-            '<div className"sussmsg">Record successfully added</div>'
-          );
-          //get results
-          axios
-            .get("/api/getcoursebranchs")
-            .then((response) => {
-              setDatas(response.data);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-          //end get results
+      if (courb_id.value > 0) {
+        axios({
+          method: "post",
+          url: "/api/admin/updatecoursebranches",
+          data: payload,
         })
-        .catch(function (error) {
-          console.log(error);
-          setReturndspmsg('<div className"errmsg">Error in add record</div>');
-        });
-    } else {
-      setErrorMsg(errorsForm);
+          .then(function (response) {
+            //console.log(response);
+            if (response.statusText == "OK") {
+              setCourseid("");
+              setBranchstatus("A");
+              setIsEditOpen(false);
+              branch_name.value = "";
+              branch_url.value = "";
+              meta_title.value = "";
+              meta_description.value = "";
+              meta_keyword.value = "";
+              toast.success("Course branch details updated!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            }
+            //get results
+            axios
+              .get("/api/admin/getcoursebranchs")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+            //end get results
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else {
+        axios({
+          method: "post",
+          url: "/api/admin/addcoursebranches",
+          data: payload,
+        })
+          .then(function (response) {
+            if (response.statusText === "OK") {
+              setCourseid("");
+              setBranchstatus("A");
+              setIsEditOpen(false);
+              toast.success("Course branch details added!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+
+              branch_name.value = "";
+              branch_url.value = "";
+              meta_title.value = "";
+              meta_description.value = "";
+              meta_keyword.value = "";
+              //get results
+              axios
+                .get("/api/admin/getcoursebranchs")
+                .then((response) => {
+                  setDatas(response.data);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+            }
+            //end get results
+          })
+          .catch(function (error) {
+            console.log(error);
+            // setReturndspmsg('<div className"errmsg">Error in add record</div>');
+          });
+      }
     }
   };
   // end add new course branches
+  const handleChangeFormdata = (e) => {
+    const { id, value } = e.target;
+    setEditdata((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
 
   return (
     <>
@@ -262,7 +391,7 @@ function Coursebranchs() {
               //onClick={() =>document.getElementById("filter_modal").showModal()}
               onClick={() => setIsFilter(true)}
             >
-              <svg
+              {/* <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -273,7 +402,7 @@ function Coursebranchs() {
               >
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-              </svg>
+              </svg> */}
             </span>
           </div>
         </div>
@@ -288,93 +417,126 @@ function Coursebranchs() {
       {isEditOpen && (
         <DialogContent>
           <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            <IconButton className="bsolute right-2 top-2 toc-popupclosebtnpossition">
+              <HighlightOffIcon
+                className="bsolute right-2 top-2"
                 onClick={() => setIsEditOpen(false)}
-              >
-                ✕
-              </button>
-            </form>
-            <h3 className="font-bold text-lg">Add Course Branch</h3>
+              />
+            </IconButton>
+            <h3 className="font-bold text-lg">
+              {editdata.courb_id > 0 ? "Edit" : "Add"} Course Branch
+            </h3>
 
             <form
               action=""
               method="post"
               id="coursebranchForm"
-              onSubmit={addcousebranches}
+              onSubmit={submitCousebranches}
             >
-              {returndspmsg && returndspmsg}
-              <div className="mt-2">
-                <select
-                  name="course_id"
-                  id="course_id"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option value="">Select Course</option>
-                  {courarr.map((cour) => (
-                    <option value={cour.cour_id}>{cour.course_name}</option>
-                  ))}
-                  ;
-                </select>
-                <div className="errmsg">{errorMsg[0]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="branch_name"
-                  placeholder="Branch Name*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[1]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="branch_url"
-                  placeholder="Branch URL*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[2]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_title"
-                  placeholder="Meta Title*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[3]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_description"
-                  placeholder="Meta Description*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[4]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_keyword"
-                  placeholder="Meta Keyword*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[5]}</div>
+              <div className="popupform">
+                <div className="mt-2">
+                  <input
+                    type="hidden"
+                    value={editdata.courb_id}
+                    name="courb_id"
+                  />
+                  <TocSelectList
+                    id="course_id"
+                    label="Course Name"
+                    options={courarr}
+                    value={courseid}
+                    required={true}
+                    errmsg={errForm.course_id}
+                    onChange={(e) => setCourseid(e.target.value)}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="branch_name"
+                    label="Branch Name"
+                    placeholder="Please enter branch name."
+                    value={editdata.branch_name ? editdata.branch_name : ""}
+                    required={true}
+                    errmsg={errForm.branch_name}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="branch_url"
+                    label="Branch URL"
+                    placeholder="Please enter branch url."
+                    value={editdata.branch_url ? editdata.branch_url : ""}
+                    required={true}
+                    errmsg={errForm.branch_url}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="meta_title"
+                    label="Meta Title"
+                    placeholder="Please enter meta title."
+                    value={editdata.meta_title ? editdata.meta_title : ""}
+                    required={true}
+                    errmsg={errForm.meta_title}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocTextarea
+                    id="meta_description"
+                    label="Meta Description"
+                    placeholder="Please enter meta description."
+                    value={
+                      editdata.meta_description ? editdata.meta_description : ""
+                    }
+                    required={true}
+                    errmsg={errForm.meta_description}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="meta_keyword"
+                    label="Meta Keyword"
+                    placeholder="Please enter meta keyword."
+                    value={editdata.meta_keyword ? editdata.meta_keyword : ""}
+                    required={true}
+                    errmsg={errForm.meta_keyword}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <label>Status</label>
+                  <div className="flex gap-4">
+                    <TocRadioInput
+                      id="cbstatusa"
+                      name="cbstatus"
+                      value="A"
+                      label="Active"
+                      checked={branchstatus === "A"}
+                      onChange={(e) => setBranchstatus(e.target.value)}
+                    />
+
+                    <TocRadioInput
+                      id="cbstatusd"
+                      name="cbstatus"
+                      value="D"
+                      label="Inactive"
+                      checked={branchstatus === "D"}
+                      onChange={(e) => setBranchstatus(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="btn-section">
                 <button type="button" onClick={() => setIsEditOpen(false)}>
                   Cancle
                 </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Submit
-                </button>
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
+                  {editdata.courb_id > 0 ? "Update" : "Submit"}
+                </TocButton>
               </div>
             </form>
           </div>

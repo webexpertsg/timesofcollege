@@ -14,6 +14,7 @@ import {
   updateCategory,
   getCoursesarr,
   getCoursebranchs,
+  inactiveCoursebranch,
   getCoursetype,
   getCollegetype,
   getRolelist,
@@ -28,6 +29,9 @@ import {
   getNotificationlisting,
   getCMSListing,
   editCms,
+  addCoursebrach,
+  updateCoursebrach,
+  editCoursebranch,
   getApprovedbyarr,
   getApprovedby,
   getNewsarticleslisting,
@@ -267,6 +271,11 @@ export async function GET(request, { params }) {
     const returnresponse = await inactiveCourse(cour_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "inactivecoursebrach") {
+    const courb_id = searchParams.get("courb_id"); //
+    const returnresponse = await inactiveCoursebranch(courb_id);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "editapprovedby") {
     const appbyid = searchParams.get("appbyid"); //
     const returnresponse = await editapproved(appbyid);
@@ -285,6 +294,16 @@ export async function GET(request, { params }) {
   if (slug === "editcategory") {
     const cat_id = searchParams.get("cat_id"); //
     const returnresponse = await editCategory(cat_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editmenu") {
+    const menu_id = searchParams.get("menu_id"); //
+    const returnresponse = await editmenu(menu_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editcoursebranch") {
+    const courb_id = searchParams.get("courb_id"); //
+    const returnresponse = await editCoursebranch(courb_id);
     return NextResponse.json(returnresponse);
   }
 
@@ -388,7 +407,7 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(
-        { error: "Failed to add category" },
+        { error: "Failed to update category" },
         { status: 500 }
       );
     }
@@ -413,7 +432,55 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(
-        { error: "Failed to add course" },
+        { error: "Failed to update course" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addmenu") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addNewmenudetails(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add menu" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatemenu") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateMenudetails(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update menu" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addcoursebranches") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addCoursebrach(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add menu" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatecoursebranches") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCoursebrach(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update course branch" },
         { status: 500 }
       );
     }

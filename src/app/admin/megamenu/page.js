@@ -1,5 +1,6 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
+import { hasNotEmptyValue } from "@/utils";
 //import Link from "next/link";
 import {
   MaterialReactTable,
@@ -16,19 +17,27 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocTextarea from "@/components/ui/atoms/tocTextarea";
+import TocSelectList from "@/components/ui/atoms/tocSelectlist";
+import TocRadioInput from "@/components/ui/atoms/tocRadio";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import TocButton from "@/components/ui/atoms/tocButtom";
+
 import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 function Megamenu() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   const [menuarrlist, setMenuarrlist] = useState([]);
-  const [returndspmsg, setReturndspmsg] = useState();
-  const [errorMsg, setErrorMsg] = useState([]);
+  const [errForm, setErrForm] = useState({});
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
+  const [menustatus, setMenustatus] = useState("A");
   const [editdata, setEditdata] = useState({
     menu_id: "",
     menu_name: "",
@@ -37,6 +46,7 @@ function Megamenu() {
     meta_keyword: "",
     meta_title: "",
     menu_disp_position: "",
+    menu_status: "",
   });
   useEffect(() => {
     axios
@@ -58,10 +68,10 @@ function Megamenu() {
   }, []);
 
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
   };
   //const data = JSON.parse(datas);
@@ -91,7 +101,15 @@ function Megamenu() {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
@@ -102,9 +120,10 @@ function Megamenu() {
   const editDetails = (editval) => {
     console.log("Edit menu id:", editval);
     axios
-      .get("/api/editmenu/" + editval)
+      .get("/api/admin/editmenu/?menu_id=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
+        setMenustatus(response.data[0].menu_status);
       })
       .catch((error) => {
         console.error(error);
@@ -134,21 +153,22 @@ function Megamenu() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.menu_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
   // add new menu
 
-  const addmenu = (e) => {
+  const submitAddmenu = (e) => {
+    const newErrors = {};
     e.preventDefault();
     const {
       menu_id,
@@ -162,67 +182,47 @@ function Megamenu() {
       menu_disp_position,
     } = e.target.elements;
 
-    let errorsForm = [];
-
-    if (menu_name.value === "") {
-      errorsForm.push(<div key="branameErr">Memu Name cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!menu_name.value.trim()) {
+      newErrors.menu_name = "Memu Name cann't be blank!";
     }
-    if (menu_url.value === "") {
-      errorsForm.push(<div key="branurlErr">Memu URL cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!menu_url.value.trim()) {
+      newErrors.menu_url = "Memu URL cann't be blank!";
     }
-
-    if (menu_description.value === "") {
-      errorsForm.push(
-        <div key="branurlErr">Menu Description cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!menu_description.value.trim()) {
+      newErrors.menu_description = "Memu Description cann't be blank!";
     }
-    if (meta_title.value === "") {
-      errorsForm.push(<div key="metatitErr">Meta Title cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!meta_title.value.trim()) {
+      newErrors.meta_title = "Meta Title cann't be blank!";
     }
-    if (meta_keyword.value === "") {
-      errorsForm.push(
-        <div key="metakeyErr">Meta Keyword cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!meta_description.value.trim()) {
+      newErrors.meta_description = "Meta Description cann't be blank!";
     }
-    if (meta_description.value === "") {
-      errorsForm.push(
-        <div key="metadescErr">Meta Description cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
+    if (!meta_keyword.value.trim()) {
+      newErrors.meta_keyword = "Meta Keyword cann't be blank!";
     }
-    console.log("errorsForm", errorsForm);
-    if (errorsForm.length === 0) {
+    setErrForm(newErrors);
+    if (!hasNotEmptyValue(newErrors)) {
       const payload = {
         menu_id: menu_id.value,
-        menu_name: menu_name.value,
-        menu_url: menu_url.value,
-        menu_parent_id: menu_parent_id.value,
-        menu_description: menu_description.value,
-        meta_title: meta_title.value,
-        meta_description: meta_description.value,
-        meta_keyword: meta_keyword.value,
-        menu_status: "A",
-        menu_disp_position: menu_disp_position.value,
+        menu_name: menu_name.value.trim(),
+        menu_url: menu_url.value.trim(),
+        menu_parent_id: menu_parent_id.value.trim(),
+        menu_description: menu_description.value.trim(),
+        meta_title: meta_title.value.trim(),
+        meta_description: meta_description.value.trim(),
+        meta_keyword: meta_keyword.value.trim(),
+        menu_status: menustatus,
+        menu_disp_position: menu_disp_position.value.trim(),
       };
       if (menu_id.value > 0) {
         axios({
           method: "post",
-          url: "/api/updatemenu",
+          url: "/api/admin/updatemenu",
           data: payload,
         })
           .then(function (response) {
             //console.log(response);
+            setMenustatus("A");
             menu_id.value = "";
             menu_name.value = "";
             menu_url.value = "";
@@ -248,7 +248,7 @@ function Megamenu() {
             }
             //get results
             axios
-              .get("/api/getmegamenulist")
+              .get("/api/admin/getmegamenulisting")
               .then((response) => {
                 setDatas(response.data);
               })
@@ -263,10 +263,11 @@ function Megamenu() {
       } else {
         axios({
           method: "post",
-          url: "/api/addmenu",
+          url: "/api/admin/addmenu",
           data: payload,
         })
           .then(function (response) {
+            setMenustatus("A");
             console.log(response);
             menu_id.value = "";
             menu_name.value = "";
@@ -293,7 +294,7 @@ function Megamenu() {
             }
             //get results
             axios
-              .get("/api/getmegamenulist")
+              .get("/api/admin/getmegamenulisting")
               .then((response) => {
                 setDatas(response.data);
               })
@@ -304,13 +305,8 @@ function Megamenu() {
           })
           .catch(function (error) {
             console.log(error);
-            setReturndspmsg(
-              "<div className={errmsg}>Error in add menu record</div>"
-            );
           });
       }
-    } else {
-      setErrorMsg(errorsForm);
     }
   };
   // end add new menu
@@ -346,7 +342,7 @@ function Megamenu() {
               //onClick={() =>document.getElementById("filter_modal").showModal()}
               onClick={() => setIsFilter(true)}
             >
-              <svg
+              {/* <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
                 fill="none"
@@ -357,7 +353,7 @@ function Megamenu() {
               >
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-              </svg>
+              </svg> */}
             </span>
           </div>
         </div>
@@ -372,158 +368,202 @@ function Megamenu() {
       {isEditOpen && (
         <DialogContent>
           <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            <IconButton className="bsolute right-2 top-2 toc-popupclosebtnpossition">
+              <HighlightOffIcon
+                className="bsolute right-2 top-2"
                 onClick={() => setIsEditOpen(false)}
-              >
-                ✕
-              </button>
-            </form>
+              />
+            </IconButton>
             <h3 className="font-bold text-lg">
               {editdata.menu_id > 0 ? "Edit" : "Add"} Menu
             </h3>
 
-            <form action="" method="post" id="menuForm" onSubmit={addmenu}>
-              {returndspmsg && returndspmsg}
-              <div className="mt-2">
-                <input type="hidden" value={editdata.menu_id} name="menu_id" />
-                <select
-                  name="menu_parent_id"
-                  id="menu_parent_id"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option
-                    value="0"
-                    defaultValue={editdata.cat_id == "" ? "selected" : ""}
+            <form
+              action=""
+              method="post"
+              id="menuForm"
+              onSubmit={submitAddmenu}
+            >
+              <div className="popupform">
+                <div className="mt-2">
+                  <input
+                    type="hidden"
+                    value={editdata.menu_id}
+                    name="menu_id"
+                  />
+                  <label
+                    htmlFor={`pm`}
+                    className="block text-gray-700 text-sm font-bold mb-2"
                   >
-                    Parent Menu
-                  </option>
-                  {menuarrlist.map(
-                    (cour) =>
-                      cour.menu_parent_id == 0 && (
-                        <>
-                          <option
-                            value={cour.menu_id}
-                            selected={
-                              editdata.menu_parent_id == cour.menu_id
-                                ? "selected"
-                                : ""
-                            }
-                          >
-                            {cour.menu_name}
-                          </option>
-                          {menuarrlist.map(
-                            (scour) =>
-                              cour.menu_id == scour.menu_parent_id && (
-                                <option
-                                  value={scour.menu_id}
-                                  selected={
-                                    editdata.menu_parent_id == scour.menu_id
-                                      ? "selected"
-                                      : ""
-                                  }
-                                >
-                                  &nbsp;&nbsp;&nbsp;&nbsp;{scour.menu_name}
-                                </option>
-                              )
-                          )}
-                        </>
-                      )
-                  )}
-                  ;
-                </select>
-              </div>
+                    Parent Menu<span className="text-red-700"> *</span>
+                  </label>
+                  <select
+                    id="menu_parent_id"
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  >
+                    <option
+                      key="0"
+                      value="0"
+                      defaultValue={editdata.cat_id == "" ? "selected" : ""}
+                    >
+                      Parent Menu
+                    </option>
+                    {menuarrlist.map(
+                      (cour) =>
+                        cour.menu_parent_id == 0 && (
+                          <>
+                            <option
+                              key={cour.menu_id}
+                              value={cour.menu_id}
+                              selected={
+                                editdata.menu_parent_id == cour.menu_id
+                                  ? "selected"
+                                  : ""
+                              }
+                            >
+                              {cour.menu_name}
+                            </option>
+                            {menuarrlist.map(
+                              (scour) =>
+                                cour.menu_id == scour.menu_parent_id && (
+                                  <option
+                                    value={scour.menu_id}
+                                    selected={
+                                      editdata.menu_parent_id == scour.menu_id
+                                        ? "selected"
+                                        : ""
+                                    }
+                                  >
+                                    &nbsp;&nbsp;&nbsp;&nbsp;{scour.menu_name}
+                                  </option>
+                                )
+                            )}
+                          </>
+                        )
+                    )}
+                    ;
+                  </select>
+                </div>
 
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="menu_name"
-                  placeholder="Menu Name*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.menu_name && editdata.menu_name}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[0]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="menu_url"
-                  placeholder="Menu URL*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.menu_url && editdata.menu_url}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[1]}</div>
-              </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="menu_name"
+                    label="Menu Name"
+                    placeholder="Please enter menu name."
+                    value={editdata.menu_name ? editdata.menu_name : ""}
+                    required={true}
+                    errmsg={errForm.menu_name}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="menu_url"
+                    label="Menu Url"
+                    placeholder="Please enter menu url."
+                    value={editdata.menu_url ? editdata.menu_url : ""}
+                    required={true}
+                    errmsg={errForm.menu_url}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
 
-              <div className="mt-2">
-                <textarea
-                  name="menu_description"
-                  placeholder="Menu Description*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 px-2"
-                  onChange={handleChangeFormdata}
-                  value={editdata.menu_description && editdata.menu_description}
-                ></textarea>
-                <div className="errmsg">{errorMsg[1]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_title"
-                  placeholder="Meta Title*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.meta_title && editdata.meta_title}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[2]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_description"
-                  placeholder="Meta Description*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.meta_description && editdata.meta_description}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[3]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="meta_keyword"
-                  placeholder="Meta Keyword*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={editdata.meta_keyword && editdata.meta_keyword}
-                  onChange={handleChangeFormdata}
-                />
-                <div className="errmsg">{errorMsg[4]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="menu_disp_position"
-                  placeholder="Display Position"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  value={
-                    editdata.menu_disp_position && editdata.menu_disp_position
-                  }
-                  onChange={handleChangeFormdata}
-                />
+                <div className="mt-2">
+                  <TocTextarea
+                    id="menu_description"
+                    label="Menu Description"
+                    placeholder="Please enter description."
+                    value={
+                      editdata.menu_description ? editdata.menu_description : ""
+                    }
+                    required={true}
+                    errmsg={errForm.menu_description}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="meta_title"
+                    label="Meta Title"
+                    placeholder="Please enter meta title."
+                    value={editdata.meta_title ? editdata.meta_title : ""}
+                    required={true}
+                    errmsg={errForm.meta_title}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocTextarea
+                    id="meta_description"
+                    label="Meta Description"
+                    placeholder="Please enter meta description."
+                    value={
+                      editdata.meta_description ? editdata.meta_description : ""
+                    }
+                    required={true}
+                    errmsg={errForm.meta_description}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    id="meta_keyword"
+                    label="Meta Keyword"
+                    placeholder="Please enter meta keyword."
+                    value={editdata.meta_keyword ? editdata.meta_keyword : ""}
+                    required={true}
+                    errmsg={errForm.meta_keyword}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <TocInputWithLabel
+                    type="number"
+                    id="menu_disp_position"
+                    label="Display Position"
+                    placeholder="Display Position"
+                    value={
+                      editdata.menu_disp_position
+                        ? editdata.menu_disp_position
+                        : ""
+                    }
+                    //required={true}
+                    //errmsg={errForm.menu_disp_position}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <label>Status</label>
+                  <div className="flex gap-4">
+                    <TocRadioInput
+                      id="menu_statusa"
+                      name="menu_status"
+                      value="A"
+                      label="Active"
+                      checked={menustatus === "A"}
+                      //onChange={handleChangeFormdata}
+                      onChange={(e) => setMenustatus(e.target.value)}
+                    />
+
+                    <TocRadioInput
+                      id="menu_statusd"
+                      name="menu_status"
+                      value="D"
+                      label="Inactive"
+                      checked={menustatus === "D"}
+                      // onChange={handleChangeFormdata}
+                      onChange={(e) => setMenustatus(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
               <div className="btn-section">
                 <button type="button" onClick={() => setIsEditOpen(false)}>
                   Cancle
                 </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
                   {editdata.menu_id > 0 ? "Update" : "Submit"}
-                </button>
+                </TocButton>
               </div>
             </form>
           </div>

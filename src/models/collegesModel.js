@@ -1489,7 +1489,7 @@ export const getCoursesarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT cour_id,course_name FROM courses WHERE cstatus='A' ORDER BY course_name ASC",
+        "SELECT cour_id value,course_name label FROM courses WHERE cstatus='A' ORDER BY course_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1902,7 +1902,25 @@ export const getCollegetype = async () => {
     throw new Error("Internal server error");
   }
 };
+export const editCoursebranch = (courb_id) => {
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "SELECT * FROM coursebranches WHERE courb_id = $1",
+      [courb_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(results.rows);
+        }
 
+        //resolve(`Edit course branch ID: ${id}`);
+      }
+    );
+    //console.log(query);
+  });
+};
 //create a new course branch record in the databsse
 export const addCoursebrach = (body) => {
   return new Promise(function (resolve, reject) {
@@ -1939,6 +1957,63 @@ export const addCoursebrach = (body) => {
         } else {
           reject(new Error("No results found"));
         }
+      }
+    );
+  });
+};
+export const updateCoursebrach = (body) => {
+  return new Promise(function (resolve, reject) {
+    console.log(body);
+    const {
+      courb_id,
+      course_id,
+      branch_name,
+      branch_url,
+      meta_title,
+      meta_description,
+      meta_keyword,
+      branch_status,
+    } = body;
+    pool.query(
+      "UPDATE coursebranches SET course_id=$2,branch_name=$3,branch_url=$4,meta_title=$5,meta_description=$6,meta_keyword=$7,branch_status=$8 WHERE courb_id=$1 RETURNING courb_id",
+      [
+        courb_id,
+        course_id,
+        branch_name,
+        branch_url,
+        meta_title,
+        meta_description,
+        meta_keyword,
+        branch_status,
+      ],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(
+            `A course branch details has been updated: ${JSON.stringify(
+              results.rows[0]
+            )}`
+          );
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+};
+export const inactiveCoursebranch = (courb_id) => {
+  //console.log("id--", courb_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE coursebranches SET branch_status='D' WHERE courb_id=$1",
+      [courb_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A course branch has been inactived: ${courb_id}`);
       }
     );
   });
