@@ -140,7 +140,7 @@ export const deleteVehicle = (id) => {
   });
 };
 
-export const editroles = (rol_id) => {
+export const editRoles = (rol_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -157,7 +157,6 @@ export const editroles = (rol_id) => {
         //resolve(`Edit roles ID: ${id}`);
       }
     );
-    console.log(query);
   });
 };
 
@@ -253,7 +252,6 @@ export const editcollege = (cid) => {
     // console.log(query);
   });
 };
-
 export const faqcollege = (cid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
@@ -1861,7 +1859,7 @@ export const getCoursetype = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT * FROM coursetype ORDER BY course_type_name ASC",
+        "SELECT *,case when ct_status = 'A' then 'Active'else 'Inactive' end as status  FROM coursetype ORDER BY course_type_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1879,12 +1877,52 @@ export const getCoursetype = async () => {
     throw new Error("Internal server error");
   }
 };
+export const editCoursetype = (coursetype_id) => {
+  //const coursetype_id = coursetype_id;
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "SELECT * FROM coursetype WHERE coursetype_id = $1",
+      [coursetype_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(results.rows);
+        }
+
+        //resolve(`Edit course type ID: ${coursetype_id}`);
+      }
+    );
+    // console.log(query);
+  });
+};
 //get all college type our database
+export const editCollege = (cid) => {
+  //const rol_id = rol_id;
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "SELECT * FROM collegetype WHERE col_type = $1",
+      [cid],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(results.rows);
+        }
+
+        //resolve(`Edit college ID: ${id}`);
+      }
+    );
+    // console.log(query);
+  });
+};
 export const getCollegetype = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT * FROM collegetype ORDER BY college_type ASC",
+        "SELECT *,case when college_type_status = 'A' then 'Active'else 'Inactive' end as status FROM collegetype ORDER BY college_type ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1901,6 +1939,112 @@ export const getCollegetype = async () => {
     console.error(error_1);
     throw new Error("Internal server error");
   }
+};
+export const updateCollegetype = (body) => {
+  return new Promise(function (resolve, reject) {
+    console.log(body);
+    const { col_type, college_type, college_type_status } = body;
+    pool.query(
+      "UPDATE collegetype SET college_type=$2,college_type_status=$3 WHERE col_type=$1 RETURNING col_type",
+      [col_type, college_type, college_type_status],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(
+            `A college type has been updated: ${JSON.stringify(
+              results.rows[0]
+            )}`
+          );
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+};
+export const addCoursetype = (body) => {
+  return new Promise(function (resolve, reject) {
+    const { course_type_name, ct_status } = body;
+    pool.query(
+      "INSERT INTO coursetype(course_type_name,ct_status) VALUES ($1, $2) RETURNING *",
+      [course_type_name, ct_status],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(
+            `A new course type has been added: ${JSON.stringify(
+              results.rows[0]
+            )}`
+          );
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+};
+export const updateCoursetype = (body) => {
+  return new Promise(function (resolve, reject) {
+    console.log(body);
+    const { coursetype_id, course_type_name, ct_status } = body;
+    pool.query(
+      "UPDATE coursetype SET course_type_name=$2,ct_status=$3 WHERE coursetype_id=$1 RETURNING coursetype_id",
+      [coursetype_id, course_type_name, ct_status],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(
+            `A course type has been updated: ${JSON.stringify(results.rows[0])}`
+          );
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+};
+export const inactiveCoursetype = (coursetype_id) => {
+  //console.log("id--", coursetype_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE coursetype SET ct_status='D' WHERE coursetype_id=$1",
+      [coursetype_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A course type has been inactived: ${coursetype_id}`);
+      }
+    );
+  });
+};
+export const insertCollegetype = (body) => {
+  return new Promise(function (resolve, reject) {
+    console.log(body);
+    const { college_type, college_type_status } = body;
+    pool.query(
+      "INSERT INTO collegetype(college_type,college_type_status) VALUES ($1, $2) RETURNING *",
+      [college_type, college_type_status],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(
+            `A college type has been added: ${JSON.stringify(results.rows[0])}`
+          );
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
 };
 export const editCoursebranch = (courb_id) => {
   return new Promise(function (resolve, reject) {
@@ -2018,6 +2162,22 @@ export const inactiveCoursebranch = (courb_id) => {
     );
   });
 };
+export const inactiveCollegetype = (col_type) => {
+  //console.log("id--", col_type);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE collegetype SET college_type_status='D' WHERE col_type=$1",
+      [col_type],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A college type has been inactived: ${col_type}`);
+      }
+    );
+  });
+};
+
 //create a new users record in the databsse
 export const addNewusers = (body) => {
   return new Promise(function (resolve, reject) {

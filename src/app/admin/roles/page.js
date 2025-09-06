@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { hasNotEmptyValue } from "@/utils";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -16,22 +17,28 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocRadioInput from "@/components/ui/atoms/tocRadio";
+import TocCheckbox from "@/components/ui/atoms/tocCheckbox";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import TocButton from "@/components/ui/atoms/tocButtom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
 function Roles() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   //const [editdata, setEditdata] = useState([]);
   const [returndspmsg, setReturndspmsg] = useState();
   const [modulearr, setModulearr] = useState([]);
-  const [rolesarr, setRolesarr] = useState([]);
-  const [edmodulsarr, setEdmodulsarr] = useState([]);
-  const [assignmodul, setAssignmodul] = useState([]);
+  const [errForm, setErrForm] = useState({});
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
+  const [selectModule, setSelectModule] = useState([]);
+  const [rolestatus, setRolestatus] = useState("A");
   const [editdata, setEditdata] = useState({
     rol_id: "",
     role_name: "",
@@ -57,11 +64,21 @@ function Roles() {
       });
   }, []);
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
+  };
+
+  const handleCheckboxModule = (event) => {
+    const checkedId = event.target.value;
+
+    if (event.target.checked) {
+      setSelectModule([...selectModule, checkedId]);
+    } else {
+      setSelectModule(selectModule.filter((id) => id !== checkedId));
+    }
   };
   //const data = JSON.parse(datas);
   //const keys = Object.keys(data.length ? data[0] : {});
@@ -111,43 +128,81 @@ function Roles() {
   // add new roles
   const [errorMsg, setErrorMsg] = useState([]);
   const addroles = (e) => {
+    const newErrors = {};
     e.preventDefault();
     const { role_name } = e.target.elements;
     const { rol_id } = e.target.elements;
-    if (role_name.value === "") {
-      toast.error("Role cann't be blank!", {
-        position: "top-right",
-        autoClose: 3000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-        //transition: Bounce,
-      });
-      return;
+    if (!role_name.value.trim()) {
+      newErrors.role_name = "Role name cann't be blank!";
     }
-    console.log("role id ", rol_id.value);
-    // console.log("errorsForm", errorsForm);
-    if (rol_id.value > 0) {
-      // console.log("--------------------->", assignmodul.join(","));
+    setErrForm(newErrors);
+    if (!hasNotEmptyValue(newErrors)) {
       const payload = {
         rol_id: rol_id.value,
         role_name: role_name.value,
-        modules_access_ids: assignmodul.join(","),
-        role_status: "A",
+        //modules_access_ids: assignmodul.join(","),
+        modules_access_ids: selectModule.join(","),
+        role_status: rolestatus,
       };
-      axios({
-        method: "post",
-        url: "/api/updateroles",
-        data: payload,
-      })
-        .then(function (response) {
-          console.log(response);
-          console.log("respose text", response.statusText);
-          if (response.statusText == "OK") {
-            toast.success("Role details updated!", {
+      if (rol_id.value > 0) {
+        axios({
+          method: "post",
+          url: "/api/admin/updateroles",
+          data: payload,
+        })
+          .then(function (response) {
+            console.log(response);
+            console.log("respose text", response.statusText);
+            if (response.statusText == "OK") {
+              toast.success("Role details updated!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+              //get results
+              axios
+                .get("/api/getroleslist")
+                .then((response) => {
+                  setDatas(response.data);
+                })
+                .catch((error) => {
+                  //console.error(error);
+                  toast.error(error, {
+                    position: "top-right",
+                    autoClose: 3000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "light",
+                    //transition: Bounce,
+                  });
+                });
+              //end get results
+            } else {
+              toast.error("Role details not updated!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            }
+          })
+          .catch(function (error) {
+            //console.log(error);
+            toast.error("Error in update record!", {
               position: "top-right",
               autoClose: 3000,
               hideProgressBar: false,
@@ -158,6 +213,44 @@ function Roles() {
               theme: "light",
               //transition: Bounce,
             });
+          });
+      } else {
+        axios({
+          method: "post",
+          url: "/api/admin/addroles",
+          data: payload,
+        })
+          .then(function (response) {
+            if (response.statusText == "OK") {
+              toast.success("Role details added!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            } else {
+              toast.error("Role details not added!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            }
+            console.log(response);
+            role_name.value = "";
+            setReturndspmsg(
+              '<div className"sussmsg">Record successfully added</div>'
+            );
             //get results
             axios
               .get("/api/getroleslist")
@@ -168,71 +261,12 @@ function Roles() {
                 console.error(error);
               });
             //end get results
-          } else {
-            toast.error("Role details not updated!", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              //transition: Bounce,
-            });
-          }
-        })
-        .catch(function (error) {
-          //console.log(error);
-          setReturndspmsg('<div className"errmsg"></div>');
-          toast.error("Error in update record!", {
-            position: "top-right",
-            autoClose: 3000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-            theme: "light",
-            //transition: Bounce,
+          })
+          .catch(function (error) {
+            console.log(error);
+            // setReturndspmsg('<div className"errmsg">Error in add record</div>');
           });
-        });
-    }
-    if (role_name.value != "" && rol_id.value == "") {
-      // console.log("--------------------->", assignmodul.join(","));
-      const payload = {
-        role_name: role_name.value,
-        modules_access_ids: assignmodul.join(","),
-        role_status: "A",
-      };
-      axios({
-        method: "post",
-        url: "/api/addroles",
-        data: payload,
-      })
-        .then(function (response) {
-          console.log(response);
-          role_name.value = "";
-          setReturndspmsg(
-            '<div className"sussmsg">Record successfully added</div>'
-          );
-          //get results
-          axios
-            .get("/api/getroleslist")
-            .then((response) => {
-              setDatas(response.data);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-          //end get results
-        })
-        .catch(function (error) {
-          console.log(error);
-          setReturndspmsg('<div className"errmsg">Error in add record</div>');
-        });
-    } else {
-      setErrorMsg(errorsForm);
+      }
     }
   };
   // end add new roles
@@ -242,13 +276,12 @@ function Roles() {
   const editDetails = (editval) => {
     console.log("Edit role id:", editval);
     axios
-      .get("/api/editroles/" + editval)
+      .get("/api/admin/editroles/?rol_id=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
+        setRolestatus(response.data[0].role_status);
         let editmodulesArr = response.data[0].modules_access_ids;
-        setAssignmodul(
-          editmodulesArr.length > 0 ? editmodulesArr.split(",") : []
-        );
+        setSelectModule(editmodulesArr);
       })
       .catch((error) => {
         console.error(error);
@@ -256,14 +289,14 @@ function Roles() {
   };
   //end edit role details
 
-  const assingeModulvalue = (event) => {
-    let index = assignmodul.indexOf(event.target.value);
-    if (event.target.checked) {
-      setAssignmodul((assignmodul) => [...assignmodul, event.target.value]);
-    } else {
-      assignmodul.splice(index, 1);
-    }
-  };
+  // const assingeModulvalue = (event) => {
+  //   let index = assignmodul.indexOf(event.target.value);
+  //   if (event.target.checked) {
+  //     setAssignmodul((assignmodul) => [...assignmodul, event.target.value]);
+  //   } else {
+  //     assignmodul.splice(index, 1);
+  //   }
+  // };
 
   const table = useMaterialReactTable({
     columns,
@@ -301,7 +334,7 @@ function Roles() {
     ),
   });
 
-  console.log("modul -->", assignmodul);
+  console.log("modul -->", selectModule);
 
   return (
     <>
@@ -331,7 +364,7 @@ function Roles() {
                 <line x1="12" y1="9" x2="12" y2="15" />
               </svg>
             </span>
-            <span
+            {/* <span
               //onClick={() =>document.getElementById("filter_modal").showModal()}
               onClick={() => setIsFilter(true)}
             >
@@ -347,7 +380,7 @@ function Roles() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
@@ -360,39 +393,54 @@ function Roles() {
       {isEditOpen && (
         <DialogContent>
           <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            <IconButton className="bsolute right-2 top-2 toc-popupclosebtnpossition">
+              <HighlightOffIcon
+                className="bsolute right-2 top-2"
                 onClick={() => setIsEditOpen(false)}
-              >
-                ✕
-              </button>
-            </form>
+              />
+            </IconButton>
             <h3 className="font-bold text-lg">Role Details</h3>
             <form method="roleForm" id="roleForm" onSubmit={addroles}>
-              {returndspmsg && returndspmsg}
-              <div className="mt-2">
-                <input type="hidden" value={editdata.rol_id} name="rol_id" />
-                <input
-                  type="text"
-                  placeholder="Role Name"
-                  name="role_name"
-                  onChange={handleChangeFormdata}
-                  value={editdata.role_name && editdata.role_name}
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-              </div>
-              <div className="errmsg">{errorMsg[0]}</div>
-
-              <div htmlFor="module" className="mt-2">
-                <label
-                  htmlFor="model"
-                  className="block text-sm font-semibold leading-6 text-gray-900"
-                >
-                  Module
-                </label>
-                {modulearr.map((item, i) => (
+              <div className="popupform">
+                {returndspmsg && returndspmsg}
+                <div className="mt-2">
+                  <input type="hidden" value={editdata.rol_id} name="rol_id" />
+                  <TocInputWithLabel
+                    id="role_name"
+                    label="Role Name"
+                    placeholder="Please enter role name."
+                    value={editdata.role_name ? editdata.role_name : ""}
+                    required={true}
+                    errmsg={errForm.role_name}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div htmlFor="module" className="mt-2">
+                  <label
+                    htmlFor="model"
+                    className="block text-sm font-semibold leading-6 text-gray-900"
+                  >
+                    Module <span className="text-red-700">*</span>
+                  </label>
+                  <div className="flex flex-wrap gap-1">
+                    {modulearr.map((item, id) => (
+                      <div
+                        key={`collegeType-${id}`}
+                        className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700"
+                      >
+                        <TocCheckbox
+                          id={`modules-${item.mod_id}`}
+                          value={item.mod_id}
+                          label={item.module_title}
+                          checked={selectModule.includes(
+                            JSON.stringify(item.mod_id)
+                          )}
+                          onChange={handleCheckboxModule}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {/* {modulearr.map((item, i) => (
                   <div key={i} className="mt-2 text-sm">
                     <input
                       type="checkbox"
@@ -414,15 +462,38 @@ function Roles() {
                       {item.module_title}
                     </span>
                   </div>
-                ))}
+                ))} */}
+                  <div className="mt-2">
+                    <label>Status</label>
+                    <div className="flex gap-4">
+                      <TocRadioInput
+                        id="role_statusa"
+                        name="role_status"
+                        value="A"
+                        label="Active"
+                        checked={rolestatus === "A"}
+                        onChange={(e) => setRolestatus(e.target.value)}
+                      />
+
+                      <TocRadioInput
+                        id="role_statusd"
+                        name="role_status"
+                        value="D"
+                        label="Inactive"
+                        checked={rolestatus === "D"}
+                        onChange={(e) => setRolestatus(e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="btn-section">
                 <button type="button" onClick={() => setIsEditOpen(false)}>
                   Cancle
                 </button>
-                <button className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                  Submit
-                </button>
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
+                  {editdata.rol_id > 0 ? "Update" : "Submit"}
+                </TocButton>
               </div>
             </form>
           </div>

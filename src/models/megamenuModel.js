@@ -168,3 +168,18 @@ export const editmenu = (menu_id) => {
     );
   });
 };
+export const inactiveMegamenu = (menu_id) => {
+  //console.log("id--", menu_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE megamenu SET menu_status='D' WHERE menu_id=$1",
+      [menu_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A mega menu has been inactived: ${menu_id}`);
+      }
+    );
+  });
+};

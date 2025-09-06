@@ -36,6 +36,7 @@ function Categories() {
   const [isFilter, setIsFilter] = useState(false);
   const [errForm, setErrForm] = useState({});
   const [rowSelection, setRowSelection] = useState({});
+  const [categorystatus, setCategorystatus] = useState("A");
   const [editdata, setEditdata] = useState({
     cat_id: "",
     category_description: "",
@@ -43,7 +44,7 @@ function Categories() {
     category_meta_description: "",
     category_meta_keyword: "",
     category_meta_title: "",
-    category_status: "A",
+    category_status: categorystatus,
     category_url: "",
   });
   useEffect(() => {
@@ -121,6 +122,7 @@ function Categories() {
       .get("/api/admin/editcategory/?cat_id=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
+        setCategorystatus(response.data[0].category_status);
       })
       .catch((error) => {
         console.error(error);
@@ -217,7 +219,6 @@ function Categories() {
       category_meta_keyword,
       category_meta_description,
       category_featured,
-      category_status,
     } = e.target.elements;
     if (!category_name.value.trim()) {
       newErrors.category_name = "Category Name cann't be blank!";
@@ -248,7 +249,7 @@ function Categories() {
         category_meta_keyword: category_meta_keyword.value,
         category_meta_description: category_meta_description.value,
         category_featured: category_featured.value,
-        category_status: category_status.value,
+        category_status: categorystatus,
       };
       if (cat_id.value > 0) {
         axios({
@@ -258,6 +259,7 @@ function Categories() {
         })
           .then(function (response) {
             console.log(response);
+            setCategorystatus("A");
             category_name.value = "";
             category_url.value = "";
             category_description.value = "";
@@ -265,7 +267,7 @@ function Categories() {
             category_meta_keyword.value = "";
             category_meta_description.value = "";
             category_featured.value = "";
-            category_status.value = "A";
+
             if (response.statusText == "OK") {
               setIsEditOpen(false);
               toast.success("Category details updated!", {
@@ -304,6 +306,7 @@ function Categories() {
             if (response.statusText == "OK") {
               setIsEditOpen(false);
               console.log(response);
+              setCategorystatus("A");
               category_name.value = "";
               category_url.value = "";
               category_description.value = "";
@@ -311,7 +314,7 @@ function Categories() {
               category_meta_keyword.value = "";
               category_meta_description.value = "";
               category_featured.value = "";
-              category_status.value = "A";
+
               toast.success("Category details added!", {
                 position: "top-right",
                 autoClose: 3000,
@@ -524,12 +527,9 @@ function Categories() {
                     name="category_status"
                     value="A"
                     label="Active"
-                    checked={
-                      (editdata.category_status
-                        ? editdata.category_status
-                        : "A") === "A"
-                    }
-                    onChange={handleChangeFormdata}
+                    checked={categorystatus === "A"}
+                    //onChange={handleChangeFormdata}
+                    onChange={(e) => setCategorystatus(e.target.value)}
                   />
 
                   <TocRadioInput
@@ -537,8 +537,8 @@ function Categories() {
                     name="category_status"
                     value="D"
                     label="Inactive"
-                    checked={editdata.category_status === "D"}
-                    onChange={handleChangeFormdata}
+                    checked={categorystatus === "D"}
+                    onChange={(e) => setCategorystatus(e.target.value)}
                   />
                 </div>
               </div>

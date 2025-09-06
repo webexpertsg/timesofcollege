@@ -1,6 +1,7 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { hasNotEmptyValue } from "@/utils";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -16,18 +17,28 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocRadioInput from "@/components/ui/atoms/tocRadio";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import TocButton from "@/components/ui/atoms/tocButtom";
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
-function Courses() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+function Collegetype() {
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
-  const [returndspmsg, setReturndspmsg] = useState();
-  const [errorMsg, setErrorMsg] = useState([]);
-  const [catarr, setCatarr] = useState([]);
+  const [errForm, setErrForm] = useState({});
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [isFilter, setIsFilter] = useState(false);
+  const [collegetstatus, setCollegetstatus] = useState("A");
+  const [editdata, setEditdata] = useState({
+    col_type: "",
+    college_type: "",
+    college_type_status: "A",
+  });
   useEffect(() => {
     axios
       .get("/api/admin/getcollegetype")
@@ -37,26 +48,31 @@ function Courses() {
       .catch((error) => {
         console.error(error);
       });
-    axios
-      .get("/api/admin/getcategoriesarr")
-      .then((response) => {
-        setCatarr(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
   }, []);
 
   //const data = JSON.parse(datas);
   //const keys = Object.keys(data.length ? data[0] : {});
   const data = datas;
-
   const columns = [
     {
       accessorKey: "college_type", //simple recommended way to define a column
       header: "Type Name",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
       //Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+    },
+    {
+      accessorKey: "status", //simple recommended way to define a column
+      header: "Status",
+      muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
@@ -78,37 +94,72 @@ function Courses() {
               onClick={() => {
                 // table.setEditingRow(row);
                 editDetails(row.original.col_type);
-
                 //console.log("Edit======------>", row.original.rol_id);
               }}
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.college_type_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
-  // add new course
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.col_type);
+      //console.log("Delete======------>", row.original.cat_id);
+    }
+  };
+  const inactiveRecord = (col_type) => {
+    if (col_type > 0) {
+      axios
+        .get("/api/admin/inactivecollegetype/?col_type=" + col_type)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getcollegetype")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
   //edit college type details
-
   const editDetails = (editval) => {
     console.log("Edit college type id:", editval);
     axios
-      .get("http://localhost:3007/editroles/" + editval)
+      .get("/api/admin/editcollegetype/?col_type=" + editval)
       .then((response) => {
         setEditdata(response.data[0]);
-        let editmodulesArr = response.data[0].modules_access_ids;
-        setAssignmodul(
-          editmodulesArr.length > 0 ? editmodulesArr.split(",") : []
-        );
+        setCollegetstatus(response.data[0].college_type_status);
       })
       .catch((error) => {
         console.error(error);
@@ -116,104 +167,119 @@ function Courses() {
   };
   //end edit college type
 
-  const addcouse = (e) => {
+  const submitAddcollegetype = (e) => {
+    const newErrors = {};
     e.preventDefault();
-    const {
-      course_name,
-      course_url,
-      cmeta_title,
-      cmeta_description,
-      cmeta_keyword,
-    } = e.target.elements;
+    const { col_type, college_type, college_type_status } = e.target.elements;
 
-    let errorsForm = [];
-
-    if (course_name.value === "") {
-      errorsForm.push(<div key="branameErr">Course Name cann't be blank!</div>);
-    } else {
-      errorsForm.push();
+    if (!college_type.value.trim()) {
+      newErrors.college_type = "College type cann't be blank!";
     }
-    if (course_url.value === "") {
-      errorsForm.push(<div key="branurlErr">Course URL cann't be blank!</div>);
-    } else {
-      errorsForm.push();
-    }
-    if (cmeta_title.value === "") {
-      errorsForm.push(<div key="metatitErr">Meta Title cann't be blank!</div>);
-    } else {
-      errorsForm.push();
-    }
-    if (cmeta_keyword.value === "") {
-      errorsForm.push(
-        <div key="metakeyErr">Meta Keyword cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
-    }
-    if (cmeta_description.value === "") {
-      errorsForm.push(
-        <div key="metadescErr">Meta Description cann't be blank!</div>
-      );
-    } else {
-      errorsForm.push();
-    }
-    console.log("errorsForm", errorsForm);
-    if (errorsForm.length === 0) {
+    setErrForm(newErrors);
+    if (!hasNotEmptyValue(newErrors)) {
       const payload = {
-        course_name: course_name.value,
-        course_url: course_url.value,
-        meta_title: cmeta_title.value,
-        cmeta_description: cmeta_description.value,
-        cmeta_keyword: cmeta_keyword.value,
-        cstatus: "A",
+        col_type: col_type.value,
+        college_type: college_type.value,
+        college_type_status: college_type_status.value,
       };
-      axios({
-        method: "post",
-        url: "http://localhost:3007/addcourse",
-        data: payload,
-      })
-        .then(function (response) {
-          console.log(response);
-          course_name.value = "";
-          course_url.value = "";
-          cmeta_title.value = "";
-          cmeta_description.value = "";
-          cmeta_keyword.value = "";
-          setReturndspmsg(
-            "<div className={sussmsg}>Record successfully added</div>"
-          );
-          //get results
-          axios
-            .get("http://localhost:3007/getcourses")
-            .then((response) => {
-              setDatas(response.data);
-            })
-            .catch((error) => {
-              console.error(error);
-            });
-          //end get results
+      if (col_type.value > 0) {
+        axios({
+          method: "post",
+          url: "/api/admin/updatecollegetype",
+          data: payload,
         })
-        .catch(function (error) {
-          console.log(error);
-          setReturndspmsg(
-            "<div className={errmsg}>Error in add course record</div>"
-          );
-        });
-    } else {
-      setErrorMsg(errorsForm);
+          .then(function (response) {
+            //console.log(response);
+            setCollegetstatus("A");
+            college_type.value = "";
+            if (response.statusText == "OK") {
+              setIsEditOpen(false);
+              toast.success("College type updated!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            }
+            //get results
+            axios
+              .get("/api/admin/getcollegetype")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+            //end get results
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      } else {
+        axios({
+          method: "post",
+          url: "/api/admin/addcollegetype",
+          data: payload,
+        })
+          .then(function (response) {
+            console.log(response);
+            setCollegetstatus("A");
+            college_type.value = "";
+            if (response.statusText == "OK") {
+              setIsEditOpen(false);
+              toast.success("Record successfully added!", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                //transition: Bounce,
+              });
+            }
+            //get results
+            axios
+              .get("/api/admin/getcollegetype")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+            //end get results
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
     }
   };
   // end add new course
+  const handleChangeFormdata = (e) => {
+    const { id, value } = e.target;
+    setEditdata((prevState) => ({
+      ...prevState,
+      [id]: value,
+    }));
+  };
+  const openpopup = () => {
+    setIsEditOpen(true);
+    setEditdata("");
+  };
   return (
     <>
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">College Type Listing</h1>
           <div className="actions">
-            <span
-              // onClick={() => document.getElementById("users_modal").showModal()}
-              onClick={() => setIsEditOpen(true)}
-            >
+            <span onClick={() => openpopup()}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 width="24"
@@ -225,14 +291,13 @@ function Courses() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                {" "}
                 <path stroke="none" d="M0 0h24v24H0z" />{" "}
                 <circle cx="12" cy="12" r="9" />{" "}
                 <line x1="9" y1="12" x2="15" y2="12" />{" "}
                 <line x1="12" y1="9" x2="12" y2="15" />
               </svg>
             </span>
-            <span
+            {/* <span
               //onClick={() =>document.getElementById("filter_modal").showModal()}
               onClick={() => setIsFilter(true)}
             >
@@ -248,7 +313,7 @@ function Courses() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
@@ -262,93 +327,70 @@ function Courses() {
       {isEditOpen && (
         <DialogContent>
           <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+            <IconButton className="bsolute right-2 top-2 toc-popupclosebtnpossition">
+              <HighlightOffIcon
+                className="bsolute right-2 top-2"
                 onClick={() => setIsEditOpen(false)}
-              >
-                ✕
-              </button>
-            </form>
-            <h3 className="font-bold text-lg">Add Course</h3>
+              />
+            </IconButton>
+            <h3 className="font-bold text-lg">Add College Type</h3>
 
             <form
               action=""
               method="post"
-              id="coursebranchForm"
-              onSubmit={addcouse}
+              id="collegetypeForm"
+              onSubmit={submitAddcollegetype}
             >
-              {returndspmsg && returndspmsg}
-              <div className="mt-2">
-                <select
-                  name="course_id"
-                  id="course_id"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-                >
-                  <option value="">Select Category</option>
-                  {catarr.map((cour) => (
-                    <option value={cour.cat_id}>{cour.category_name}</option>
-                  ))}
-                  ;
-                </select>
-                <div className="errmsg">{errorMsg[0]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="course_name"
-                  placeholder="Course Name*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[0]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="course_url"
-                  placeholder="Branch URL*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[1]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="cmeta_title"
-                  placeholder="Meta Title*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[2]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="cmeta_description"
-                  placeholder="Meta Description*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[3]}</div>
-              </div>
-              <div className="mt-2">
-                <input
-                  type="text"
-                  name="cmeta_keyword"
-                  placeholder="Meta Keyword*"
-                  className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                />
-                <div className="errmsg">{errorMsg[4]}</div>
-              </div>
-              <div className="btn-section">
-                <button type="button" onClick={() => setIsEditOpen(false)}>
-                  Cancle
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Submit
-                </button>
+              <div className="popupform">
+                <div className="mt-2">
+                  <input
+                    type="hidden"
+                    value={editdata.col_type}
+                    name="col_type"
+                  />
+                  <TocInputWithLabel
+                    id="college_type"
+                    label="College Type"
+                    placeholder="Please enter college type."
+                    value={editdata.college_type ? editdata.college_type : ""}
+                    required={true}
+                    errmsg={errForm.college_type}
+                    onChange={handleChangeFormdata}
+                  />
+                </div>
+                <div className="mt-2">
+                  <label>Status</label>
+                  <div className="flex gap-4">
+                    <TocRadioInput
+                      id="college_type_statusa"
+                      name="college_type_status"
+                      value="A"
+                      label="Active"
+                      checked={collegetstatus === "A"}
+                      //onChange={handleChangeFormdata}
+                      onChange={(e) => setCollegetstatus(e.target.value)}
+                    />
+
+                    <TocRadioInput
+                      id="college_type_statusd"
+                      name="college_type_status"
+                      value="D"
+                      label="Inactive"
+                      checked={collegetstatus === "D"}
+                      // onChange={handleChangeFormdata}
+                      onChange={(e) => setCollegetstatus(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className="btn-section">
+                  <button type="button" onClick={() => setIsEditOpen(false)}>
+                    Cancle
+                  </button>
+
+                  <TocButton type="submit" className="pl-10 pr-10 h-10">
+                    {editdata.col_type > 0 ? "Update" : "Submit"}
+                  </TocButton>
+                </div>
               </div>
             </form>
           </div>
@@ -358,17 +400,17 @@ function Courses() {
       {isFilter && (
         <DialogContent>
           <div className="modal-box">
-            <form method="dialog">
-              {/* if there is a button in form, it will close the modal */}
-              <button
-                className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                onClick={() => setIsFilter(false)}
-              >
-                ✕
-              </button>
-            </form>
             <h3 className="font-bold text-lg">Filter</h3>
             <form>
+              <TocInputWithLabel
+                id="college_type"
+                label="Branch Name"
+                placeholder="Please enter college type."
+                value={editdata.college_type ? editdata.college_type : ""}
+                required={true}
+                errmsg={errForm.college_type}
+                onChange={handleChangeFormdata}
+              />
               <input
                 type="text"
                 placeholder="Search by college name"
@@ -378,15 +420,16 @@ function Courses() {
                 <button type="button" onClick={() => setIsFilter(false)}>
                   Cancle
                 </button>
-                <button className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                  Submit
-                </button>
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
+                  {editdata.col_type > 0 ? "Update" : "Submit"}
+                </TocButton>
               </div>
             </form>
           </div>
         </DialogContent>
       )}
+      <ToastContainer />
     </>
   );
 }
-export default Courses;
+export default Collegetype;

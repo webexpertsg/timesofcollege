@@ -16,13 +16,20 @@ import {
   getCoursebranchs,
   inactiveCoursebranch,
   getCoursetype,
+  editCoursetype,
+  updateCoursetype,
+  addCoursetype,
+  editRoles,
   getCollegetype,
+  insertCollegetype,
+  updateCollegetype,
+  inactiveCollegetype,
+  inactiveCoursetype,
   getRolelist,
   getModulearr,
   getRolesrr,
   getAdminusers,
   collegeenquirylisting,
-  getWebsiteconfig,
   getQuestionlisting,
   getExamlist,
   getTrendinglist,
@@ -52,6 +59,7 @@ import {
   updateAdmission,
   deleteFacility,
   editfacility,
+  editCollege,
   updatefacility,
   editapproved,
   updateapprovedby,
@@ -73,6 +81,7 @@ import {
   addNewmenudetails,
   updateMenudetails,
   editmenu,
+  inactiveMegamenu,
 } from "@/models/megamenuModel";
 import {
   getWebsiteconfigdetails,
@@ -261,6 +270,16 @@ export async function GET(request, { params }) {
     const returnresponse = await editcourse(cour_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "editcoursetype") {
+    const coursetype_id = searchParams.get("coursetype_id"); //
+    const returnresponse = await editCoursetype(coursetype_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editroles") {
+    const rol_id = searchParams.get("rol_id"); //
+    const returnresponse = await editRoles(rol_id);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "inactivefacility") {
     const facility_id = searchParams.get("facility_id"); //
     const returnresponse = await inactiveFacility(facility_id);
@@ -274,6 +293,21 @@ export async function GET(request, { params }) {
   if (slug === "inactivecoursebrach") {
     const courb_id = searchParams.get("courb_id"); //
     const returnresponse = await inactiveCoursebranch(courb_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivemegamenu") {
+    const menu_id = searchParams.get("menu_id"); //
+    const returnresponse = await inactiveMegamenu(menu_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivecollegetype") {
+    const col_type = searchParams.get("col_type"); //
+    const returnresponse = await inactiveCollegetype(col_type);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivecoursetype") {
+    const coursetype_id = searchParams.get("coursetype_id"); //
+    const returnresponse = await inactiveCoursetype(coursetype_id);
     return NextResponse.json(returnresponse);
   }
   if (slug === "editapprovedby") {
@@ -311,6 +345,12 @@ export async function GET(request, { params }) {
     const searchParams = request.nextUrl.searchParams;
     const cid = searchParams.get("cid");
     const returnresponse = await editcollege(cid);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editcollegetype") {
+    const searchParams = request.nextUrl.searchParams;
+    const col_type = searchParams.get("col_type");
+    const returnresponse = await editCollege(col_type);
     return NextResponse.json(returnresponse);
   }
   if (slug === "getcountrylists") {
@@ -486,6 +526,31 @@ export async function POST(request, { params }) {
     }
   }
 
+  if (slug === "addcoursetype") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addCoursetype(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add couse type" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatecoursetype") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCoursetype(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update course type" },
+        { status: 500 }
+      );
+    }
+  }
+
   if (slug === "insertbasicinformation") {
     const body = await request.json();
     try {
@@ -494,6 +559,31 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to Insert Colleges" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addcollegetype") {
+    const body = await request.json();
+    try {
+      const returnresponse = await insertCollegetype(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to Insert Colleges" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (slug === "updatecollegetype") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCollegetype(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Contacts" },
         { status: 500 }
       );
     }

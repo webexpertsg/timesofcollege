@@ -166,7 +166,47 @@ function Megamenu() {
     ),
   });
   // add new menu
-
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.menu_id);
+      //console.log("Delete======------>", row.original.menu_id);
+    }
+  };
+  const inactiveRecord = (menu_id) => {
+    if (menu_id > 0) {
+      axios
+        .get("/api/admin/inactivemegamenu/?menu_id=" + menu_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getmegamenulisting")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }
+  };
   const submitAddmenu = (e) => {
     const newErrors = {};
     e.preventDefault();
