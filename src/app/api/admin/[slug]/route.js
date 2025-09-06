@@ -26,6 +26,9 @@ import {
   inactiveCollegetype,
   inactiveCoursetype,
   getRolelist,
+  updateRoles,
+  addRoles,
+  inactiveRole,
   getModulearr,
   getRolesrr,
   getAdminusers,
@@ -280,6 +283,11 @@ export async function GET(request, { params }) {
     const returnresponse = await editRoles(rol_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "inactiverole") {
+    const rol_id = searchParams.get("rol_id"); //
+    const returnresponse = await inactiveRole(rol_id);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "inactivefacility") {
     const facility_id = searchParams.get("facility_id"); //
     const returnresponse = await inactiveFacility(facility_id);
@@ -310,6 +318,7 @@ export async function GET(request, { params }) {
     const returnresponse = await inactiveCoursetype(coursetype_id);
     return NextResponse.json(returnresponse);
   }
+
   if (slug === "editapprovedby") {
     const appbyid = searchParams.get("appbyid"); //
     const returnresponse = await editapproved(appbyid);
@@ -542,6 +551,30 @@ export async function POST(request, { params }) {
     const body = await request.json();
     try {
       const returnresponse = await updateCoursetype(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update course type" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addroles") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addRoles(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add couse type" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updateroles") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateRoles(body);
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(

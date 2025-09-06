@@ -372,6 +372,21 @@ export const inactiveCourse = (cour_id) => {
     );
   });
 };
+export const inactiveRole = (rol_id) => {
+  console.log("id--", rol_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE roles SET role_status='D' WHERE rol_id=$1",
+      [rol_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A role has been inactived: ${rol_id}`);
+      }
+    );
+  });
+};
 
 export const editnewsarticle = (na_id) => {
   //const rol_id = rol_id;
@@ -1811,7 +1826,7 @@ export const getRolelist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "select r.rol_id, r.role_name,case when r.role_status = 'A' then 'Active' else 'Inactive' end as status, string_agg(module_title,', ') module_name from roles r left join modules md on md.mod_id = any(string_to_array(r.modules_access_ids,',')::int[]) group by rol_id,role_name  ORDER BY rol_id DESC",
+        "select r.rol_id, r.role_name,r.role_status,case when r.role_status = 'A' then 'Active' else 'Inactive' end as status, string_agg(module_title,', ') module_name from roles r left join modules md on md.mod_id = any(string_to_array(r.modules_access_ids,',')::int[]) group by rol_id,role_name  ORDER BY rol_id DESC",
         (error, results) => {
           if (error) {
             reject(error);

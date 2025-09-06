@@ -114,7 +114,15 @@ function Roles() {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
@@ -127,7 +135,7 @@ function Roles() {
 
   // add new roles
   const [errorMsg, setErrorMsg] = useState([]);
-  const addroles = (e) => {
+  const submitAddroles = (e) => {
     const newErrors = {};
     e.preventDefault();
     const { role_name } = e.target.elements;
@@ -141,7 +149,8 @@ function Roles() {
         rol_id: rol_id.value,
         role_name: role_name.value,
         //modules_access_ids: assignmodul.join(","),
-        modules_access_ids: selectModule.join(","),
+        //modules_access_ids: selectModule.join(","),
+        modules_access_ids: selectModule,
         role_status: rolestatus,
       };
       if (rol_id.value > 0) {
@@ -151,9 +160,8 @@ function Roles() {
           data: payload,
         })
           .then(function (response) {
-            console.log(response);
-            console.log("respose text", response.statusText);
             if (response.statusText == "OK") {
+              setIsEditOpen(false);
               toast.success("Role details updated!", {
                 position: "top-right",
                 autoClose: 3000,
@@ -167,7 +175,7 @@ function Roles() {
               });
               //get results
               axios
-                .get("/api/getroleslist")
+                .get("/api/admin/getroleslist")
                 .then((response) => {
                   setDatas(response.data);
                 })
@@ -222,6 +230,8 @@ function Roles() {
         })
           .then(function (response) {
             if (response.statusText == "OK") {
+              setIsEditOpen(false);
+              role_name.value = "";
               toast.success("Role details added!", {
                 position: "top-right",
                 autoClose: 3000,
@@ -246,14 +256,9 @@ function Roles() {
                 //transition: Bounce,
               });
             }
-            console.log(response);
-            role_name.value = "";
-            setReturndspmsg(
-              '<div className"sussmsg">Record successfully added</div>'
-            );
             //get results
             axios
-              .get("/api/getroleslist")
+              .get("/api/admin/getroleslist")
               .then((response) => {
                 setDatas(response.data);
               })
@@ -287,17 +292,6 @@ function Roles() {
         console.error(error);
       });
   };
-  //end edit role details
-
-  // const assingeModulvalue = (event) => {
-  //   let index = assignmodul.indexOf(event.target.value);
-  //   if (event.target.checked) {
-  //     setAssignmodul((assignmodul) => [...assignmodul, event.target.value]);
-  //   } else {
-  //     assignmodul.splice(index, 1);
-  //   }
-  // };
-
   const table = useMaterialReactTable({
     columns,
     data,
@@ -315,13 +309,21 @@ function Roles() {
               onClick={() => {
                 // table.setEditingRow(row);
                 editDetails(row.original.rol_id);
-
                 //console.log("Edit======------>", row.original.rol_id);
               }}
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
+        {row.original.role_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
+        {/* <Tooltip title="Delete">
           <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
             <DeleteIcon
               onClick={() => {
@@ -329,23 +331,75 @@ function Roles() {
               }}
             />
           </IconButton>
-        </Tooltip>
+        </Tooltip> */}
       </Box>
     ),
   });
-
-  console.log("modul -->", selectModule);
-
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.rol_id);
+      //console.log("Delete======------>", row.original.cat_id);
+    }
+  };
+  const inactiveRecord = (rol_id) => {
+    if (rol_id > 0) {
+      axios
+        .get("/api/admin/inactiverole/?rol_id=" + rol_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getroleslist")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          //console.error(error);
+          toast.success(error, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            // transition: Bounce,
+          });
+        });
+    }
+  };
+  const openpopup = () => {
+    setIsEditOpen(true);
+    setEditdata("");
+    setSelectModule([]);
+  };
+  console.log("selectModule-->", selectModule);
   return (
     <>
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">Roles</h1>
           <div className="actions">
-            <span
-              // onClick={() => document.getElementById("users_modal").showModal()}
-              onClick={() => setIsEditOpen(true)}
-            >
+            <span onClick={() => openpopup()}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 width="24"
@@ -357,7 +411,6 @@ function Roles() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
               >
-                {" "}
                 <path stroke="none" d="M0 0h24v24H0z" />{" "}
                 <circle cx="12" cy="12" r="9" />{" "}
                 <line x1="9" y1="12" x2="15" y2="12" />{" "}
@@ -399,10 +452,11 @@ function Roles() {
                 onClick={() => setIsEditOpen(false)}
               />
             </IconButton>
-            <h3 className="font-bold text-lg">Role Details</h3>
-            <form method="roleForm" id="roleForm" onSubmit={addroles}>
+            <h3 className="font-bold text-lg">
+              {editdata.rol_id > 0 ? "Update" : "Add"} Role Details
+            </h3>
+            <form method="roleForm" id="roleForm" onSubmit={submitAddroles}>
               <div className="popupform">
-                {returndspmsg && returndspmsg}
                 <div className="mt-2">
                   <input type="hidden" value={editdata.rol_id} name="rol_id" />
                   <TocInputWithLabel
@@ -440,29 +494,6 @@ function Roles() {
                       </div>
                     ))}
                   </div>
-                  {/* {modulearr.map((item, i) => (
-                  <div key={i} className="mt-2 text-sm">
-                    <input
-                      type="checkbox"
-                      name="modules[]"
-                      value={item.mod_id}
-                      //onChange={(e) => handleCheckBox(e, i)}
-                      onChange={handleChangeFormdata}
-                      onClick={assingeModulvalue}
-                      defaultChecked={
-                        editdata.modules_access_ids?.length
-                          ? editdata.modules_access_ids.includes(
-                              JSON.stringify(item.mod_id)
-                            )
-                          : false
-                      }
-                      className="py-2  text-sm font-semibold"
-                    />
-                    <span className="py-2 px-2 text-sm font-normal text-justify">
-                      {item.module_title}
-                    </span>
-                  </div>
-                ))} */}
                   <div className="mt-2">
                     <label>Status</label>
                     <div className="flex gap-4">
