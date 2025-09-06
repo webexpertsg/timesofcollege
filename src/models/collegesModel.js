@@ -1729,11 +1729,11 @@ export const getSubcoursearr = async () => {
   }
 };
 
-export const getRolesrr = async () => {
+export const getRolesarr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT rol_id,role_name FROM roles WHERE role_status='A' ORDER BY role_name ASC",
+        "SELECT rol_id value,role_name label FROM roles WHERE role_status='A' ORDER BY role_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1907,6 +1907,26 @@ export const editCoursetype = (coursetype_id) => {
         }
 
         //resolve(`Edit course type ID: ${coursetype_id}`);
+      }
+    );
+    // console.log(query);
+  });
+};
+export const editUser = (au_id) => {
+  //const au_id = au_id;
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "SELECT * FROM adminusers WHERE au_id = $1",
+      [au_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(results.rows);
+        }
+
+        //resolve(`Edit user ID: ${au_id}`);
       }
     );
     // console.log(query);
@@ -2194,7 +2214,7 @@ export const inactiveCollegetype = (col_type) => {
 };
 
 //create a new users record in the databsse
-export const addNewusers = (body) => {
+export const addnewUser = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       admin_id,
@@ -2227,6 +2247,61 @@ export const addNewusers = (body) => {
         } else {
           reject(new Error("No results found"));
         }
+      }
+    );
+  });
+};
+export const updateUser = (body) => {
+  return new Promise(function (resolve, reject) {
+    console.log(body);
+    const {
+      au_id,
+      admin_id,
+      admin_email,
+      admin_password,
+      admin_contact,
+      admin_status,
+      rol_id,
+    } = body;
+    pool.query(
+      "UPDATE adminusers SET admin_id=$2,admin_email=$3,admin_password=$4,admin_contact=$5,admin_status=$6,rol_id=$7 WHERE au_id=$1 RETURNING *",
+      [
+        au_id,
+        admin_id,
+        admin_email,
+        admin_password,
+        admin_contact,
+        admin_status,
+        rol_id,
+      ],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        if (results && results.rows) {
+          resolve(
+            `A user details has been updated: ${JSON.stringify(
+              results.rows[0]
+            )}`
+          );
+        } else {
+          reject(new Error("No results found"));
+        }
+      }
+    );
+  });
+};
+export const inactiveUser = (au_id) => {
+  console.log("id--", au_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE adminusers SET admin_status='D' WHERE au_id=$1",
+      [au_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A admin user has been inactived: ${au_id}`);
       }
     );
   });

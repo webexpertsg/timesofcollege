@@ -131,20 +131,6 @@ function Courses() {
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
-  const editDetails = (editval) => {
-    console.log("Edit course id:", editval);
-    axios
-      .get("/api/admin/editcourse/?cour_id=" + editval)
-      .then((response) => {
-        setEditdata(response.data[0]);
-        setCategoryid(response.data[0].cat_id);
-        setStatus(response.data[0].cstatus);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-  };
-
   const table = useMaterialReactTable({
     columns,
     data,
@@ -181,6 +167,19 @@ function Courses() {
     ),
   });
   // add new course
+  const editDetails = (editval) => {
+    console.log("Edit course id:", editval);
+    axios
+      .get("/api/admin/editcourse/?cour_id=" + editval)
+      .then((response) => {
+        setEditdata(response.data[0]);
+        setCategoryid(response.data[0].cat_id);
+        setStatus(response.data[0].cstatus);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
   const openInactiveConfirmModal = (row) => {
     if (window.confirm("Are you sure want to inactive this record?")) {
       inactiveRecord(row.original.cour_id);
@@ -222,7 +221,7 @@ function Courses() {
         });
     }
   };
-  const addcouse = (e) => {
+  const submitaddCouse = (e) => {
     const newErrors = {};
     e.preventDefault();
     const {
@@ -291,17 +290,15 @@ function Courses() {
                 theme: "light",
                 //transition: Bounce,
               });
+              axios
+                .get("/api/admin/getcourses")
+                .then((response) => {
+                  setDatas(response.data);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
             }
-            //get results
-            axios
-              .get("/api/admin/getcourses")
-              .then((response) => {
-                setDatas(response.data);
-              })
-              .catch((error) => {
-                console.error(error);
-              });
-            //end get results
           })
           .catch(function (error) {
             console.log(error);
@@ -427,7 +424,7 @@ function Courses() {
               action=""
               method="post"
               id="coursebranchForm"
-              onSubmit={addcouse}
+              onSubmit={submitaddCouse}
             >
               <div className="popupform">
                 <div className="mt-2">

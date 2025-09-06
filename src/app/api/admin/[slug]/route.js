@@ -30,8 +30,12 @@ import {
   addRoles,
   inactiveRole,
   getModulearr,
-  getRolesrr,
+  getRolesarr,
   getAdminusers,
+  editUser,
+  addnewUser,
+  updateUser,
+  inactiveUser,
   collegeenquirylisting,
   getQuestionlisting,
   getExamlist,
@@ -168,7 +172,7 @@ export async function GET(request, { params }) {
     return NextResponse.json(returnresponse);
   }
   if (slug === "getrolesarr") {
-    const returnresponse = await getRolesrr();
+    const returnresponse = await getRolesarr();
     return NextResponse.json(returnresponse);
   }
   if (slug === "getadminuserslist") {
@@ -318,6 +322,11 @@ export async function GET(request, { params }) {
     const returnresponse = await inactiveCoursetype(coursetype_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "inactiveuser") {
+    const au_id = searchParams.get("au_id"); //
+    const returnresponse = await inactiveUser(au_id);
+    return NextResponse.json(returnresponse);
+  }
 
   if (slug === "editapprovedby") {
     const appbyid = searchParams.get("appbyid"); //
@@ -360,6 +369,11 @@ export async function GET(request, { params }) {
     const searchParams = request.nextUrl.searchParams;
     const col_type = searchParams.get("col_type");
     const returnresponse = await editCollege(col_type);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "edituser") {
+    const au_id = searchParams.get("au_id"); //
+    const returnresponse = await editUser(au_id);
     return NextResponse.json(returnresponse);
   }
   if (slug === "getcountrylists") {
@@ -617,6 +631,30 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to update Contacts" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addusers") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addnewUser(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to Insert admin user" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updateuser") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateUser(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update admin user" },
         { status: 500 }
       );
     }
