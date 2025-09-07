@@ -39,7 +39,14 @@ import {
   collegeenquirylisting,
   getQuestionlisting,
   getExamlist,
+  edittrending,
   getTrendinglist,
+  addNewTrending,
+  updateTrending,
+  inactiveTrending,
+  addNewexam,
+  updateExam,
+  inactiveExam,
   getNotificationlisting,
   getCMSListing,
   editCms,
@@ -74,6 +81,7 @@ import {
   inactiveApprovedby,
   inactiveFacility,
   inactiveCourse,
+  editExam,
   editcollege,
   getCountryarr,
   getStatearr,
@@ -343,6 +351,16 @@ export async function GET(request, { params }) {
     const returnresponse = await inactiveCategory(cat_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "inactivetrending") {
+    const tid = searchParams.get("tid"); //
+    const returnresponse = await inactiveTrending(tid);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactiveexam") {
+    const exam_id = searchParams.get("exam_id"); //
+    const returnresponse = await inactiveExam(exam_id);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "editcategory") {
     const cat_id = searchParams.get("cat_id"); //
     const returnresponse = await editCategory(cat_id);
@@ -374,6 +392,16 @@ export async function GET(request, { params }) {
   if (slug === "edituser") {
     const au_id = searchParams.get("au_id"); //
     const returnresponse = await editUser(au_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "edittrending") {
+    const tid = searchParams.get("tid"); //
+    const returnresponse = await edittrending(tid);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editexam") {
+    const exam_id = searchParams.get("exam_id"); //
+    const returnresponse = await editExam(exam_id);
     return NextResponse.json(returnresponse);
   }
   if (slug === "getcountrylists") {
@@ -655,6 +683,55 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to update admin user" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addtrending") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addNewTrending(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to Insert trending" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatetrending") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateTrending(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update tending" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "addexam") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addNewexam(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to Insert exam" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (slug === "updateexam") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateExam(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update exam" },
         { status: 500 }
       );
     }

@@ -387,6 +387,21 @@ export const inactiveRole = (rol_id) => {
     );
   });
 };
+export const inactiveTrending = (tid) => {
+  console.log("id--", tid);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE trending SET trading_status='D' WHERE tid=$1",
+      [tid],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A trending has been inactived: ${tid}`);
+      }
+    );
+  });
+};
 
 export const editnewsarticle = (na_id) => {
   //const rol_id = rol_id;
@@ -1114,7 +1129,7 @@ export const getExamlist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT * from examnames ORDER BY exam_id DESC",
+        "SELECT *,case when exam_status = 'A' then 'Active' else 'Inactive' end as status from examnames ORDER BY exam_id DESC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1137,7 +1152,7 @@ export const getTrendinglist = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT * from trending ORDER BY tid DESC",
+        "SELECT *,  case when trading_status = 'A' then 'Active' else 'Inactive' end as status from trending ORDER BY tid DESC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1173,11 +1188,10 @@ export const edittrending = (tid) => {
         //resolve(`Edit roles ID: ${id}`);
       }
     );
-    console.log(query);
   });
 };
 
-export const updatetrending = (body) => {
+export const updateTrending = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const { tid, trading_name, trading_url, trading_status } = body;
@@ -1226,7 +1240,7 @@ export const addNewTrending = (body) => {
   });
 };
 
-export const editexam = (exam_id) => {
+export const editExam = (exam_id) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -1243,7 +1257,6 @@ export const editexam = (exam_id) => {
         //resolve(`Edit roles ID: ${id}`);
       }
     );
-    console.log(query);
   });
 };
 
@@ -1306,7 +1319,7 @@ export const addNewexam = (body) => {
   });
 };
 
-export const updateexam = (body) => {
+export const updateExam = (body) => {
   return new Promise(function (resolve, reject) {
     console.log(body);
     const {
@@ -1318,9 +1331,10 @@ export const updateexam = (body) => {
       emeta_title,
       emeta_description,
       emeta_keyword,
+      exam_status,
     } = body;
     pool.query(
-      "UPDATE examnames SET exam_name=$2,exam_url=$3,exam_brief=$4,exam_description=$5,emeta_title=$6,emeta_description=$7, emeta_keyword=$8 WHERE exam_id=$1 RETURNING exam_id",
+      "UPDATE examnames SET exam_name=$2,exam_url=$3,exam_brief=$4,exam_description=$5,emeta_title=$6,emeta_description=$7, emeta_keyword=$8,exam_status=$9 WHERE exam_id=$1 RETURNING exam_id",
       [
         exam_id,
         exam_name,
@@ -1330,6 +1344,7 @@ export const updateexam = (body) => {
         emeta_title,
         emeta_description,
         emeta_keyword,
+        exam_status,
       ],
       (error, results) => {
         if (error) {
@@ -1344,6 +1359,21 @@ export const updateexam = (body) => {
         } else {
           reject(new Error("No results found"));
         }
+      }
+    );
+  });
+};
+export const inactiveExam = (exam_id) => {
+  console.log("id--", exam_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE examnames SET exam_status='D' WHERE exam_id=$1",
+      [exam_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A approved by has been exam: ${exam_id}`);
       }
     );
   });
