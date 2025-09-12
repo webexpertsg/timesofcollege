@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -16,6 +16,8 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 function Notifications() {
@@ -58,11 +60,20 @@ function Notifications() {
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
       //Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
     },
+
     {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      //Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
@@ -89,24 +100,75 @@ function Notifications() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                console.log("Delete======------>", row.original.cmsid);
-
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.notification_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.notif_id);
+      //console.log("Delete======------>", row.original.cat_id);
+    }
+  };
+  const inactiveRecord = (notif_id) => {
+    if (notif_id > 0) {
+      axios
+        .get("/api/admin/inactivenotification/?notif_id=" + notif_id)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            // load approved by listing
+            axios
+              .get("/api/admin/getnotificationlisting")
+              .then((response) => {
+                setDatas(response.data);
+              })
+              .catch((error) => {
+                console.error(error);
+              });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          toast.error(error, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            //transition: Bounce,
+          });
+        });
+    }
+  };
   const editDetails = (editval) => {
     console.log("Edit notification id:", editval);
     if (editval > 0) {
-      window.location.href = "/admin/notifications/notificationadd/" + editval;
+      window.location.href =
+        "/admin/notifications/notificationadd/?nid=" + editval;
     }
   };
 
@@ -196,6 +258,7 @@ function Notifications() {
           </div>
         </DialogContent>
       )}
+      <ToastContainer />
     </>
   );
 }

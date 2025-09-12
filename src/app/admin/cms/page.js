@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 
 function Cms() {
@@ -60,6 +61,20 @@ function Cms() {
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
       //Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
     },
+    {
+      accessorKey: "status", //simple recommended way to define a column
+      header: "Status",
+      muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
+    },
   ];
   const [rowSelection, setRowSelection] = useState({});
 
@@ -85,19 +100,21 @@ function Cms() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" >
-            <DeleteIcon
-              onClick={() => openDeleteConfirmModal(row)}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.cms_status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
-  const openDeleteConfirmModal = (row) => {
-    if (window.confirm("Are you sure you want to delete this cms details?")) {
-      deleteCMS(row.original.cmsid);
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.cmsid);
       //console.log("Delete======------>", row.original.cmsid);
     }
   };
@@ -107,16 +124,16 @@ function Cms() {
       window.location.href = "/admin/cms/addcms/" + editval;
     }
   };
-  const deleteCMS = (cmsid) =>{
-    if(cmsid > 0){
+  const inactiveRecord = (cmsid) => {
+    if (cmsid > 0) {
       axios
-        .get("/api/admin/deletecms/?cmsid=" + cmsid)
+        .get("/api/admin/inactivecms/?cmsid=" + cmsid)
         .then((response) => {
           //setEditdata(response.data[0]);
           //console.log('response-->',response);
           if (response.statusText === "OK") {
             //window.location.href = "../../questionanswerlist";
-            toast.success("Deleted successfully!", {
+            toast.success("Inactive successfully!", {
               position: "top-right",
               autoClose: 3000,
               hideProgressBar: false,
@@ -145,9 +162,8 @@ function Cms() {
           console.error(error);
         });
       //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
-      }
-    
-  }
+    }
+  };
 
   return (
     <>
@@ -156,7 +172,11 @@ function Cms() {
           <h1 className="text-2xl font-semibold">CMS Listing</h1>
           <div className="actions">
             <span onClick={() => setIsEditOpen(true)}>
-              <Link href={"/admin/cms/addcms"} alt="Add New Cms" title="Add New Cms">
+              <Link
+                href={"/admin/cms/addcms"}
+                alt="Add New Cms"
+                title="Add New Cms"
+              >
                 <svg
                   className="h-6 w-6 text-stone-600"
                   width="24"

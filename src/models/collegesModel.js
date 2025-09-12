@@ -328,6 +328,21 @@ export const deleteCMS = (cmsid) => {
     );
   });
 };
+export const inactiveCms = (cmsid) => {
+  console.log("id--", cmsid);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE cms SET cms_status='D' WHERE cmsid=$1",
+      [cmsid],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A cms has been inactived: ${cmsid}`);
+      }
+    );
+  });
+};
 export const deleteFacility = (facility_id) => {
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -3052,28 +3067,8 @@ export const inactiveCategory = (cat_id) => {
 export const getCMSListing = async () => {
   try {
     return await new Promise(function (resolve, reject) {
-      pool.query("SELECT * FROM cms ORDER BY cmsid DESC", (error, results) => {
-        if (error) {
-          reject(error);
-        }
-        if (results && results.rows) {
-          resolve(results.rows);
-        } else {
-          reject(new Error("No results found"));
-        }
-      });
-    });
-  } catch (error_1) {
-    console.error(error_1);
-    throw new Error("Internal server error");
-  }
-};
-
-export const getNotificationlisting = async () => {
-  try {
-    return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT notif_id,notification_title, notification_url, notification_position,case when notification_status = 'A' then 'Active' else 'Inactive' end as status FROM notifications ORDER BY notif_id DESC",
+        "SELECT *,case when cms_status = 'A' then 'Active' else 'Inactive' end as status FROM cms ORDER BY cmsid DESC",
         (error, results) => {
           if (error) {
             reject(error);

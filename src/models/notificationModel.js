@@ -1,21 +1,10 @@
-const { query } = require("express");
-const config = require("../config/config.js");
+import pool from "@/lib/db";
 
-const Pool = require("pg").Pool;
-
-const pool = new Pool({
-  user: config.dbuser,
-  host: config.dbhost,
-  database: config.dbname,
-  password: config.dbpassword,
-  port: config.dbport,
-});
-
-const getNotificationlisting = async () => {
+export const getNotificationlisting = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT * FROM notifications ORDER BY notif_id DESC",
+        "SELECT notif_id,notification_title, notification_url,notification_status, notification_position,case when notification_status = 'A' then 'Active' else 'Inactive' end as status FROM notifications ORDER BY notif_id DESC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -34,7 +23,7 @@ const getNotificationlisting = async () => {
   }
 };
 
-const geteditnotification = (notif_id) => {
+export const geteditNotification = (notif_id) => {
   //const notif_id = notif_id;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -51,10 +40,10 @@ const geteditnotification = (notif_id) => {
         //resolve(`Edit Notification ID: ${notif_id}`);
       }
     );
-    console.log(query);
+    //console.log(query);
   });
 };
-const addNotification = (body) => {
+export const addNotification = (body) => {
   console.log("body->", body);
   return new Promise(function (resolve, reject) {
     const {
@@ -90,7 +79,7 @@ const addNotification = (body) => {
     );
   });
 };
-const updateNotification = (notif_id, body) => {
+export const updateNotification = (notif_id, body) => {
   return new Promise(function (resolve, reject) {
     const {
       notif_id,
@@ -123,9 +112,18 @@ const updateNotification = (notif_id, body) => {
     );
   });
 };
-module.exports = {
-  getNotificationlisting,
-  geteditnotification,
-  addNotification,
-  updateNotification,
+export const inactiveNotification = (notif_id) => {
+  console.log("id--", notif_id);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE notifications SET notification_status='D' WHERE notif_id=$1",
+      [notif_id],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A approved by has been notifications : ${notif_id}`);
+      }
+    );
+  });
 };

@@ -47,7 +47,6 @@ import {
   addNewexam,
   updateExam,
   inactiveExam,
-  getNotificationlisting,
   getCMSListing,
   editCms,
   addCoursebrach,
@@ -66,6 +65,7 @@ import {
   updateCMS,
   addCms,
   deleteCMS,
+  inactiveCms,
   insertCollegeBasicInfoNew,
   updateCollegeBasicInfoNew,
   updateContactus,
@@ -109,6 +109,11 @@ import {
   citylisting,
   countrydetail,
 } from "@/models/locationModel";
+import {
+  getNotificationlisting,
+  inactiveNotification,
+  geteditNotification,
+} from "@/models/notificationModel";
 
 export async function GET(request, { params }) {
   const { slug } = params;
@@ -231,6 +236,12 @@ export async function GET(request, { params }) {
     const returnresponse = await getCMSListing();
     return NextResponse.json(returnresponse);
   }
+  if (slug === "notificationadd") {
+    const notif_id = searchParams.get("notif_id"); //
+    console.log("notif_id-->", notif_id);
+    const returnresponse = await geteditNotification(notif_id);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "editcms") {
     const cms_id = searchParams.get("cmsid"); //
     const returnresponse = await editCms(cms_id);
@@ -239,6 +250,11 @@ export async function GET(request, { params }) {
   if (slug === "deletecms") {
     const cms_id = searchParams.get("cmsid"); //
     const returnresponse = await deleteCMS(cms_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivecms") {
+    const cms_id = searchParams.get("cmsid"); //
+    const returnresponse = await inactiveCms(cms_id);
     return NextResponse.json(returnresponse);
   }
   if (slug === "getadvertisementlisting") {
@@ -359,6 +375,11 @@ export async function GET(request, { params }) {
   if (slug === "inactiveexam") {
     const exam_id = searchParams.get("exam_id"); //
     const returnresponse = await inactiveExam(exam_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivenotification") {
+    const notif_id = searchParams.get("notif_id"); //
+    const returnresponse = await inactiveNotification(notif_id);
     return NextResponse.json(returnresponse);
   }
   if (slug === "editcategory") {
