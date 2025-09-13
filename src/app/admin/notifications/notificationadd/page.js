@@ -88,7 +88,6 @@ function Notificationadd() {
       newErrors.notification_position = "Display position be blank!";
     }
     setErrForm(newErrors);
-    console.log("formsubmit error ", newErrors);
     if (!hasNotEmptyValue(newErrors)) {
       const payload = {
         notif_id: notif_id.value,

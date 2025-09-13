@@ -444,7 +444,7 @@ export async function GET(request, { params }) {
 //export async function PUT(request,{}) {
 export async function POST(request, { params }) {
   const { slug } = params;
-  if (slug === "getupdatecms") {
+  if (slug === "updatecms") {
     const body = await request.json();
     try {
       const returnresponse = await updateCMS(body);

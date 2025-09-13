@@ -121,7 +121,7 @@ function Cms() {
   const editDetails = (editval) => {
     //console.log("Edit cms id:", editval);
     if (editval > 0) {
-      window.location.href = "/admin/cms/addcms/" + editval;
+      window.location.href = "/admin/cms/addcms/?cmsid=" + editval;
     }
   };
   const inactiveRecord = (cmsid) => {
@@ -196,7 +196,7 @@ function Cms() {
                 </svg>
               </Link>
             </span>
-            <span onClick={() => setIsFilter(true)}>
+            {/* <span onClick={() => setIsFilter(true)}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
@@ -209,7 +209,7 @@ function Cms() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
