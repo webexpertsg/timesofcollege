@@ -113,6 +113,8 @@ import {
   getNotificationlisting,
   inactiveNotification,
   geteditNotification,
+  addNotification,
+  updateNotification,
 } from "@/models/notificationModel";
 
 export async function GET(request, { params }) {
@@ -236,7 +238,7 @@ export async function GET(request, { params }) {
     const returnresponse = await getCMSListing();
     return NextResponse.json(returnresponse);
   }
-  if (slug === "notificationadd") {
+  if (slug === "editnotification") {
     const notif_id = searchParams.get("notif_id"); //
     console.log("notif_id-->", notif_id);
     const returnresponse = await geteditNotification(notif_id);
@@ -753,6 +755,31 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to update exam" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (slug === "addnotification") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addNotification(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to Insert notification" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatenotification") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateNotification(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update notification" },
         { status: 500 }
       );
     }

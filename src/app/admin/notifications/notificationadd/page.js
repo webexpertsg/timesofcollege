@@ -1,8 +1,13 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { hasNotEmptyValue } from "@/utils";
 import { useSearchParams } from "next/navigation";
 //import { Link, useParams } from "react-router-dom";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocRadioInput from "@/components/ui/atoms/tocRadio";
+import TocButton from "@/components/ui/atoms/tocButtom";
+import TocSelectList from "@/components/ui/atoms/tocSelectlist";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -11,8 +16,9 @@ function Notificationadd() {
   //   if (localStorage.getItem("login_id") <= 0) {
   //     window.location = "/login";
   //   }
-  const searchParams = useSearchParams();
-  const notif_id = searchParams.get("notif_id");
+  const [errForm, setErrForm] = useState({});
+  const [notificationstatus, setNotificationstatus] = useState("A");
+  const [notificationtarget, setNotificationtarget] = useState("");
 
   const [editdata, setEditdata] = useState({
     notif_id: "",
@@ -20,34 +26,46 @@ function Notificationadd() {
     notification_url: "",
     notification_target: "Pairent",
     notification_position: "",
-    notification_status: "A",
+    notification_status: notificationstatus,
   });
-
-  //const { notif_id } = useParams();
-  //const searchParams = request.nextUrl.searchParams;
-  //const notif_id = searchParams.get("notif_id"); //
+  const searchParams = useSearchParams();
+  const notif_id = searchParams.get("nid");
   useEffect(() => {
-    // if (notif_id > 0) {
-    axios
-      .get("/api/admin/editnotification/?notif_id=" + notif_id)
-      .then((response) => {
-        setEditdata(response.data[0]);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-    //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
-    // }
+    if (notif_id) {
+      axios
+        .get("/api/admin/editnotification/?notif_id=" + notif_id)
+        .then((response) => {
+          setEditdata(response.data[0]);
+          setNotificationstatus(response.data[0].notification_status);
+          setNotificationtarget(response.data[0].notification_target);
+        })
+        .catch((error) => {
+          //console.error(error);
+          toast.error(error, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            // transition: Bounce,
+          });
+        });
+      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
+    }
   }, []);
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
   };
 
-  const addnotification = (e) => {
+  const submitNotification = (e) => {
+    const newErrors = {};
     e.preventDefault();
     const {
       notif_id,
@@ -57,89 +75,138 @@ function Notificationadd() {
       notification_position,
       notification_status,
     } = e.target.elements;
-
-    const payload = {
-      notif_id: notif_id.value,
-      notification_title: notification_title.value,
-      notification_url: notification_url.value,
-      notification_target: notification_target.value,
-      notification_position: notification_position.value,
-      notification_status: notification_status.value,
-    };
-    if (notif_id.value > 0) {
-      //update form data
-      axios({
-        method: "PUT",
-        url: "/api/getupdatenotification/${notif_id}",
-        data: payload,
-      })
-        .then(function (response) {
-          //console.log(response);
-          //console.log(response.statusText);
-          if (response.statusText === "OK") {
-            toast.success("Successfully Updated.", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              // transition: Bounce,
-            });
-            setTimeout(function () {
-              window.location.replace("../../notifications");
-            }, 3000);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
-      //end update form data
-    } else {
-      axios({
-        method: "post",
-        url: "/api/addnotification",
-        data: payload,
-      })
-        .then(function (response) {
-          console.log(response);
-          if (response.statusText === "OK") {
-            //window.location.href = "../../questionanswerlist";
-            toast.success("Successfully Added.", {
-              position: "top-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-              // transition: Bounce,
-            });
-            setTimeout(function () {
-              window.location.replace("../notifications");
-            }, 3000);
-          }
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
+    if (!notification_title.value.trim()) {
+      newErrors.notification_title = "Title cann't be blank!";
     }
-
-    /*  } else {
-      setErrorMsg(errorsForm);
-    } */
+    if (!notification_url.value.trim()) {
+      newErrors.notification_url = "Url cann't be blank!";
+    }
+    if (!notificationtarget) {
+      newErrors.notification_target = "Target cann't be blank!";
+    }
+    if (!notification_position.value.trim()) {
+      newErrors.notification_position = "Display position be blank!";
+    }
+    setErrForm(newErrors);
+    console.log("formsubmit error ", newErrors);
+    if (!hasNotEmptyValue(newErrors)) {
+      const payload = {
+        notif_id: notif_id.value,
+        notification_title: notification_title.value,
+        notification_url: notification_url.value,
+        notification_target: notificationtarget,
+        notification_position: notification_position.value,
+        notification_status: notificationstatus,
+      };
+      if (notif_id.value > 0) {
+        //update form data
+        axios({
+          method: "post",
+          url: "/api/admin/updatenotification",
+          data: payload,
+        })
+          .then(function (response) {
+            console.log(response);
+            //console.log(response.statusText);
+            if (response.statusText === "OK") {
+              toast.success("Successfully Updated.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+              setTimeout(function () {
+                window.location.replace("/admin/notifications");
+              }, 3000);
+            }
+          })
+          .catch(function (error) {
+            //console.log(error);
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+          });
+        //end update form data
+      } else {
+        axios({
+          method: "post",
+          url: "/api/admin/addnotification",
+          data: payload,
+        })
+          .then(function (response) {
+            console.log(response);
+            if (response.statusText === "OK") {
+              //window.location.href = "../../questionanswerlist";
+              toast.success("Successfully Added.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+              setTimeout(function () {
+                window.location.replace("../notifications");
+              }, 3000);
+            } else {
+              toast.error(response.error, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+            }
+          })
+          .catch(function (error) {
+            //console.log(error);
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+          });
+      }
+    }
   };
   // end add new Cms
+  const redircttargetarr = [
+    { value: "Parent", label: "Parent" },
+    { value: "Blank", label: "Blank" },
+  ];
 
   return (
     <>
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">
-            {/* {notif_id > 0 ? "Edit" : "Add New"} Notification */}
+            {notif_id > 0 ? "Edit" : "Add New"} Notification
           </h1>
           <div className="actions">
             <Link
@@ -175,117 +242,97 @@ function Notificationadd() {
           action=""
           method="post"
           id="notificationForm"
-          onSubmit={addnotification}
+          onSubmit={submitNotification}
         >
           <div className="mt-2">
-            <label
-              htmlFor="notification_title"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Title *
-            </label>
             <input
               type="hidden"
               name="notif_id"
               value={editdata.notif_id && editdata.notif_id}
             />
-            <input
-              type="text"
-              name="notification_title"
+            <TocInputWithLabel
+              id="notification_title"
+              label="Title"
+              placeholder="Please enter notification."
               value={
                 editdata.notification_title ? editdata.notification_title : ""
               }
-              required="required"
+              required={true}
+              errmsg={errForm.notification_title}
               onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-          </div>{" "}
+          </div>
           <div className="mt-2">
-            <label
-              htmlFor="notification_url"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Url *
-            </label>
-
-            <input
+            <TocInputWithLabel
               type="url"
-              name="notification_url"
+              id="notification_url"
+              label="Url"
+              placeholder="Please enter notification url."
               value={editdata.notification_url ? editdata.notification_url : ""}
-              required="required"
+              required={true}
+              errmsg={errForm.notification_url}
               onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="notification_target"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Target
-            </label>
-            <select name="notification_target" id="notification_target">
-              <option value="Pairent">Pairent</option>
-              <option value="Blank">Blank</option>
-            </select>
+            <TocSelectList
+              id="notification_target"
+              label="Redirection Target"
+              options={redircttargetarr}
+              value={notificationtarget}
+              required={true}
+              errmsg={errForm.notification_target}
+              onChange={(e) => setNotificationtarget(e.target.value)}
+            />
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="notification_url"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Display Position
-            </label>
-
-            <input
+            <TocInputWithLabel
               type="number"
-              name="notification_position"
+              id="notification_position"
+              label="Display Position"
+              placeholder="Please enter display position."
               value={
                 editdata.notification_position
                   ? editdata.notification_position
                   : ""
               }
-              required=""
+              required={true}
+              errmsg={errForm.notification_position}
               onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="notification_url"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Status
-            </label>
-            <input
-              type="radio"
-              name="notification_status"
-              value="A"
-              className="sm:text-sm text-gray-900"
-              checked={editdata.notification_status == "A" && true}
-              required="required"
-              onChange={handleChangeFormdata}
-            />
-            Active &nbsp;
-            <input
-              type="radio"
-              value="D"
-              name="notification_status"
-              className="sm:text-sm text-gray-900"
-              checked={editdata.notification_status == "D" && true}
-              required="required"
-              onChange={handleChangeFormdata}
-            />
-            Deactive
+            <label>Status</label>
+            <div className="flex gap-4">
+              <TocRadioInput
+                id="notification_statusa"
+                name="notification_status"
+                value="A"
+                label="Active"
+                checked={notificationstatus === "A"}
+                //onChange={handleChangeFormdata}
+                onChange={(e) => setNotificationstatus(e.target.value)}
+              />
+
+              <TocRadioInput
+                id="notification_statusd"
+                name="notification_status"
+                value="D"
+                label="Inactive"
+                checked={notificationstatus === "D"}
+                // onChange={handleChangeFormdata}
+                onChange={(e) => setNotificationstatus(e.target.value)}
+              />
+            </div>
           </div>
           <div className="btn-section">
-            <button type="button">Cancle</button>
-            <button
-              type="submit"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Submit
+            <button type="link">
+              <Link href={"../notifications"}>Cancle</Link>
             </button>
+
+            <TocButton type="submit" className="pl-10 pr-10 h-10">
+              {editdata.notif_id > 0 ? "Update" : "Submit"}
+            </TocButton>
           </div>
         </form>
       </div>
