@@ -273,12 +273,12 @@ export const faqcollege = (cid) => {
   });
 };
 
-export const editquestion = (cid) => {
+export const editQuestion = (qid) => {
   //const rol_id = rol_id;
   return new Promise(function (resolve, reject) {
     pool.query(
       "SELECT * FROM questions WHERE qid = $1",
-      [cid],
+      [qid],
       (error, results) => {
         if (error) {
           reject(error);
@@ -290,7 +290,6 @@ export const editquestion = (cid) => {
         //resolve(`Edit college ID: ${id}`);
       }
     );
-    console.log(query);
   });
 };
 
@@ -2551,7 +2550,7 @@ export const addQuestion = (body) => {
   });
 };
 
-export const updateQuestion = (qid, body) => {
+export const updateQuestion = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       qid,

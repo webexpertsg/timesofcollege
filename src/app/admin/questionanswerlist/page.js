@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -105,10 +105,10 @@ function Questionanswerlisting() {
     ),
   });
   const editDetails = (editval) => {
-    console.log("Edit college id:", editval);
+    console.log("Edit question id:", editval);
     if (editval > 0) {
       window.location.href =
-        "/admin/questionanswerlist/questionanswer/" + editval;
+        "/admin/questionanswerlist/questionanswer/?qid=" + editval;
     }
   };
 
@@ -135,7 +135,6 @@ function Questionanswerlisting() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  
                   <path stroke="none" d="M0 0h24v24H0z" />{" "}
                   <circle cx="12" cy="12" r="9" />{" "}
                   <line x1="9" y1="12" x2="15" y2="12" />{" "}

@@ -28,20 +28,20 @@ const TocCustomEditor = ({ id, label, initialData, onChange, required, errmsg = 
             data={initialData}
             onReady={(editor) => {
                 // You can store the "editor" instance and use it later if needed
-                console.log('Editor is ready to use!', editor);
+               // console.log('Editor is ready to use!', editor);
             }}
             onChange={(event, editor) => {
                 const data = editor.getData();
                 onChange(data); // Pass the updated data to the parent component
             }}
             onBlur={(event, editor) => {
-                console.log('Blur.', editor);
+                //console.log('Blur.', editor);
             }}
             onFocus={(event, editor) => {
-                console.log('Focus.', editor);
+                //console.log('Focus.', editor);
             }}
             />
-            {errmsg && <hint className="text-red-700">{errmsg}</hint>}
+            {errmsg && <div className="text-red-700">{errmsg}</div>}
 
         </>
     ) : (

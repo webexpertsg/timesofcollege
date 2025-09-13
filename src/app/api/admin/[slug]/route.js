@@ -66,6 +66,8 @@ import {
   addCms,
   deleteCMS,
   inactiveCms,
+  addQuestion,
+  editQuestion,
   insertCollegeBasicInfoNew,
   updateCollegeBasicInfoNew,
   updateContactus,
@@ -249,6 +251,11 @@ export async function GET(request, { params }) {
   if (slug === "editcms") {
     const cms_id = searchParams.get("cmsid"); //
     const returnresponse = await editCms(cms_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editquestion") {
+    const qid = searchParams.get("qid"); //
+    const returnresponse = await editQuestion(qid);
     return NextResponse.json(returnresponse);
   }
   if (slug === "deletecms") {
@@ -466,6 +473,18 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json({ error: "Failed to add cms" }, { status: 500 });
+    }
+  }
+  if (slug === "addquestion") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addQuestion(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add toc cafe question" },
+        { status: 500 }
+      );
     }
   }
   if (slug === "updatefacility") {
