@@ -42,6 +42,7 @@ const MultiStepForm = () => {
     approvedbyarr, setApprovedbyarr,
     catgoryarr, setCatgoryarr,
     coursearr, setCoursearr,
+    subcoursearr, setSubcoursearr,
     subcoursestypearr, setSubcoursestypearr,
     tradingarr, setTradingarr,
     examarr, setExamarr,
@@ -93,7 +94,27 @@ const MultiStepForm = () => {
     clgHighlights: [{ highParameter: "", highDetails: "" }],
 
     clgAdmission: '',
-    clgScholarship: ''
+    clgScholarship: '',
+
+    clgRateAcademic: '',
+    clgRateAccommodation: '',
+    clgRateFaculty: '',
+    clgRateInfra: '',
+    clgRatePlacements: '',
+    clgRateSocial: '',
+    clgRateThroughout: '',
+
+    clgRatePlacements: '',
+    clgPlacementInfo: '',
+    clgTotalPlacementRatio: '',
+    clgAvgPlacement: '',
+    clgHighPlacement: '',
+    clgLowPlacement: '',
+    clgTopRecruiter: '',
+    clgRecruitSector: '',
+    clgTopProfile: '',
+
+    clgSelectCourseType: [],
   })
 
     useEffect(() => {
@@ -258,6 +279,30 @@ const MultiStepForm = () => {
           setFormData((prevData) => ({ ...prevData, clgAdmission: data.adminssiondetails}));
           setFormData((prevData) => ({ ...prevData, clgScholarship: data.scholarshipoffer}));
 
+          //Rating
+          setFormData((prevData) => ({ ...prevData, clgRateAcademic: data.ratingacademic}));
+          setFormData((prevData) => ({ ...prevData, clgRateAccommodation: data.rattingaccommodation}));
+          setFormData((prevData) => ({ ...prevData, clgRateFaculty: data.rattingfaculty}));
+          setFormData((prevData) => ({ ...prevData, clgRateInfra: data.rattinginfrastructure}));
+          setFormData((prevData) => ({ ...prevData, clgRatePlacements: data.rattingplacements}));
+          setFormData((prevData) => ({ ...prevData, clgRateSocial: data.rattingsocial}));
+          setFormData((prevData) => ({ ...prevData, clgRateThroughout: data.rattingthroughout}));
+
+          //Placements
+          setFormData((prevData) => ({ ...prevData, clgPlacementInfo: data.placement_overview}));
+          setFormData((prevData) => ({ ...prevData, clgTotalPlacementRatio: data.totalplacementratio}));
+          setFormData((prevData) => ({ ...prevData, clgAvgPlacement: data.averageplacementrecord}));
+          setFormData((prevData) => ({ ...prevData, clgHighPlacement: data.higestplacementrecord}));
+          setFormData((prevData) => ({ ...prevData, clgLowPlacement: data.lowestplacementrecord}));
+          setFormData((prevData) => ({ ...prevData, clgTopRecruiter: data.toprecruiters}));
+          setFormData((prevData) => ({ ...prevData, clgRecruitSector: data.toprecuitingsectors}));
+          setFormData((prevData) => ({ ...prevData, clgTopProfile: data.topprofile}));
+
+          //FAQ
+
+
+          //Courses
+          setFormData((prevData) => ({ ...prevData, clgSelectCourseType: commaWithSingleQuotes(data.courses)}));
 
           // setFormData({clgType: data.ctype})   
         setIsLoading(false)
@@ -282,16 +327,21 @@ const MultiStepForm = () => {
       // end getting faq
     }
 
-  }, []);
+  }, [])
 
   const handleNext = (data) => {
     // setFormData((prevData) => ({ ...prevData, ...data }));
     setCurrentStep((prevStep) => prevStep + 1);
-  };
+  }
 
   const handlePrevious = () => {
     setCurrentStep((prevStep) => prevStep - 1);
-  };
+  }
+
+  const handleTabs = (step) => {
+    setCurrentStep(step);
+  }
+
 
   const handleSubmit = async () => {
     // Perform final submission of formData to a backend API
@@ -309,15 +359,15 @@ const MultiStepForm = () => {
       <div className='p-10'>
         <div className='mb-10'>
           <ul className='flex flex-wrap gap-2 text-sm font-medium text-center text-white border-b border-gray-200 dark:border-gray-700'>
-            <li className='cursor-pointer inline-block p-4 text-white-600 bg-[#5c3a7c] rounded-t-lg dark:bg-[#5c3a7c] active'>Basic Info</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Contacts</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Highlights</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Gallery / Brouchure</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Admissions / Scholarship</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Rating</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Placements</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>FAQ</li>
-            <li className='cursor-pointer inline-block p-4 rounded-t-lg bg-[#bbb4c1] hover:bg-[#5c3a7c]'>Courses</li>
+            <li onClick={() => handleTabs(1)} className={`cursor-pointer inline-block p-4 rounded-t-lg  hover:bg-[#5c3a7c] ${ currentStep === 1 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Basic Info</li>
+            <li onClick={() => handleTabs(2)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 2 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Contacts</li>
+            <li onClick={() => handleTabs(3)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 3 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Highlights</li>
+            <li onClick={() => handleTabs(4)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 4 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Gallery / Brouchure</li>
+            <li onClick={() => handleTabs(5)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 5 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Admissions / Scholarship</li>
+            <li onClick={() => handleTabs(6)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 6 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Rating</li>
+            <li onClick={() => handleTabs(7)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 7 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Placements</li>
+            <li onClick={() => handleTabs(8)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 8 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>FAQ</li>
+            <li onClick={() => handleTabs(9)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 9 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Courses</li>
           </ul>
         </div>
         {currentStep === 1 && (

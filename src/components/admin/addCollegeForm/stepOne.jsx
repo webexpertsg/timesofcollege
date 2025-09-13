@@ -443,10 +443,10 @@ const StepOne = ({ data, onNext }) => {
       {formState.catgoryarr.map((item, id)=>(
         <div className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
           <TocCheckbox
-            id={`cat_id-${item.cat_id}`}
-            value={item.cat_id}
-            label={item.category_name}
-            checked={selectCategory.includes(JSON.stringify(item.cat_id))}
+            id={`cat_id-${item.value}`}
+            value={item.value}
+            label={item.label}
+            checked={selectCategory.includes(JSON.stringify(item.value))}
             onChange={handleCheckboxCategory}
           />
         </div>

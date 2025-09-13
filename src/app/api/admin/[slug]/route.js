@@ -71,6 +71,8 @@ import {
   updateContactus,
   updateHighlight,
   updateAdmission,
+  updateRating,
+  updatePlacement,
   deleteFacility,
   editfacility,
   editCollege,
@@ -765,19 +767,7 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(
-        { error: "Failed to update college" },
-        { status: 500 }
-      );
-    }
-  }
-  if (slug === "updatebasicinformation") {
-    const body = await request.json();
-    try {
-      const returnresponse = await updateCollegeBasicInfoNew(body);
-      return NextResponse.json(returnresponse);
-    } catch (error) {
-      return NextResponse.json(
-        { error: "Failed to update college" },
+        { error: "Failed to update basic info" },
         { status: 500 }
       );
     }
@@ -801,7 +791,7 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(
-        { error: "Failed to update Contacts" },
+        { error: "Failed to update Highlights" },
         { status: 500 }
       );
     }
@@ -813,7 +803,31 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(
-        { error: "Failed to update Contacts" },
+        { error: "Failed to update Admission" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updaterating") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateRating(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Rating" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updateplacement") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updatePlacement(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Placement" },
         { status: 500 }
       );
     }

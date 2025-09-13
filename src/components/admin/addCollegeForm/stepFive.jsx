@@ -15,19 +15,19 @@ const TocClientSideCustomEditor = dynamic(
 const StepFive = ({ data, onNext, onPrevious }) => {
   const { formState  } = useContext(MultiStepFormContext)
   
-  const [clgAdmission, setAdmission] = useState(data.clgAdmission);
-  const [clgScholarship, setScholarship] = useState(data.clgScholarship);
+  const [clgAdmission, setClgAdmission] = useState(data.clgAdmission);
+  const [clgScholarship, setClgScholarship] = useState(data.clgScholarship);
 
   const [error, setErrors] = useState({})
   const searchParams = useSearchParams()
   const cid = searchParams.get('cid')
 
   const handleClgAdmissionChange = (data) => {
-    setAdmission(data);
+    setClgAdmission(data);
   }
 
   const handleScholarshipChange = (data) => {
-    setScholarship(data)
+    setClgScholarship(data)
   }
 
   const handleAdmissionSubmit = (e) => {

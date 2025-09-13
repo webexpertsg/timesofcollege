@@ -1571,7 +1571,7 @@ export const getSubcoursestypearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT coursetype_id,course_type_name FROM coursetype ORDER BY course_type_name ASC",
+        "SELECT coursetype_id value, course_type_name label FROM coursetype ORDER BY course_type_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1663,7 +1663,7 @@ export const getFeetypearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT feetype_id,fee_type FROM fee_type ORDER BY fee_type ASC",
+        "SELECT feetype_id value, fee_type label FROM fee_type ORDER BY fee_type ASC",
         (error, results) => {
           if (error) {
             reject(error);
@@ -1755,7 +1755,7 @@ export const getSubcoursearr = async () => {
   try {
     return await new Promise(function (resolve, reject) {
       pool.query(
-        "SELECT courb_id,branch_name FROM coursebranches ORDER BY branch_name ASC",
+        "SELECT courb_id value, branch_name label FROM coursebranches ORDER BY branch_name ASC",
         (error, results) => {
           if (error) {
             reject(error);
