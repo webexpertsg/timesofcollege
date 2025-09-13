@@ -79,7 +79,7 @@ export const addNotification = (body) => {
     );
   });
 };
-export const updateNotification = (notif_id, body) => {
+export const updateNotification = (body) => {
   return new Promise(function (resolve, reject) {
     const {
       notif_id,

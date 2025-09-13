@@ -1,29 +1,30 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
+import { hasNotEmptyValue } from "@/utils";
+import { useSearchParams } from "next/navigation";
 import { useParams, usePathname } from "next/navigation";
-import { ToastContainer, toast } from "react-toastify";
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocTextarea from "@/components/ui/atoms/tocTextarea";
+import TocRadioInput from "@/components/ui/atoms/tocRadio";
+import TocButton from "@/components/ui/atoms/tocButtom";
 import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 const TocClientSideCustomEditor = dynamic(
-  () => import('@/components/ui/atoms/tocCkEditor'),
+  () => import("@/components/ui/atoms/tocCkEditor"),
   { ssr: false }
 );
+
 import axios from "axios";
 
 function Addcms() {
   // if (localStorage.getItem("login_id") <= 0) {
   //   window.location = "/login";
   // }
-  const [returndspmsg, setReturndspmsg] = useState();
   const [cmsdescvalue, setCmsdescvalue] = useState();
-  const [errForm, setErrForm] = useState(true);
-  const [errTitle, setErrTitle] = useState('');
-  const [errURL, setErrURL] = useState('');
-  const [errmetatitle, setErrmetatitle] = useState('');
-  const [errmetakeyword, setErrmetakeyword] = useState('');
-  const [errmetadescription, setErrmetadescription] = useState('');
-
+  const [errForm, setErrForm] = useState({});
+  const [cmsstatus, setCmsstatus] = useState("A");
   const [editdata, setEditdata] = useState({
     cmsid: "",
     cms_title: "",
@@ -32,75 +33,101 @@ function Addcms() {
     cms_meta_title: "",
     cms_meta_description: "",
     cms_meta_keyword: "",
+    cms_status: cmsstatus,
   });
-  
+  const searchParams = useSearchParams();
+  const cmsid = searchParams.get("cmsid");
+  useEffect(() => {
+    if (cmsid > 0) {
+      axios
+        .get("/api/admin/editcms/?cmsid=" + cmsid)
+        .then((response) => {
+          setEditdata(response.data[0]);
+          setCmsstatus(response.data[0].cms_status);
+        })
+        .catch((error) => {
+          //console.error(error);
+          toast.success(error, {
+            position: "top-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "light",
+            // transition: Bounce,
+          });
+        });
+      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
+    }
+  }, []);
   const handleChangeFormdata = (e) => {
-    const { name, value } = e.target;
+    const { id, value } = e.target;
     setEditdata((prevState) => ({
       ...prevState,
-      [name]: value,
+      [id]: value,
     }));
   };
 
-  const addcms = (e) => {
+  const submitAddcms = (e) => {
+    const newErrors = {};
     e.preventDefault();
     const {
+      cmsid,
       cms_title,
       cms_url,
       cms_meta_title,
       cms_meta_keyword,
       cms_meta_description,
     } = e.target.elements;
-    if(cms_title.value == ""){
-      setErrTitle('Title can not be blank!');
-    }else{
-      setErrTitle('');
-      setErrForm(false);
+
+    if (!cms_title.value.trim()) {
+      newErrors.cms_title = "Title cann't be blank!";
     }
-    if(cms_url.value == ""){
-      setErrURL('URL can not be blank!');
-    }else{
-      setErrURL('');
-      setErrForm(false);
+    if (!cms_url.value.trim()) {
+      newErrors.cms_url = "URL cann't be blank!";
     }
-    if(cms_meta_title.value == ""){
-      setErrmetatitle('Meta title can not be blank!');
-    }else{
-      setErrmetatitle('');
-      setErrForm(false);
-    } 
-    if(cms_meta_keyword.value == ""){
-      setErrmetakeyword('Meta keyword can not be blank!');
-    }else{
-      setErrmetakeyword('');
-      setErrForm(false);
+    if (!cms_meta_title.value.trim()) {
+      newErrors.cms_meta_title = "Meta title cann't be blank!";
     }
-    if(cms_meta_description.value == ""){
-      setErrmetadescription('Meta description can not be blank!');
-    }else{
-      setErrmetadescription('');
-      setErrForm(false);
+    if (!cms_meta_description.value.trim()) {
+      newErrors.cms_meta_description = "Meta description cann't be blank!";
     }
-    if(!errForm){
+    if (!cms_meta_keyword.value.trim()) {
+      newErrors.cms_meta_keyword = "Meta keyword cann't be blank!";
+    }
+
+    setErrForm(newErrors);
+    if (!hasNotEmptyValue(newErrors)) {
       const payload = {
+        cmsid: cmsid.value,
         cms_title: cms_title.value,
         cms_url: cms_url.value,
         cms_description: cmsdescvalue,
         cms_meta_title: cms_meta_title.value,
         cms_meta_description: cms_meta_description.value,
         cms_meta_keyword: cms_meta_keyword.value,
+        cms_status: cmsstatus,
       };
-     
+      if (cmsid.value > 0) {
+        //update form data
         axios({
-          method: "post",
-          url: "/api/admin/addnewcms",
+          method: "POST",
+          url: "/api/admin/updatecms/",
           data: payload,
         })
+          // axios
+          //   .post("/api/admin/getupdatecms/", payload, {
+          //     headers: {
+          //       "Content-Type": "application/json",
+          //     },
+          //   })
           .then(function (response) {
-           // console.log(response);
+            //console.log(response);
+            //console.log(response.statusText);
             if (response.statusText === "OK") {
-              //window.location.href = "../../questionanswerlist";
-              toast.success("Successfully Added.", {
+              toast.success("Successfully Updated.", {
                 position: "top-right",
                 autoClose: 3000,
                 hideProgressBar: false,
@@ -117,13 +144,76 @@ function Addcms() {
             }
           })
           .catch(function (error) {
-            console.log(error);
+            //console.log(error);
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
           });
+        //end update form data
+      } else {
+        axios({
+          method: "post",
+          url: "/api/admin/addnewcms",
+          data: payload,
+        })
+          .then(function (response) {
+            console.log(response);
+            if (response.statusText === "OK") {
+              //window.location.href = "../../questionanswerlist";
+              toast.success("Successfully Added.", {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+              setTimeout(function () {
+                window.location.replace("../cms");
+              }, 3000);
+            } else {
+              toast.error(response.error, {
+                position: "top-right",
+                autoClose: 3000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "light",
+                // transition: Bounce,
+              });
+            }
+          })
+          .catch(function (error) {
+            //console.log(error);
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+          });
+      }
     }
-    
   };
   // end add new Cms
-  
   const createUrl = (e) => {
     var cmstitle = e.target.value;
     var cmsurl = cmstitle.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
@@ -138,7 +228,7 @@ function Addcms() {
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
           <h1 className="text-2xl font-semibold">
-          Add New CMS
+            {cmsid > 0 ? "Edit" : "Add New"} CMS
           </h1>
           <div className="actions">
             <Link
@@ -170,117 +260,113 @@ function Addcms() {
 
       <div className="p-2">
         <div className="mx-auto max-w-7xl py-6 sm:px-2 lg:px-2"></div>
-        <form action="" method="post" id="facilitesForm" onSubmit={addcms}>
+        <form action="" method="post" id="addcmsForm" onSubmit={submitAddcms}>
           <div className="mt-2">
-            <label
-              htmlFor="college_url"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Title *
-            </label>
             <input
-              type="text"
-              name="cms_title"
+              type="hidden"
+              name="cmsid"
+              value={editdata.cmsid && editdata.cmsid}
+            />
+            <TocInputWithLabel
+              id="cms_title"
+              label="Title"
+              placeholder="Please enter title."
               value={editdata.cms_title ? editdata.cms_title : ""}
-              //required="required"
+              required={true}
+              errmsg={errForm.cms_title}
               onChange={handleChangeFormdata}
-              onChangeCapture={createUrl}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <hint className="text-red-700">{errTitle}</hint>
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="college_url"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Title Url *
-            </label>
-
-            <input
-              type="text"
-              name="cms_url"
+            <TocInputWithLabel
+              id="cms_url"
+              label="Title Url"
+              placeholder="Please enter url."
               value={editdata.cms_url ? editdata.cms_url : ""}
-              //required="required"
+              required={true}
+              errmsg={errForm.cms_url}
               onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <hint className="text-red-700">{errURL}</hint>
           </div>
 
           <div className="mt-2">
-            <label
-              htmlFor="college_url"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Description
-            </label>
-            <TocClientSideCustomEditor data={editdata.cms_description ? editdata.cms_description : ""} onChange={handleEditorChange} />
-          </div>
-          
-          <div className="mt-2">
-            <label
-              htmlFor="cms_meta_title"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Meta Title *
-            </label>
-            <input
-              type="text"
-              name="cms_meta_title"
-              value={editdata.cms_meta_title ? editdata.cms_meta_title : ""}
-              //required="required"
-              onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+            <TocClientSideCustomEditor
+              initialData={
+                editdata.cms_description ? editdata.cms_description : ""
+              }
+              onChange={handleEditorChange}
+              label={"Description"}
+              required
+              errmsg={errForm.cms_description}
             />
-            <hint className="text-red-700">{errmetatitle}</hint>
+          </div>
+
+          <div className="mt-2">
+            <TocInputWithLabel
+              id="cms_meta_title"
+              label="Title Meta Title"
+              placeholder="Please enter meta title."
+              value={editdata.cms_meta_title ? editdata.cms_meta_title : ""}
+              required={true}
+              errmsg={errForm.cms_meta_title}
+              onChange={handleChangeFormdata}
+            />
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="cms_meta_description"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Meta Description *
-            </label>
-            <input
-              type="text"
-              name="cms_meta_description"
+            <TocTextarea
+              id="cms_meta_description"
+              label="Title Meta Description"
+              placeholder="Please enter meta description."
               value={
                 editdata.cms_meta_description
                   ? editdata.cms_meta_description
                   : ""
               }
-              //required="required"
+              required={true}
+              errmsg={errForm.cms_meta_description}
               onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <hint className="text-red-700">{errmetadescription}</hint>
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="cms_meta_keyword"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Meta Keyword *
-            </label>
-            <input
-              type="text"
-              name="cms_meta_keyword"
+            <TocInputWithLabel
+              id="cms_meta_keyword"
+              label="Title Meta Description"
+              placeholder="Please enter meta keyword."
               value={editdata.cms_meta_keyword ? editdata.cms_meta_keyword : ""}
-              //required="required"
+              required={true}
+              errmsg={errForm.cms_meta_keyword}
               onChange={handleChangeFormdata}
-              className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
-            <hint className="text-red-700">{errmetakeyword}</hint>
+          </div>
+          <div className="mt-2">
+            <label>Status</label>
+            <div className="flex gap-4">
+              <TocRadioInput
+                id="cms_statusa"
+                name="cms_status"
+                value="A"
+                label="Active"
+                checked={cmsstatus === "A"}
+                //onChange={handleChangeFormdata}
+                onChange={(e) => setCmsstatus(e.target.value)}
+              />
+
+              <TocRadioInput
+                id="cms_statusd"
+                name="cms_status"
+                value="D"
+                label="Inactive"
+                checked={cmsstatus === "D"}
+                // onChange={handleChangeFormdata}
+                onChange={(e) => setCmsstatus(e.target.value)}
+              />
+            </div>
           </div>
           <div className="btn-section">
             <button type="button">Cancle</button>
-            <button
-              type="submit"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Submit
-            </button>
+            <TocButton type="submit" className="pl-10 pr-10 h-10">
+              {editdata.cmsid > 0 ? "Update" : "Submit"}
+            </TocButton>
           </div>
         </form>
       </div>

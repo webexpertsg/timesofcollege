@@ -959,9 +959,10 @@ export const updateCMS = (body) => {
       cms_meta_title,
       cms_meta_description,
       cms_meta_keyword,
+      cms_status,
     } = body;
     pool.query(
-      "UPDATE cms SET cms_title = $2,cms_url=$3, cms_description=$4,cms_meta_title=$5,cms_meta_description=$6,cms_meta_keyword=$7 WHERE cmsid = $1 RETURNING *",
+      "UPDATE cms SET cms_title = $2,cms_url=$3, cms_description=$4,cms_meta_title=$5,cms_meta_description=$6,cms_meta_keyword=$7,cms_status=$8 WHERE cmsid = $1 RETURNING *",
       [
         cmsid,
         cms_title,
@@ -970,6 +971,7 @@ export const updateCMS = (body) => {
         cms_meta_title,
         cms_meta_description,
         cms_meta_keyword,
+        cms_status,
       ],
       (error, results) => {
         if (error) {
@@ -2601,9 +2603,10 @@ export const addCms = (body) => {
       cms_meta_title,
       cms_meta_description,
       cms_meta_keyword,
+      cms_status,
     } = body;
     pool.query(
-      "INSERT INTO cms(cms_title,cms_url,cms_description,cms_meta_title,cms_meta_description,cms_meta_keyword) VALUES ( $1,$2,$3,$4,$5,$6) RETURNING *",
+      "INSERT INTO cms(cms_title,cms_url,cms_description,cms_meta_title,cms_meta_description,cms_meta_keyword,cms_status) VALUES ( $1,$2,$3,$4,$5,$6,$7) RETURNING *",
       [
         cms_title,
         cms_url,
@@ -2611,6 +2614,7 @@ export const addCms = (body) => {
         cms_meta_title,
         cms_meta_description,
         cms_meta_keyword,
+        cms_status,
       ],
       (error, results) => {
         if (error) {
