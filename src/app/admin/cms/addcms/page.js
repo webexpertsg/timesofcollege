@@ -4,7 +4,6 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { hasNotEmptyValue } from "@/utils";
 import { useSearchParams } from "next/navigation";
-import { useParams, usePathname } from "next/navigation";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocTextarea from "@/components/ui/atoms/tocTextarea";
 import TocRadioInput from "@/components/ui/atoms/tocRadio";
@@ -42,8 +41,25 @@ function Addcms() {
       axios
         .get("/api/admin/editcms/?cmsid=" + cmsid)
         .then((response) => {
-          setEditdata(response.data[0]);
-          setCmsstatus(response.data[0].cms_status);
+          if (response.data.length > 0) {
+            setEditdata(response.data[0]);
+            setCmsstatus(response.data[0].cms_status);
+          } else {
+            toast.error("Edit id not exits.", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            setTimeout(function () {
+              window.location.replace("/admin/cms");
+            }, 3000);
+          }
         })
         .catch((error) => {
           //console.error(error);
@@ -139,7 +155,7 @@ function Addcms() {
                 // transition: Bounce,
               });
               setTimeout(function () {
-                window.location.replace("../cms");
+                window.location.replace("/admin/cms");
               }, 3000);
             }
           })
@@ -180,7 +196,7 @@ function Addcms() {
                 // transition: Bounce,
               });
               setTimeout(function () {
-                window.location.replace("../cms");
+                window.location.replace("/admin/cms");
               }, 3000);
             } else {
               toast.error(response.error, {
@@ -232,7 +248,7 @@ function Addcms() {
           </h1>
           <div className="actions">
             <Link
-              href={"../cms"}
+              href={"/admin/cms"}
               alt="Back To cms Listing"
               title="Back To Cms Listing"
             >
@@ -347,7 +363,6 @@ function Addcms() {
                 value="A"
                 label="Active"
                 checked={cmsstatus === "A"}
-                //onChange={handleChangeFormdata}
                 onChange={(e) => setCmsstatus(e.target.value)}
               />
 
@@ -357,7 +372,6 @@ function Addcms() {
                 value="D"
                 label="Inactive"
                 checked={cmsstatus === "D"}
-                // onChange={handleChangeFormdata}
                 onChange={(e) => setCmsstatus(e.target.value)}
               />
             </div>

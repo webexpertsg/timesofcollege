@@ -35,9 +35,26 @@ function Notificationadd() {
       axios
         .get("/api/admin/editnotification/?notif_id=" + notif_id)
         .then((response) => {
-          setEditdata(response.data[0]);
-          setNotificationstatus(response.data[0].notification_status);
-          setNotificationtarget(response.data[0].notification_target);
+          if (response.data.length > 0) {
+            setEditdata(response.data[0]);
+            setNotificationstatus(response.data[0].notification_status);
+            setNotificationtarget(response.data[0].notification_target);
+          } else {
+            toast.error("Edit id not exits.", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            setTimeout(function () {
+              window.location.replace("/admin/notifications");
+            }, 3000);
+          }
         })
         .catch((error) => {
           //console.error(error);
