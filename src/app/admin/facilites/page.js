@@ -148,7 +148,7 @@ function Facilites() {
 
     if (facility_name.value === "") {
       errorsForm.push(
-        <div key="branameErr">Facility Name cann't be blank!</div>
+        <div key="branameErr">Facility Name cann&apos;t be blank!</div>
       );
     } else {
       errorsForm.push();

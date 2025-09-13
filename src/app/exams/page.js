@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
-import Image from 'next/image';
+import Image from "next/image";
 import axios from "axios";
 
 // import Relatednews from "../../../src/Pages/website/college/relatednews";
@@ -66,12 +66,7 @@ function Exams(props) {
     <a href={"/exams/" + eitem.na_url}>
       <div className="exam-card" id={eitem.na_id}>
         <div className="exam-meta">
-            <Image 
-                src={clgSmallImg}
-                alt=''
-                width={30}
-                height={30}
-            />
+          <Image src={clgSmallImg} alt="" width={30} height={30} />
           <div>
             <h3>{eitem.na_title}</h3>
             <span>online</span>
@@ -110,7 +105,7 @@ function Exams(props) {
                 //     {item.na_title}
                 //   </div>
                 // </a>
-                <div>{renderExams(item)}</div>
+                <div key={`exa-${i}`}>{renderExams(item)}</div>
               ))}
           </div>
         </section>
@@ -134,18 +129,12 @@ function Exams(props) {
 
           <div className="ads">
             <a href="https://timesofcollege.com/college/jaipuria-school-of-business-ghaziabad">
-                <Image 
-                    src={adsImg1}
-                    alt='JAIPURIA'
-                />
+              <Image src={adsImg1} alt="JAIPURIA" />
             </a>
           </div>
           <div className="ads">
             <a href="https://timesofcollege.com/college/bimtech-greater-noida">
-                <Image 
-                    src={adsImg2}
-                    alt='BIMTECH'
-                />
+              <Image src={adsImg2} alt="BIMTECH" />
             </a>
           </div>
         </div>

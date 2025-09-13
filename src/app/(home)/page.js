@@ -1,10 +1,11 @@
-"use client"
+"use client";
+"react/no-unescaped-entities";
 
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "axios";
-import Image from 'next/image';
+import Image from "next/image";
 
 // import { getImageURL } from "../../../utils/utils-image";
 
@@ -34,7 +35,6 @@ import Modal from "@/components/ui/modal";
 import Login from "@/components/ui/login";
 
 import { openModel } from "@/app/redux/manageModelSlice";
-
 
 function Home(props) {
   const dispatch = useDispatch();
@@ -80,7 +80,7 @@ function Home(props) {
     cit_id: "",
     city_name: "",
   });
-  
+
   const [tradingarr, setTradingarr] = useState({
     trading_url: "",
     trading_name: "",
@@ -92,8 +92,8 @@ function Home(props) {
     btnTitle: "",
   });
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [viewExm, setViewExm] = useState(false)
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [viewExm, setViewExm] = useState(false);
 
   // const [searchparameter, setSearchparameter] = useState({
   //   search_parameter: "",
@@ -253,7 +253,11 @@ function Home(props) {
             <span style={{ color: "#fff" }}>Top Courses:</span>
             {topcourses.length > 0 &&
               topcourses.map((citem) => (
-                <span key={`citem-${citem}`} className="border-chips" id={citem.cour_id}>
+                <span
+                  key={`citem-${citem}`}
+                  className="border-chips"
+                  id={citem.cour_id}
+                >
                   <a href={"course/" + citem.course_url}>{citem.course_name}</a>
                 </span>
               ))}
@@ -272,21 +276,15 @@ function Home(props) {
       <section className="latest-news">
         <div className="news-wrapper">
           <span>
-            <Image 
-              src={handSpeaker}
-              alt=''
-            />
+            <Image src={handSpeaker} alt="" />
           </span>
           <span>
-            <Image 
-              src={leftArrow}
-              alt=''
-            />
+            <Image src={leftArrow} alt="" />
           </span>
           <div className="news-list">
             {topnotification.length > 0 &&
               topnotification.map((nitem) => (
-                <span id={nitem.notif_id}>
+                <span key={`news-${nitem.notif_id}`} id={nitem.notif_id}>
                   <a
                     href={nitem.notification_url}
                     alt={nitem.notification_title}
@@ -300,10 +298,7 @@ function Home(props) {
               ))}
           </div>
           <span>
-            <Image 
-              src={rightArrow}
-              alt=''
-            />
+            <Image src={rightArrow} alt="" />
           </span>
         </div>
       </section>
@@ -319,15 +314,15 @@ function Home(props) {
       </section>
 
       <section className="container popular-colleges">
-        <div className="head-line">Most Popular Featured College's</div>
+        <div className="head-line">Most Popular Featured College&apos;s</div>
         <div className="popular-clg-container">
           {toppopularcollegelisting.length > 0 &&
             toppopularcollegelisting.map((item, id) => {
-              const examArr = item.exam_name.split(',')
-              const examsView = examArr.slice(0,3).join(',')
-              const remainingCount = examArr.length - 3
-              const remainingExam = examArr.slice(3).join(',')
-              
+              const examArr = item.exam_name.split(",");
+              const examsView = examArr.slice(0, 3).join(",");
+              const remainingCount = examArr.length - 3;
+              const remainingExam = examArr.slice(3).join(",");
+
               var courlink = "";
               if (item.courses) {
                 const courarrs = item.courses.split(", ");
@@ -345,16 +340,16 @@ function Home(props) {
                 return (
                   <>
                     {/* <a href={"college/" + item.college_url}> */}
-                      <div className="popular-clg" key={id}>
-                        <div
-                          className="header"
-                          style={{
-                            // backgroundImage: `url(${getImageURL(item.banner) ? getImageURL(item.banner) : clgBanner})`,
-                            backgroundRepeat: "no-repeat",
-                          }}
-                        >
-                          <div>
-                            <a href={"college/" + item.college_url}>
+                    <div className="popular-clg" key={id}>
+                      <div
+                        className="header"
+                        style={{
+                          // backgroundImage: `url(${getImageURL(item.banner) ? getImageURL(item.banner) : clgBanner})`,
+                          backgroundRepeat: "no-repeat",
+                        }}
+                      >
+                        <div>
+                          <a href={"college/" + item.college_url}>
                             {/* <img src={getImageURL(item.logo)} alt="" /> */}
                             <div className="details">
                               <h3>{item.college_name} </h3>
@@ -363,75 +358,81 @@ function Home(props) {
                               </p>
                               <p>{item.approved_by}</p>
                             </div>
-                            </a>
-                          </div>
-                          <div className="heart"></div>
+                          </a>
                         </div>
-                        <div className="other-details relative">
-                          <div className="clg-type-rating">
-                            <span>{item.courses && courlink}</span>
-                            <span className="clg-rating">
-                              {/* <img src={star} alt="" /> */}
-                              <Image 
-                                src={star}
-                                alt=''            
-                              />
-                              <span>
-                                <b>
-                                  {item.total_rating
-                                    ? item.total_rating.slice(0, 3)
-                                    : "0"}
-                                </b>
-                                /10
-                              </span>
+                        <div className="heart"></div>
+                      </div>
+                      <div className="other-details relative">
+                        <div className="clg-type-rating">
+                          <span>{item.courses && courlink}</span>
+                          <span className="clg-rating">
+                            {/* <img src={star} alt="" /> */}
+                            <Image src={star} alt="" />
+                            <span>
+                              <b>
+                                {item.total_rating
+                                  ? item.total_rating.slice(0, 3)
+                                  : "0"}
+                              </b>
+                              /10
                             </span>
+                          </span>
+                        </div>
+                        <ul className="links mt-2 mb-2">
+                          <li className="text-sm">
+                            <span>College Type: </span>
+                            <span>
+                              <b>{item.college_types}</b>
+                            </span>
+                          </li>
+                          <li className="text-sm">
+                            <span>Placement Ratio: </span>
+                            <span>
+                              <b>{item.totalplacementratio}</b>
+                            </span>
+                          </li>
+                          <li className="text-sm">
+                            <span>Highest Package: </span>
+                            <span>
+                              <b>{item.higestplacementrecord}</b>
+                            </span>
+                          </li>
+                          <li className="text-sm">
+                            <span>Exam Accepted: </span>
+                            <span>
+                              <b>
+                                {examsView}{" "}
+                                {examArr.length > 3 && (
+                                  <span
+                                    className="text-green cursor-pointer"
+                                    onClick={() => setViewExm(!viewExm)}
+                                  >
+                                    +{remainingCount}
+                                  </span>
+                                )}
+                              </b>
+                              {/* {viewExm && <span className="absolute block w-20 text-xs right-2 bottom-14 bg-[#fcfcfc] p-1 font-bold rounded-md border-2 border-solid">{remainingExam}</span>}  */}
+                            </span>
+                          </li>
+                        </ul>
+                        <div className="action-btns">
+                          <div
+                            className="download"
+                            onClick={(e) => openModal(e)}
+                          >
+                            <Image src={downlaod} alt="" />
+                            <span>Download Brochure</span>
                           </div>
-                          <ul className="links mt-2 mb-2">
-                            <li className="text-sm">
-                              <span>College Type: </span>
-                              <span>
-                                <b>{item.college_types}</b>
-                              </span>
-                            </li>
-                            <li className="text-sm">
-                              <span>Placement Ratio: </span>
-                              <span>
-                                <b>{item.totalplacementratio}</b>
-                              </span>
-                            </li>
-                            <li className="text-sm">
-                              <span>Highest Package: </span>
-                              <span>
-                                <b>{item.higestplacementrecord}</b>
-                              </span>
-                            </li>
-                            <li className="text-sm">
-                              <span>Exam Accepted: </span>
-                              <span>
-                                <b>{examsView} {examArr.length > 3 && <span className="text-green cursor-pointer" onClick={() => setViewExm(!viewExm)}>+{remainingCount}</span>}</b>
-                                {/* {viewExm && <span className="absolute block w-20 text-xs right-2 bottom-14 bg-[#fcfcfc] p-1 font-bold rounded-md border-2 border-solid">{remainingExam}</span>}  */}
-                              </span>
-                            </li>
-                          </ul>
-                          <div className="action-btns">
-                            <div className="download" onClick={(e) => openModal(e)}
-                            >
-                              <Image 
-                                src={downlaod}
-                                alt=''            
-                              />
-                              <span>Download Brochure</span>
-                            </div>
-                            <div className="compare" onClick={(e) => openModal(e)}                            >
-                              <Image 
-                                src={compare}
-                                alt=''
-                              />
-                              <span>Compare</span>
-                            </div>
+                          <div
+                            className="compare"
+                            onClick={(e) => openModal(e)}
+                          >
+                            <Image src={compare} alt="" />
+                            <span>Compare</span>
                           </div>
                         </div>
                       </div>
+                    </div>
                     {/* </a> */}
                   </>
                 );
@@ -453,10 +454,7 @@ function Home(props) {
             <div className="chips-link">
               <span>JEE Mains Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -464,10 +462,7 @@ function Home(props) {
             <div className="chips-link">
               <span>CUET Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''              
-                />
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -475,10 +470,7 @@ function Home(props) {
             <div className="chips-link">
               <span>MBA Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -486,10 +478,7 @@ function Home(props) {
             <div className="chips-link">
               <span>LLB Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -497,10 +486,7 @@ function Home(props) {
             <div className="chips-link">
               <span>B.Sc Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />              
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -508,10 +494,7 @@ function Home(props) {
             <div className="chips-link">
               <span>MBBS Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -519,10 +502,7 @@ function Home(props) {
             <div className="chips-link">
               <span>PhD Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />              
+                <Image src={arrowTilt} alt="" />
               </span>
             </div>
           </a>
@@ -530,11 +510,8 @@ function Home(props) {
             <div className="chips-link">
               <span>B Ed Admission 2025</span>
               <span>
-                <Image 
-                  src={arrowTilt}
-                  alt=''
-                />              
-                </span>
+                <Image src={arrowTilt} alt="" />
+              </span>
             </div>
           </a>
         </div>
@@ -544,15 +521,12 @@ function Home(props) {
         <div className="admission-links-list">
           {tradingarr.length > 0 &&
             tradingarr.map((trd, keyid) => (
-              <a href={"/college"}>
+              <a key={`trd-${keyid}`} href={"/college"}>
                 <div className="chips-link" key={keyid}>
                   <span>{trd.trading_name}</span>
                   <span>
-                  <Image 
-                    src={arrowTilt}
-                    alt=''
-                  />                  
-                </span>
+                    <Image src={arrowTilt} alt="" />
+                  </span>
                 </div>
               </a>
             ))}
@@ -564,31 +538,22 @@ function Home(props) {
           <div className="get-notify-container">
             <div className="form-element">
               <span>
-                <Image 
-                  src={studentIcon}
-                  alt=''
-                />
+                <Image src={studentIcon} alt="" />
               </span>
-              <select name="course-list" id="">
+              <select name="course-list" id="" key={"courselist"}>
                 <option value="-Select-">Choose courses</option>
                 <option value="option">Option</option>
               </select>
             </div>
             <div className="form-element">
               <span>
-                <Image 
-                  src={emailIcon}
-                  alt=''
-                />                
+                <Image src={emailIcon} alt="" />
               </span>
               <input type="text" name="" id="" placeholder="Enter your email" />
             </div>
             <div className="form-element">
               <span>
-                <Image 
-                  src={phoneIcon}
-                  alt=''
-                /> 
+                <Image src={phoneIcon} alt="" />
               </span>
               <input type="text" name="" id="" placeholder="Enter your phone" />
             </div>
