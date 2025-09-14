@@ -58,7 +58,6 @@ export const getAvertisement = (ad_id) => {
         //resolve(`Edit Notification ID: ${notif_id}`);
       }
     );
-    console.log(query);
   });
 };
 export const updateAvertisementlisting = (body) => {

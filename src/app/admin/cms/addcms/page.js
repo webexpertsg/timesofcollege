@@ -347,7 +347,7 @@ function Addcms() {
           <div className="mt-2">
             <TocInputWithLabel
               id="cms_meta_keyword"
-              label="Title Meta Description"
+              label="Title Meta Keyword"
               placeholder="Please enter meta keyword."
               value={editdata.cms_meta_keyword ? editdata.cms_meta_keyword : ""}
               required={true}

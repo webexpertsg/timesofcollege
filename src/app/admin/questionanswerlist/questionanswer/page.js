@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { hasNotEmptyValue } from "@/utils";
+import { hasNotEmptyValue, commaWithSingleQuotes } from "@/utils";
 import { useSearchParams } from "next/navigation";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocTextarea from "@/components/ui/atoms/tocTextarea";
@@ -27,8 +27,8 @@ function Questionanswer() {
   const [catgoryarr, setCatgoryarr] = useState([]);
   const [tradingarr, setTradingarr] = useState([]);
   const [tradingvalue, setTradingvalue] = useState([]);
-  const [selectCategory, setSelectCategory] = useState("");
-  const [selectTrading, setSelectTrading] = useState("");
+  const [selectCategory, setSelectCategory] = useState([]);
+  const [selectTrading, setSelectTrading] = useState([]);
 
   const [qstatus, setQstatus] = useState("A");
   const [editdata, setEditdata] = useState({
@@ -47,10 +47,6 @@ function Questionanswer() {
   const searchParams = useSearchParams();
   const qid = searchParams.get("qid");
   useEffect(() => {
-    /*fetch("http://localhost:3001/")
-      .then((response) => response.json())
-      .then((json) => setData(json))
-      .catch((error) => console.error(error));*/
     axios
       .get("/api/admin/getcategoriesarr")
       .then((response) => {
@@ -75,8 +71,10 @@ function Questionanswer() {
             setEditdata(response.data[0]);
             setQstatus(response.data[0].qstatus);
             //setAnswervalue(response.data[0].answer);
-            setSelectCategory(response.data[0].catgories);
-            setSelectTrading(response.data[0].trading);
+            setSelectCategory(
+              commaWithSingleQuotes(response.data[0].catgories)
+            );
+            setSelectTrading(commaWithSingleQuotes(response.data[0].trading));
           } else {
             toast.error("Edit id not exits.", {
               position: "top-right",
@@ -163,7 +161,7 @@ function Questionanswer() {
         //update form data
         axios({
           method: "post",
-          url: "/api/admin/getupdatequestion/",
+          url: "/api/admin/updatequestion/",
           data: payload,
         })
           .then(function (response) {
@@ -189,6 +187,17 @@ function Questionanswer() {
           })
           .catch(function (error) {
             console.log(error);
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
           });
         //end update form data
       } else {
@@ -231,6 +240,17 @@ function Questionanswer() {
           })
           .catch(function (error) {
             console.log(error);
+            toast.error(error, {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
           });
       }
     }

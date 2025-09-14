@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -129,7 +129,7 @@ function Notifications() {
     console.log("Edit advertisement id:", editval);
     if (editval > 0) {
       window.location.href =
-        "/admin/advertisement/advertisementform/" + editval;
+        "/admin/advertisement/advertisementform/?adid=" + editval;
     }
   };
 
@@ -163,7 +163,7 @@ function Notifications() {
                 </svg>
               </Link>
             </span>
-            <span onClick={() => setIsFilter(true)}>
+            {/* <span onClick={() => setIsFilter(true)}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
@@ -176,7 +176,7 @@ function Notifications() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>

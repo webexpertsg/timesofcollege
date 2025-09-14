@@ -342,6 +342,21 @@ export const inactiveCms = (cmsid) => {
     );
   });
 };
+export const inactiveQuestionanswer = (qid) => {
+  console.log("id--", qid);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE questions SET qstatus='D' WHERE qid=$1",
+      [qid],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A question has been inactived: ${qid}`);
+      }
+    );
+  });
+};
 export const deleteFacility = (facility_id) => {
   return new Promise(function (resolve, reject) {
     pool.query(
