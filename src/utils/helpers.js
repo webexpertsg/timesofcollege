@@ -5,5 +5,8 @@ export const hasNotEmptyValue = (obj) => {
 }
 
 export const commaWithSingleQuotes = (value) => {
+    if(value==null || value===undefined || value===''){
+        return '';
+    }
     return value.split(',').map(number => number.toString());
 } 

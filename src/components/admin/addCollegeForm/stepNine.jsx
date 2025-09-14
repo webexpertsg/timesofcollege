@@ -29,19 +29,7 @@ const StepNine = ({ data, onNext, onPrevious }) => {
     }
   }
 
-  const [subcoursesoptions, setSubcoursesoptions] = useState([
-    {
-      subcourseId: "",
-      course_duration: "",
-      course_fee: "",
-      feetype_id: "",
-      course_seats: "",
-      subcoursedescription: "",
-      subcourseselectioncriteria: "",
-      subcourseselectiioneligibility: "",
-      subcoursestype: "",
-    },
-  ])
+  const [subcoursesoptions, setSubcoursesoptions] = useState(data.clgSubCourses)
 
     const handleSubcoursesClick = (e) => {
     setSubcoursesoptions([
@@ -60,8 +48,8 @@ const StepNine = ({ data, onNext, onPrevious }) => {
     ]);
   }
 
-  const handlesubcourseChange = (e, i) => {
-    const { name, value } = e.target;
+  const handlesubcourseChange = (e, i, name) => {
+    const { value } = e.target;
     const onChangeData = [...subcoursesoptions];
     onChangeData[i][name] = value;
     setSubcoursesoptions(onChangeData);
@@ -73,18 +61,54 @@ const StepNine = ({ data, onNext, onPrevious }) => {
     setSubcoursesoptions(deleteData);
   }
 
-  const handleSubmit = (e) => {
+  const handleCourseSubmit = (e) => {
     e.preventDefault();
-    onNext({ });
+    const formData = new FormData();
+
+    formData.append("cid", cid);
+    formData.append("courses", selectCourseType.join(","));
+    formData.append("sub_course_details", JSON.stringify(subcoursesoptions));
+
+    if (cid > 0) {
+      //update form data
+      axios({
+        method: "POST",
+        url: "/api/admin/updatecourses",
+        data: formData,
+        headers: { "Content-Type": "application/json" },
+      })
+        .then(function (response) {
+          //console.log(response);
+          console.log(response.statusText);
+          if (response.statusText === "OK") {
+            toast.success("Course sucessfully updated", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              //transition: Bounce,
+            });
+            /*  setSuccessmsg("Successfully Updated.");
+            setTimeout(function () {
+              window.location.replace("../../collegelisting");
+            }, 3000); */
+          }
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+      //end update form data
+    }
+
+    // onNext({ });
   }
 
-  
-  const handleCheckboxChange = (event) => {
-    setIsChecked(event.target.checked);
-  };
-
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleCourseSubmit}>
       <div className='flex justify-between'>
         <h2 className='text-2xl mb-10 font-bold'>Step 9: Courses</h2>
         <div className='flex gap-4'>     
@@ -95,7 +119,7 @@ const StepNine = ({ data, onNext, onPrevious }) => {
 
     <h2 className='pt-5 pb-2 font-semibold'>Courses</h2>
     <div className='flex flex-wrap gap-1'>
-      {formState.coursearr.map((item, id)=>(
+      {formState.coursearr.map((item, id)=> (
         <div key={`courses-${id}`} className="items-center p-2 border bg-white border-gray-200 rounded-sm dark:border-gray-700">
           <TocCheckbox
             id={`courses-${item.value}`}
@@ -109,105 +133,108 @@ const StepNine = ({ data, onNext, onPrevious }) => {
     </div>
     {error.ctype && <hint className="text-red-700">{error.ctype}</hint>}
 
-    {console.log("subcoursesoptions=======>", formState.subcoursearr)}
+    {/* {console.log("subcoursesoptions=======>", formState.subcoursearr)} */}
     <h2 className='pt-5 pb-2 font-semibold'>Courses Braches</h2>
     <div className="sm:col-span-4">
         {subcoursesoptions.map((item, i) => (
         <>
-          <div className="flex mb-2" key={`key-${i}`}>
+          <div className="flex items-baseline mb-2" key={`key-${i}`}>
             <div className="sm:col-span-4 px-2">
                 <TocSelectList
-                id="fruit-select"
+                id="subcourseId"
                 // label="Country"
                 options={formState.subcoursearr}
                 // onChange={handleChange}
+                onChange={(e) => handlesubcourseChange(e, i, 'subcourseId')}
                 // value={selectedOption}
+                className="lg:w-[180px]"
                 />
             </div>
 
-            <div className="sm:col-span-4 px-2">
+            <div className="sm:col-span-1 px-2">
               <TocInputWithLabel
-                id="highParameter"
-                name="highParameter"
-                placeholder="Parameter"
-                value={item.highParameter}
-                // onChange={(e) => handleChange(e, i)}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
+                id="course_duration"
+                name="course_duration"
+                placeholder="Course Duration"
+                value={item.course_duration}
+                onChange={(e) => handlesubcourseChange(e, i, 'course_duration')}
+                className="lg:w-[50px]"
               />
             </div>
 
-            <div className="sm:col-span-4 px-2">
+            <div className="sm:col-span-1 px-2">
               <TocInputWithLabel 
-                id="highParameter"
-                name="highParameter"
-                placeholder="Parameter"
-                value={item.highParameter}
-                // onChange={(e) => handleChange(e, i)}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
+                id="course_fee"
+                name="course_fee"
+                placeholder="Course Fee"
+                value={item.course_fee}
+                onChange={(e) => handlesubcourseChange(e, i, 'course_fee')}
+                className="lg:w-[100px]"
               />
             </div>
 
             <div className="sm:col-span-2 px-2">
                 <TocSelectList
-                id="fruit-select"
+                id="feetype_id"
                 // label="Country"
                 options={formState.feetypearr}
-                // onChange={handleChange}
+                onChange={(e) => handlesubcourseChange(e, i, 'feetype_id')}
                 // value={selectedOption}
+                className="lg:w-[110px]"
                 />
             </div>
 
-            <div className="sm:col-span-4 px-2">
+            <div className="sm:col-span-2 px-2">
               <TocInputWithLabel 
-                id="highParameter"
-                name="highParameter"
-                placeholder="Parameter"
-                value={item.highParameter}
-                // onChange={(e) => handleChange(e, i)}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
-              />
-            </div>
-
-            <div className="sm:col-span-4 px-2">
-              <TocInputWithLabel 
-                id="highParameter"
-                name="highParameter"
-                placeholder="Parameter"
-                value={item.highParameter}
-                // onChange={(e) => handleChange(e, i)}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
+                id="course_seats"
+                name="course_seats"
+                placeholder="Available Seats"
+                value={item.course_seats}
+                onChange={(e) => handlesubcourseChange(e, i, 'course_seats')}
+                className="lg:w-[60px]"
               />
             </div>
 
             <div className="sm:col-span-2 px-2">
               <TocInputWithLabel 
-                id="highParameter"
-                name="highParameter"
-                placeholder="Parameter"
-                value={item.highParameter}
-                // onChange={(e) => handleChange(e, i)}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
+                id="subcoursedescription"
+                name="subcoursedescription"
+                placeholder="Description"
+                value={item.subcoursedescription}
+                onChange={(e) => handlesubcourseChange(e, i, 'subcoursedescription')}
+                className="lg:w-[100px]"
               />
             </div>
 
             <div className="sm:col-span-2 px-2">
               <TocInputWithLabel 
-                id="highParameter"
-                name="highParameter"
-                placeholder="Parameter"
-                value={item.highParameter}
-                // onChange={(e) => handleChange(e, i)}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
+                id="subcourseselectioncriteria"
+                name="subcourseselectioncriteria"
+                placeholder="Accepted Exams"
+                value={item.subcourseselectioncriteria}
+                onChange={(e) => handlesubcourseChange(e, i, 'subcourseselectioncriteria')}
+              />
+            </div>
+
+            <div className="sm:col-span-2 px-2">
+              <TocInputWithLabel 
+                id="subcourseselectiioneligibility"
+                name="subcourseselectiioneligibility"
+                placeholder="Eligibility"
+                value={item.subcourseselectiioneligibility}
+                onChange={(e) => handlesubcourseChange(e, i, 'subcourseselectiioneligibility')}
+                className="lg:w-[100px]"
               />
             </div>
             
             <div className="sm:col-span-2 px-2">
                 <TocSelectList
-                id="fruit-select"
+                id="subcoursestype"
                 // label="Country"
                 options={formState.subcoursestypearr}
-                // onChange={handleChange}
+                onChange={(e) => handlesubcourseChange(e, i, 'subcoursestype')}
                 // value={selectedOption}
+                className="lg:w-[100px]"
                 />
             </div>
 

@@ -126,14 +126,13 @@ const StepThree = ({ data, onNext, onPrevious }) => {
       {highLights.map((item, i) => (
         <>
           <div className="flex mb-2" key={`key-${i}`}>
-            <div className="sm:col-span-4 px-2">
+            <div className="sm:col-span-2 px-2">
               <TocInputWithLabel 
                 id="highParameter"
                 name="highParameter"
                 placeholder="Parameter"
                 value={item.highParameter}
                 onChange={(e) => handleChange(e, i, 'highParameter')}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
               />
             </div>
             <div className="sm:col-span-2 px-2">
@@ -143,7 +142,6 @@ const StepThree = ({ data, onNext, onPrevious }) => {
                 placeholder="Use colons for bullet points"
                 value={item.highDetails}
                 onChange={(e) => handleChange(e, i, 'highDetails')}
-                className="block w-full rounded-md border-0 text-gray-900 ring-1 ring-gray"
               />       
             </div>
             <div className="sm:col-span-2">

@@ -28,7 +28,7 @@ const TocCustomEditor = ({ id, label, initialData, onChange, required, errmsg = 
             data={initialData}
             onReady={(editor) => {
                 // You can store the "editor" instance and use it later if needed
-                console.log('Editor is ready to use!', editor);
+                // console.log('Editor is ready to use!', editor);
             }}
             onChange={(event, editor) => {
                 const data = editor.getData();

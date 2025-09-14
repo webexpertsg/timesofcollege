@@ -115,6 +115,17 @@ const MultiStepForm = () => {
     clgTopProfile: '',
 
     clgSelectCourseType: [],
+    clgSubCourses: [{
+      subcourseId: "",
+      course_duration: "",
+      course_fee: "",
+      feetype_id: "",
+      course_seats: "",
+      subcoursedescription: "",
+      subcourseselectioncriteria: "",
+      subcourseselectiioneligibility: "",
+      subcoursestype: "",
+    }]
   })
 
     useEffect(() => {
@@ -303,6 +314,7 @@ const MultiStepForm = () => {
 
           //Courses
           setFormData((prevData) => ({ ...prevData, clgSelectCourseType: commaWithSingleQuotes(data.courses)}));
+          setFormData((prevData) => ({ ...prevData, clgSubCourses: data.sub_course_details ? data.sub_course_details : formData.clgSubCourses}));
 
           // setFormData({clgType: data.ctype})   
         setIsLoading(false)
@@ -359,15 +371,15 @@ const MultiStepForm = () => {
       <div className='p-10'>
         <div className='mb-10'>
           <ul className='flex flex-wrap gap-2 text-sm font-medium text-center text-white border-b border-gray-200 dark:border-gray-700'>
-            <li onClick={() => handleTabs(1)} className={`cursor-pointer inline-block p-4 rounded-t-lg  hover:bg-[#5c3a7c] ${ currentStep === 1 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Basic Info</li>
-            <li onClick={() => handleTabs(2)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 2 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Contacts</li>
-            <li onClick={() => handleTabs(3)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 3 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Highlights</li>
-            <li onClick={() => handleTabs(4)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 4 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Gallery / Brouchure</li>
-            <li onClick={() => handleTabs(5)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 5 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Admissions / Scholarship</li>
-            <li onClick={() => handleTabs(6)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 6 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Rating</li>
-            <li onClick={() => handleTabs(7)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 7 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Placements</li>
-            <li onClick={() => handleTabs(8)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 8 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>FAQ</li>
-            <li onClick={() => handleTabs(9)} className={`cursor-pointer inline-block p-4 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 9 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Courses</li>
+            <li onClick={() => handleTabs(1)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg  hover:bg-[#5c3a7c] ${ currentStep === 1 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Basic Info</li>
+            <li onClick={() => handleTabs(2)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 2 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Contacts</li>
+            <li onClick={() => handleTabs(3)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 3 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Highlights</li>
+            <li onClick={() => handleTabs(4)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 6 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Gallery / Brouchure</li>
+            <li onClick={() => handleTabs(5)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 5 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Admissions / Scholarship</li>
+            <li onClick={() => handleTabs(6)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 6 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Rating</li>
+            <li onClick={() => handleTabs(7)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 7 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Placements</li>
+            <li onClick={() => handleTabs(8)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 8 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>FAQ</li>
+            <li onClick={() => handleTabs(9)} className={`cursor-pointer inline-block px-6 py-3 rounded-t-lg hover:bg-[#5c3a7c] ${ currentStep === 9 ? 'bg-[#5c3a7c] text-white-600 active' : 'bg-[#bbb4c1]'}`}>Courses</li>
           </ul>
         </div>
         {currentStep === 1 && (

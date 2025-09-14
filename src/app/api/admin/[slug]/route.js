@@ -73,6 +73,7 @@ import {
   updateAdmission,
   updateRating,
   updatePlacement,
+  updateCourses,
   deleteFacility,
   editfacility,
   editCollege,
@@ -100,17 +101,20 @@ import {
   editmenu,
   inactiveMegamenu,
 } from "@/models/megamenuModel";
+
 import {
   getWebsiteconfigdetails,
   updateWebconfig,
   getAvertisementlisting,
 } from "@/models/advertisementModel";
+
 import {
   countrylisting,
   statelisting,
   citylisting,
   countrydetail,
 } from "@/models/locationModel";
+
 import {
   getNotificationlisting,
   inactiveNotification,
@@ -851,6 +855,18 @@ export async function POST(request, { params }) {
     const body = await request.json();
     try {
       const returnresponse = await updatePlacement(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update Placement" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatecourses") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateCourses(body);
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json(
