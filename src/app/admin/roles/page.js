@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { hasNotEmptyValue } from "@/utils";
+import { hasNotEmptyValue, commaWithSingleQuotes } from "@/utils";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -150,7 +150,7 @@ function Roles() {
         role_name: role_name.value,
         //modules_access_ids: assignmodul.join(","),
         //modules_access_ids: selectModule.join(","),
-        modules_access_ids: selectModule,
+        modules_access_ids: selectModule.join(","),
         role_status: rolestatus,
       };
       if (rol_id.value > 0) {
@@ -285,8 +285,9 @@ function Roles() {
       .then((response) => {
         setEditdata(response.data[0]);
         setRolestatus(response.data[0].role_status);
-        let editmodulesArr = response.data[0].modules_access_ids;
-        setSelectModule(editmodulesArr);
+        setSelectModule(
+          commaWithSingleQuotes(response.data[0].modules_access_ids)
+        );
       })
       .catch((error) => {
         console.error(error);

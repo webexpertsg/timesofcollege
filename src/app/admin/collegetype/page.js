@@ -333,7 +333,9 @@ function Collegetype() {
                 onClick={() => setIsEditOpen(false)}
               />
             </IconButton>
-            <h3 className="font-bold text-lg">Add College Type</h3>
+            <h3 className="font-bold text-lg">
+              {editdata.col_type > 0 ? "Edit" : "Add"} College Type
+            </h3>
 
             <form
               action=""

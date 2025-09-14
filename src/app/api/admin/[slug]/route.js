@@ -38,6 +38,7 @@ import {
   inactiveUser,
   collegeenquirylisting,
   getQuestionlisting,
+  inactiveQuestionanswer,
   getExamlist,
   edittrending,
   getTrendinglist,
@@ -66,6 +67,8 @@ import {
   addCms,
   deleteCMS,
   inactiveCms,
+  addQuestion,
+  editQuestion,
   insertCollegeBasicInfoNew,
   updateCollegeBasicInfoNew,
   updateContactus,
@@ -106,6 +109,8 @@ import {
   getWebsiteconfigdetails,
   updateWebconfig,
   getAvertisementlisting,
+  getAvertisement,
+  updateAvertisementlisting,
 } from "@/models/advertisementModel";
 
 import {
@@ -253,6 +258,16 @@ export async function GET(request, { params }) {
   if (slug === "editcms") {
     const cms_id = searchParams.get("cmsid"); //
     const returnresponse = await editCms(cms_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "editquestion") {
+    const qid = searchParams.get("qid"); //
+    const returnresponse = await editQuestion(qid);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivequestionanswer") {
+    const qid = searchParams.get("qid"); //
+    const returnresponse = await inactiveQuestionanswer(qid);
     return NextResponse.json(returnresponse);
   }
   if (slug === "deletecms") {
@@ -433,6 +448,11 @@ export async function GET(request, { params }) {
     const returnresponse = await editExam(exam_id);
     return NextResponse.json(returnresponse);
   }
+  if (slug === "editadvertisement") {
+    const adid = searchParams.get("adid"); //
+    const returnresponse = await getAvertisement(adid);
+    return NextResponse.json(returnresponse);
+  }
   if (slug === "getcountrylists") {
     const returnresponse = await getCountryarr();
     return NextResponse.json(returnresponse);
@@ -470,6 +490,31 @@ export async function POST(request, { params }) {
       return NextResponse.json(returnresponse);
     } catch (error) {
       return NextResponse.json({ error: "Failed to add cms" }, { status: 500 });
+    }
+  }
+  if (slug === "addquestion") {
+    const body = await request.json();
+    try {
+      const returnresponse = await addQuestion(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to add toc cafe question" },
+        { status: 500 }
+      );
+    }
+  }
+
+  if (slug === "updatequestion") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateQuestion(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update question answer" },
+        { status: 500 }
+      );
     }
   }
   if (slug === "updatefacility") {
@@ -786,6 +831,18 @@ export async function POST(request, { params }) {
     } catch (error) {
       return NextResponse.json(
         { error: "Failed to update notification" },
+        { status: 500 }
+      );
+    }
+  }
+  if (slug === "updatevertisement") {
+    const body = await request.json();
+    try {
+      const returnresponse = await updateAvertisementlisting(body);
+      return NextResponse.json(returnresponse);
+    } catch (error) {
+      return NextResponse.json(
+        { error: "Failed to update ads" },
         { status: 500 }
       );
     }

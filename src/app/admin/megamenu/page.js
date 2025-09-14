@@ -467,6 +467,7 @@ function Megamenu() {
                               (scour) =>
                                 cour.menu_id == scour.menu_parent_id && (
                                   <option
+                                    key={scour.menu_id}
                                     value={scour.menu_id}
                                     selected={
                                       editdata.menu_parent_id == scour.menu_id

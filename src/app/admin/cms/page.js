@@ -115,7 +115,6 @@ function Cms() {
   const openInactiveConfirmModal = (row) => {
     if (window.confirm("Are you sure want to inactive this record?")) {
       inactiveRecord(row.original.cmsid);
-      //console.log("Delete======------>", row.original.cmsid);
     }
   };
   const editDetails = (editval) => {

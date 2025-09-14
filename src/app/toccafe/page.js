@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
@@ -48,25 +48,23 @@ function Toccafe(props) {
 
             {displaytoclisting.length > 0 &&
               displaytoclisting.map((item, id) => (
-                 <Accordion  title={item.question} content={item.answer}/>
+                <Accordion
+                  key={`q-${i}`}
+                  title={item.question}
+                  content={item.answer}
+                />
               ))}
           </div>
         </section>
         <div className="others">
           <div className="ads">
             <a href="https://timesofcollege.com/college/jaipuria-school-of-business-ghaziabad">
-                <Image 
-                    src={adsImg1}
-                    alt='JAIPURIA'
-                />
+              <Image src={adsImg1} alt="JAIPURIA" />
             </a>
           </div>
           <div className="ads">
             <a href="https://timesofcollege.com/college/bimtech-greater-noida">
-                <Image 
-                    src={adsImg2}
-                    alt='BIMTECH'
-                />
+              <Image src={adsImg2} alt="BIMTECH" />
             </a>
           </div>
         </div>

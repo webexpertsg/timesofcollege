@@ -1,15 +1,14 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import axios from "axios";
 import PropTypes from "prop-types";
-import Image from 'next/image';
+import Image from "next/image";
 
 import NavLink from "@/components/ui/navlink";
 
 // import { getImageURL } from "../../../utils/utils-image";
-
 
 import arrowUpIcon from "../../../public/images/arrowUp.svg";
 import clgSmallImg from "../../../public/images/img-dummy-sm.png";
@@ -26,7 +25,6 @@ import adsImg from "../../../public/images/ads.svg";
 import adsImg1 from "../../../public/images/ads/ads1.gif";
 import adsImg2 from "../../../public/images/ads/ads2.gif";
 
-
 // import Relatedcolleges from "../college/relatedcolleges";
 import NewsAndUpdates from "@/home/newsAndUpdates";
 import GetHelp from "@/components/ui/getNotify";
@@ -39,9 +37,9 @@ import Filter from "@/components/features/listing/filter";
 function Listing(props) {
   const { courfilter } = useParams();
   //const params = useParams();
-//   console.log(
-//     new URLSearchParams(location.search).get("courfilter")
-//   );
+  //   console.log(
+  //     new URLSearchParams(location.search).get("courfilter")
+  //   );
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [popupEvents, setPopupEvents] = useState({
@@ -95,11 +93,10 @@ function Listing(props) {
       course_url: props.course_url,
       search_parameter: props.search_parameter,
       coursefilter: new URLSearchParams(location.search).get("courfilter"),
-    }
+    };
     const queryString = new URLSearchParams(params).toString();
 
     // .post(`/api/college/collegelisting?${queryString}`)
-
 
     //   .get(`/api/college/collegelisting`, {
     //   city_url: props.city_url,
@@ -116,7 +113,7 @@ function Listing(props) {
     // console.log('queryString------->', queryString);
 
     axios
-    .get(`/api/college/collegelisting`)
+      .get(`/api/college/collegelisting`)
       .then((response) => {
         setCollegelisting(response.data);
       })
@@ -162,7 +159,6 @@ function Listing(props) {
       .catch((error) => {
         console.error(error);
       });
-
   }, []);
 
   //console.log("collegelisting", collegelisting.length);
@@ -399,7 +395,10 @@ function Listing(props) {
           <div className="applied-filters"></div>
           {collegelisting.length > 0
             ? collegelisting.map((item, id) => (
-                <a key={`key-collegelisting-${id}`} href={"./../college/" + item.college_url}>
+                <a
+                  key={`key-collegelisting-${id}`}
+                  href={"./../college/" + item.college_url}
+                >
                   <div
                     className="college-list-card"
                     id={item.cid}
@@ -407,9 +406,13 @@ function Listing(props) {
                   >
                     <div className="title-section">
                       <div className="img-box">
-                        <Image 
-                            src={location.hostname !== 'localhost' ? item.logo : adsImg}
-                            alt={item.college_name}
+                        <Image
+                          src={
+                            location.hostname !== "localhost"
+                              ? item.logo
+                              : adsImg
+                          }
+                          alt={item.college_name}
                         />
                       </div>
 
@@ -430,7 +433,11 @@ function Listing(props) {
                           <span className="owner medium">
                             {item.college_types}
                           </span>
-                          { item.nirg_ranking > 0 && <span className="rank bold green"># NIRF {`(${item.nirg_ranking})`}</span>}
+                          {item.nirg_ranking > 0 && (
+                            <span className="rank bold green">
+                              # NIRF {`(${item.nirg_ranking})`}
+                            </span>
+                          )}
                           <span className="rating">
                             <img src={star} alt="" />
                             <span>
@@ -498,8 +505,11 @@ function Listing(props) {
                   </div>
                 </a>
               ))
-            : [1, 2, 3, 4, 5].map((item) => (
-                <div class="mx-auto w-full rounded-md border border-[#ccc] p-4 mb-5">
+            : [1, 2, 3, 4, 5].map((item, i) => (
+                <div
+                  class="mx-auto w-full rounded-md border border-[#ccc] p-4 mb-5"
+                  key={`ke-${i}`}
+                >
                   <div class="flex animate-pulse space-x-4">
                     <div class="size-10 rounded-full bg-[#ccc]"></div>
                     <div class="flex-1 space-y-6 py-1">
@@ -526,21 +536,14 @@ function Listing(props) {
 
           <div className="ads">
             <a href="https://timesofcollege.com/college/jaipuria-school-of-business-ghaziabad">
-                <Image 
-                    src={adsImg1}
-                    alt='JAIPURIA'
-                />
+              <Image src={adsImg1} alt="JAIPURIA" />
             </a>
           </div>
           <div className="ads">
             <a href="https://timesofcollege.com/college/bimtech-greater-noida">
-                <Image 
-                    src={adsImg2}
-                    alt='BIMTECH'
-                />
+              <Image src={adsImg2} alt="BIMTECH" />
             </a>
           </div>
-
         </div>
       </section>
 

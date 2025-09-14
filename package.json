@@ -34,6 +34,9 @@
     "react-toastify": "^11.0.5",
     "redis": "^5.8.2"
   },
+  "resolutions": {
+    "react-countup/countup.js": "2.5.0"
+  },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",

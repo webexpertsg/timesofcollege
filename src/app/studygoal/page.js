@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -74,7 +74,7 @@ function Studygoal(props) {
                 //     {item.na_title}
                 //   </div>
                 // </a>
-                <div>{renderSG(item)}</div>
+                <div key={`sg-${id}`}>{renderSG(item)}</div>
               ))}
           </div>
         </section>
@@ -87,21 +87,14 @@ function Studygoal(props) {
 
           <div className="ads">
             <a href="https://timesofcollege.com/college/jaipuria-school-of-business-ghaziabad">
-                <Image 
-                    src={adsImg1}
-                    alt='JAIPURIA'
-                />
+              <Image src={adsImg1} alt="JAIPURIA" />
             </a>
           </div>
           <div className="ads">
             <a href="https://timesofcollege.com/college/bimtech-greater-noida">
-                <Image 
-                    src={adsImg2}
-                    alt='BIMTECH'
-                />
+              <Image src={adsImg2} alt="BIMTECH" />
             </a>
           </div>
-
         </div>
       </section>
       <Modal isModalOpen={isModalOpen} onClose={closeModal}>

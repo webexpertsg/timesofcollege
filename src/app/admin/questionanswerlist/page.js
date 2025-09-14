@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -16,6 +16,9 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 
 function Questionanswerlisting() {
@@ -56,14 +59,28 @@ function Questionanswerlisting() {
       accessorKey: "answer", //simple recommended way to define a column
       header: "Answer",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      //Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span
+          dangerouslySetInnerHTML={{
+            __html: cell.getValue().substring(0, 250) + " ...",
+          }}
+        ></span>
+      ), //optional custom cell render
     },
 
     {
       accessorKey: "status", //simple recommended way to define a column
       header: "Status",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
     },
   ];
   const [rowSelection, setRowSelection] = useState({});
@@ -73,7 +90,7 @@ function Questionanswerlisting() {
     data,
     enableColumnOrdering: true, //enable some features
     enableRowSelection: false,
-    enablePagination: false, //disable a default feature
+    enablePagination: true, //disable a default feature
     enableRowActions: true,
     onRowSelectionChange: setRowSelection, //hoist internal state to your own state (optional)
     state: { rowSelection }, //manage your own state, pass it back to the table (optional)
@@ -90,25 +107,68 @@ function Questionanswerlisting() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                console.log("Delete======------>", row.original.rol_id);
-
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.qstatus === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.qid);
+    }
+  };
+  const inactiveRecord = (qid) => {
+    if (qid > 0) {
+      axios
+        .get("/api/admin/inactivequestionanswer/?qid=" + qid)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            //window.location.href = "../../questionanswerlist";
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            setTimeout(function () {
+              //render cms listing
+              axios
+                .get("/api/admin/getquestinlisting")
+                .then((response) => {
+                  setDatas(response.data);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+              //end render cms listing
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
+    }
+  };
   const editDetails = (editval) => {
-    console.log("Edit college id:", editval);
+    console.log("Edit question id:", editval);
     if (editval > 0) {
       window.location.href =
-        "/admin/questionanswerlist/questionanswer/" + editval;
+        "/admin/questionanswerlist/questionanswer/?qid=" + editval;
     }
   };
 
@@ -135,7 +195,6 @@ function Questionanswerlisting() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  
                   <path stroke="none" d="M0 0h24v24H0z" />{" "}
                   <circle cx="12" cy="12" r="9" />{" "}
                   <line x1="9" y1="12" x2="15" y2="12" />{" "}
@@ -198,6 +257,7 @@ function Questionanswerlisting() {
           </div>
         </DialogContent>
       )}
+      <ToastContainer />
     </>
   );
 }
