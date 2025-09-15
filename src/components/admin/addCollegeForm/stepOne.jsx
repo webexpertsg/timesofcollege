@@ -10,6 +10,7 @@ import TocCheckbox from '@/components/ui/atoms/tocCheckbox';
 import TocTextarea from '@/components/ui/atoms/tocTextarea';
 import TocImageUploader from '@/components/ui/atoms/tocImageUploader';
 import TocButton from '@/components/ui/atoms/tocButtom';
+import TocUploader from '@/components/ui/atoms/tocUploader';
 
 import { hasNotEmptyValue } from '@/utils'
 
@@ -35,6 +36,8 @@ const StepOne = ({ data, onNext }) => {
   const [clgMetaKeywords, setSlgMetaKeywords] = useState(data.clgMetaKeywords);
   const [clgCoupon, setClgCoupon] = useState(data.clgCoupon);
   const [clgNIRF, setClgNIRF] = useState(data.clgNIRF);
+  const [file, setFile] = useState(null);
+
 
   const [error, setErrors] = useState({})
   const [isChecked, setIsChecked] = useState(false)
@@ -124,9 +127,10 @@ const StepOne = ({ data, onNext }) => {
     e.preventDefault();
     // onNext({ clgName, clgUrl, clgTagLine });
     const formData = new FormData();
+    // console.log('file--->', file);
     
     formData.append("cid", cid);
-    // formData.append("logo", logo);
+    formData.append("logo", file);
     // formData.append("banner", banner);
     formData.append("college_name", clgName);
     formData.append("college_url", clgUrl);
@@ -149,7 +153,7 @@ const StepOne = ({ data, onNext }) => {
     formData.append("nirg_ranking", clgNIRF ? clgNIRF : 0);
     // formData.append("application_open", appopenvalue);
     formData.append("meta_description", clgMetaDescription);
-    // formData.append("old_logo", event.target.old_logo.value);
+    // formData.append("old_logo", file);
     // formData.append("old_banner", event.target.old_banner.value);
     // formData.append("added_by", localStorage.login_id);
 
@@ -526,9 +530,13 @@ const StepOne = ({ data, onNext }) => {
       />
     </div>
 
-    <div className='flex gap-10'>    
-      <TocImageUploader />
-      <TocImageUploader />
+    <div className='flex gap-10'>   
+
+      <TocUploader onFileSelect={setFile} />
+
+
+      {/* <TocImageUploader />
+      <TocImageUploader /> */}
     </div>
 
     <div className='flex gap-10'>
