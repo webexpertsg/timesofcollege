@@ -105,7 +105,7 @@ function Exams(props) {
                 //     {item.na_title}
                 //   </div>
                 // </a>
-                <div key={`exa-${i}`}>{renderExams(item)}</div>
+                <div key={`exa-${id}`}>{renderExams(item)}</div>
               ))}
           </div>
         </section>
