@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
-import { hasNotEmptyValue, commaWithSingleQuotes } from "@/utils";
+import { hasNotEmptyValue, commaWithSingleQuotes, createUrl } from "@/utils";
 import { useSearchParams } from "next/navigation";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocTextarea from "@/components/ui/atoms/tocTextarea";
@@ -255,11 +255,15 @@ function Questionanswer() {
     }
   };
   // end add new question
-  const createUrl = (e) => {
-    var questions = e.target.value;
-    var qsturl = questions.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
-    editdata.question_url = qsturl.toLowerCase();
+  // const createUrl = (e) => {
+  //   var questions = e.target.value;
+  //   var qsturl = questions.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
+  //   editdata.question_url = qsturl.toLowerCase();
+  // };
+  const urlLink = (e) => {
+    editdata.question_url = createUrl(e);
   };
+
   const handleEditorChange = (data) => {
     setAnswervalue(data);
   };
@@ -334,6 +338,7 @@ function Questionanswer() {
               required={true}
               errmsg={errForm.question}
               onChange={handleChangeFormdata}
+              onChangeCapture={urlLink}
             />
           </div>
           <div className="mt-2">
