@@ -361,7 +361,7 @@ const MultiStepForm = () => {
     // await fetch('/api/submit-form', { method: 'POST', body: JSON.stringify(formData) });
     alert('Form submitted successfully!')
   };
-
+  
   
   return (
     <MultiStepFormContext.Provider value={{ formState }}>

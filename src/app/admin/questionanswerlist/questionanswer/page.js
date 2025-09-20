@@ -255,11 +255,7 @@ function Questionanswer() {
     }
   };
   // end add new question
-  // const createUrl = (e) => {
-  //   var questions = e.target.value;
-  //   var qsturl = questions.replace(/[_\s]/g, "-").replace(/[^a-z0-9-\s]/gi, "");
-  //   editdata.question_url = qsturl.toLowerCase();
-  // };
+
   const urlLink = (e) => {
     editdata.question_url = createUrl(e);
   };

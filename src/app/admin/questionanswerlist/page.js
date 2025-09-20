@@ -176,11 +176,11 @@ function Questionanswerlisting() {
     <>
       <div className="flex bg-white shadow">
         <div className="pageHeader p-3">
-          <h1 className="text-2xl font-semibold">Toc Cafe Listing</h1>
+          <h3 className="text-2xl font-semibold">Toc Cafe Listing</h3>
           <div className="actions">
             <span onClick={() => setIsEditOpen(true)}>
               <Link
-                href={"questionanswer"}
+                href={"questionanswerlist/questionanswer"}
                 alt="Add New Question"
                 title="Add New Question"
               >
@@ -202,7 +202,7 @@ function Questionanswerlisting() {
                 </svg>
               </Link>
             </span>
-            <span onClick={() => setIsFilter(true)}>
+            {/* <span onClick={() => setIsFilter(true)}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
@@ -215,7 +215,7 @@ function Questionanswerlisting() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>

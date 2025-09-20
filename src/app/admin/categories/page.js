@@ -37,6 +37,7 @@ function Categories() {
   const [errForm, setErrForm] = useState({});
   const [rowSelection, setRowSelection] = useState({});
   const [categorystatus, setCategorystatus] = useState("A");
+  const [isfeature, setIsfeature] = useState(false);
   const [editdata, setEditdata] = useState({
     cat_id: "",
     category_description: "",
@@ -47,6 +48,9 @@ function Categories() {
     category_status: categorystatus,
     category_url: "",
   });
+  const handleCheckboxChange = (event) => {
+    setIsfeature(event.target.checked);
+  };
   useEffect(() => {
     axios
       .get("/api/admin/getcategories")
@@ -81,21 +85,28 @@ function Categories() {
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
       Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
     },
+
+    // {
+    //   accessorKey: "category_meta_title", //simple recommended way to define a column
+    //   header: "Meta Title",
+    //   muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+    //   Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+    // },
+    // {
+    //   accessorKey: "category_meta_keyword", //simple recommended way to define a column
+    //   header: "Meta Keyword",
+    //   muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+    //   Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+    // },
+    // {
+    //   accessorKey: "category_meta_description", //simple recommended way to define a column
+    //   header: "Meta Description",
+    //   muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+    //   Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
+    // },
     {
-      accessorKey: "category_meta_title", //simple recommended way to define a column
-      header: "Meta Title",
-      muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
-    },
-    {
-      accessorKey: "category_meta_keyword", //simple recommended way to define a column
-      header: "Meta Keyword",
-      muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
-    },
-    {
-      accessorKey: "category_meta_description", //simple recommended way to define a column
-      header: "Meta Description",
+      accessorKey: "category_featured", //simple recommended way to define a column
+      header: "Featured",
       muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
       Cell: ({ cell }) => <span>{cell.getValue()}</span>, //optional custom cell render
     },
@@ -123,6 +134,9 @@ function Categories() {
       .then((response) => {
         setEditdata(response.data[0]);
         setCategorystatus(response.data[0].category_status);
+        response.data[0].category_featured
+          ? setIsfeature(true)
+          : setIsfeature(false);
       })
       .catch((error) => {
         console.error(error);
@@ -511,12 +525,17 @@ function Categories() {
                 <div className="mt-2">
                   <TocCheckbox
                     id="category_featured"
-                    value={`Y`}
-                    label={`Feature`}
-                    //checked={selectTrending.includes(JSON.stringify(item.tid))}
-                    checked={"Y" === editdata.category_status}
-                    onChange={handleChangeFormdata}
+                    value={isfeature ? "Y" : ""}
+                    label="Feature"
+                    checked={isfeature}
+                    onChange={handleCheckboxChange}
                   />
+                  {/* <TocCheckbox
+                    id="myCheckbox"
+                    label="Application Open"
+                    checked={isChecked}
+                    onChange={handleCheckboxChange}
+                  /> */}
                 </div>
               </div>
               <div className="mt-2">

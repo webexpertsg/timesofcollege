@@ -90,6 +90,7 @@ import {
   inactiveCourse,
   editExam,
   editcollege,
+  inactiveCollege,
   getCountryarr,
   getStatearr,
   getCityarr,
@@ -404,6 +405,11 @@ export async function GET(request, { params }) {
   if (slug === "inactivenotification") {
     const notif_id = searchParams.get("notif_id"); //
     const returnresponse = await inactiveNotification(notif_id);
+    return NextResponse.json(returnresponse);
+  }
+  if (slug === "inactivecollege") {
+    const cid = searchParams.get("cid"); //
+    const returnresponse = await inactiveCollege(cid);
     return NextResponse.json(returnresponse);
   }
   if (slug === "editcategory") {

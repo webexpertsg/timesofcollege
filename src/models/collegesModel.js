@@ -10,7 +10,9 @@ export const getColleges = async (req) => {
       }
 
       const query =
-        "select * from colleges where 1=1 " + search + " order by cid desc";
+        "select *,case when status = 'A' then 'Active' else 'Inactive' end as cstatus  from colleges where 1=1 " +
+        search +
+        " order by cid desc";
       pool.query(query, (error, results) => {
         if (error) {
           reject(error);
@@ -2269,6 +2271,21 @@ export const inactiveCollegetype = (col_type) => {
           reject(error);
         }
         resolve(`A college type has been inactived: ${col_type}`);
+      }
+    );
+  });
+};
+export const inactiveCollege = (cid) => {
+  //console.log("id--", col_type);
+  return new Promise(function (resolve, reject) {
+    pool.query(
+      "UPDATE colleges SET status='D' WHERE cid=$1",
+      [cid],
+      (error, results) => {
+        if (error) {
+          reject(error);
+        }
+        resolve(`A college has been inactived: ${cid}`);
       }
     );
   });

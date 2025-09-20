@@ -12,7 +12,7 @@ import TocImageUploader from '@/components/ui/atoms/tocImageUploader';
 import TocButton from '@/components/ui/atoms/tocButtom';
 import TocUploader from '@/components/ui/atoms/tocUploader';
 
-import { hasNotEmptyValue } from '@/utils'
+import { hasNotEmptyValue,createUrl } from '@/utils'
 
 const TocClientSideCustomEditor = dynamic(
   () => import('@/components/ui/atoms/tocCkEditor'),
@@ -287,7 +287,10 @@ const StepOne = ({ data, onNext }) => {
     }
     return errors;
   }
-
+  const urlLink = (e) => {
+    const url = createUrl(e)
+    setClgUrl(url);
+  };
   return (
     <form onSubmit={handleSubmit}>
       <div className='flex justify-between'>
@@ -303,6 +306,7 @@ const StepOne = ({ data, onNext }) => {
         required={true}
         errmsg={error.college_name}
         onChange={(e) => setClgName(e.target.value)}
+        onChangeCapture={(e) =>urlLink(e)}
       />
 
       <TocInputWithLabel
@@ -313,6 +317,7 @@ const StepOne = ({ data, onNext }) => {
         required={true}
         errmsg={error.college_url}
         onChange={(e) => setClgUrl(e.target.value)}
+       
       />
 
       <TocInputWithLabel

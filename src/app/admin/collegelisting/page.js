@@ -1,9 +1,9 @@
-"use client"
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from 'next/image';
-
+import Image from "next/image";
+import { ToastContainer, toast } from "react-toastify";
 import placeHolderImg from "@/public/images/ads.svg";
 
 import {
@@ -23,21 +23,21 @@ import {
 
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 import axios from "axios";
 
 function Collegelisting() {
-
-    //   if (localStorage.getItem("login_id") <= 0) {
-    //     window.location = "/login";
-    //   }
+  //   if (localStorage.getItem("login_id") <= 0) {
+  //     window.location = "/login";
+  //   }
 
   const [datas, setDatas] = useState([]);
   const [isFilter, setIsFilter] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('login_id', 1)
-    localStorage.setItem('role_id', 1)
+    localStorage.setItem("login_id", 1);
+    localStorage.setItem("role_id", 1);
 
     axios
       .get(
@@ -58,66 +58,87 @@ function Collegelisting() {
 
   const columns = [
     {
-      accessorKey: "college_name", 
+      accessorKey: "college_name",
       header: "Name",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
+      muiTableHeadCellProps: { sx: { color: "black" } },
     },
     {
       accessorKey: "college_url",
       header: "URL",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
+      muiTableHeadCellProps: { sx: { color: "black" } },
     },
+    // {
+    //   accessorKey: "tag_line",
+    //   header: "Tag Line",
+    //   muiTableHeadCellProps: { sx: { color: "black" } },
+    //   Cell: ({ cell }) => <span>{cell.getValue()}</span>,
+    // },
+    // {
+    //   accessorKey: "usp_remark",
+    //   header: "Remark",
+    //   muiTableHeadCellProps: { sx: { color: "black" } },
+    //   Cell: ({ cell }) => <span>{cell.getValue()}</span>,
+    // },
     {
-      accessorKey: "tag_line", 
-      header: "Tag Line",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, 
-    },
-    {
-      accessorKey: "usp_remark", 
-      header: "Remark",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, 
-    },
-    {
-      accessorKey: "found_year", 
+      accessorKey: "found_year",
       header: "Found Year",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
-      Cell: ({ cell }) => <span>{cell.getValue()}</span>, 
+      muiTableHeadCellProps: { sx: { color: "black" } },
+      Cell: ({ cell }) => <span>{cell.getValue()}</span>,
     },
     {
       accessorKey: "logo",
       header: "Logo",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
+      muiTableHeadCellProps: { sx: { color: "black" } },
       Cell: ({ cell }) => (
         <span>
           {/* <img src={getImageURL(cell.getValue())} /> */}
-            <Image 
-                src={(location.hostname !== 'localhost' && cell.getValue()) ? cell.getValue() : placeHolderImg}
-                alt=''
-                width={80}
-                height={40}
-            />
+          <Image
+            src={
+              location.hostname !== "localhost" && cell.getValue()
+                ? cell.getValue()
+                : placeHolderImg
+            }
+            alt=""
+            width={80}
+            height={40}
+          />
         </span>
-      ), 
+      ),
     },
     {
-      accessorKey: "banner", 
+      accessorKey: "banner",
       header: "Banner",
-      muiTableHeadCellProps: { sx: { color: "black" } }, 
+      muiTableHeadCellProps: { sx: { color: "black" } },
       Cell: ({ cell }) => (
         <span>
           {/* <img src={getImageURL(cell.getValue())} /> */}
-            <Image 
-                src={(location.hostname !== 'localhost' && cell.getValue()) ? cell.getValue() : placeHolderImg}
-                alt=''
-                width={80}
-                height={40}
-            />
+          <Image
+            src={
+              location.hostname !== "localhost" && cell.getValue()
+                ? cell.getValue()
+                : placeHolderImg
+            }
+            alt=""
+            width={80}
+            height={40}
+          />
         </span>
-      ), 
+      ),
     },
-
+    {
+      accessorKey: "cstatus", //simple recommended way to define a column
+      header: "Status",
+      muiTableHeadCellProps: { sx: { color: "black" } }, //optional custom props
+      Cell: ({ cell }) => (
+        <span>
+          {cell.getValue() !== "Inactive" ? (
+            <span className="text-green-700">{cell.getValue()}</span>
+          ) : (
+            <span className="text-red-700">{cell.getValue()}</span>
+          )}
+        </span>
+      ), //optional custom cell render
+    },
   ];
   const [rowSelection, setRowSelection] = useState({});
 
@@ -126,7 +147,7 @@ function Collegelisting() {
     data,
     enableColumnOrdering: true,
     enableRowSelection: false,
-    enablePagination: true, 
+    enablePagination: true,
     enableRowActions: true,
     onRowSelectionChange: setRowSelection,
     state: { rowSelection },
@@ -142,29 +163,75 @@ function Collegelisting() {
             />
           </IconButton>
         </Tooltip>
-        <Tooltip title="Delete">
-          <IconButton color="error" onClick={() => openDeleteConfirmModal(row)}>
-            <DeleteIcon
-              onClick={() => {
-                // data.splice(row.index, 1); //assuming simple data table
-              }}
-            />
-          </IconButton>
-        </Tooltip>
+        {row.original.status === "A" && (
+          <Tooltip title="Inactive">
+            <IconButton color="error">
+              <VisibilityOffIcon
+                onClick={() => openInactiveConfirmModal(row)}
+              />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     ),
   });
 
-  const openDeleteConfirmModal = (row) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      deleteUser(row.original.id);
+  const openInactiveConfirmModal = (row) => {
+    if (window.confirm("Are you sure want to inactive this record?")) {
+      inactiveRecord(row.original.cid);
+    }
+  };
+  const inactiveRecord = (cid) => {
+    if (cid > 0) {
+      axios
+        .get("/api/admin/inactivecollege/?cid=" + cid)
+        .then((response) => {
+          //setEditdata(response.data[0]);
+          //console.log('response-->',response);
+          if (response.statusText === "OK") {
+            //window.location.href = "../../questionanswerlist";
+            toast.success("Inactive successfully!", {
+              position: "top-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+              progress: undefined,
+              theme: "light",
+              // transition: Bounce,
+            });
+            setTimeout(function () {
+              //render college listing
+              axios
+                .get(
+                  "/api/admin/getcollegeslisting?loginid=" +
+                    localStorage.getItem("login_id") +
+                    "&loginrole_id=" +
+                    localStorage.getItem("role_id")
+                )
+
+                .then((response) => {
+                  setDatas(response.data);
+                })
+                .catch((error) => {
+                  console.error(error);
+                });
+              //end render college listing
+            }, 3000);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+      //editdata.ctype != "" && setCollegetypevalue(editdata.ctype);
     }
   };
 
   const editDetails = (editval) => {
     console.log("Edit college id:", editval);
     if (editval > 0) {
-      window.location.href = "/admin/collegelisting/college/" + editval;
+      window.location.href = "/admin/collegelisting/college/?cid=" + editval;
     }
   };
 
@@ -172,7 +239,7 @@ function Collegelisting() {
     <>
       <div className="bg-white shadow">
         <div className="pageHeader p-3">
-          <h1 className="text-2xl font-semibold" style={{marginTop: '0px'}}>College Listing</h1>
+          <h3 className="text-2xl font-semibold">College Listing</h3>
           <div className="actions">
             <span>
               <Link
@@ -199,7 +266,7 @@ function Collegelisting() {
                 </svg>
               </Link>
             </span>
-            <span onClick={() => setIsFilter(true)}>
+            {/* <span onClick={() => setIsFilter(true)}>
               <svg
                 className="h-6 w-6 text-stone-600"
                 viewBox="0 0 24 24"
@@ -212,7 +279,7 @@ function Collegelisting() {
                 {" "}
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
               </svg>
-            </span>
+            </span> */}
           </div>
         </div>
       </div>
@@ -250,7 +317,7 @@ function Collegelisting() {
           </div>
         </DialogContent>
       )} */}
-      
+      <ToastContainer />
     </>
   );
 }
