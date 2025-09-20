@@ -68,6 +68,7 @@ import {
   deleteCMS,
   inactiveCms,
   addQuestion,
+  updateQuestion,
   editQuestion,
   insertCollegeBasicInfoNew,
   updateCollegeBasicInfoNew,

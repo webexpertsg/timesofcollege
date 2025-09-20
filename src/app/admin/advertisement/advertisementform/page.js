@@ -5,6 +5,7 @@ import { hasNotEmptyValue, commaWithSingleQuotes } from "@/utils";
 import { useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocSelectList from "@/components/ui/atoms/tocSelectlist";
 import TocRadioInput from "@/components/ui/atoms/tocRadio";
 import TocButton from "@/components/ui/atoms/tocButtom";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,11 +13,13 @@ import axios from "axios";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import "react-datepicker/dist/react-datepicker.css";
-function Notificationadd() {
+function Advertisementadd() {
   //   if (localStorage.getItem("login_id") <= 0) {
   //     window.location = "/login";
   //   }
-
+  const [errForm, setErrForm] = useState({});
+  const [displayposition, setDisplayposition] = useState("");
+  const [displaypage, setDisplaypage] = useState("");
   const [editdata, setEditdata] = useState({
     ad_id: "",
     ad_title: "",
@@ -41,6 +44,8 @@ function Notificationadd() {
           setEditdata(response.data[0]);
           setAd_disp_date_from(response.data[0].date_from);
           setAd_disp_date_to(response.data[0].date_to);
+          setDisplayposition(response.data[0].ad_disp_position);
+          setDisplaypage(response.data[0].ad_disp_page);
           console.log("...>>>", response.data[0].date_from);
         })
         .catch((error) => {
@@ -58,13 +63,18 @@ function Notificationadd() {
   };
 
   const submitAddadvertisement = async (event) => {
+    const newErrors = {};
+    setErrForm(newErrors);
     event.preventDefault();
+    if (!hasNotEmptyValue(newErrors)) {
+    }
+
     const formData = new FormData();
     formData.append("ad_image", ad_image);
     formData.append("ad_id", event.target.ad_id.value);
     formData.append("ad_title", event.target.ad_title.value);
-    formData.append("ad_disp_position", event.target.ad_disp_position.value);
-    formData.append("ad_disp_page", event.target.ad_disp_page.value);
+    formData.append("ad_disp_position", displayposition);
+    formData.append("ad_disp_page", displaypage);
     //formData.append("ad_disp_date_from", event.target.ad_disp_date_from.value);
     formData.append(
       "ad_disp_date_from",
@@ -148,6 +158,17 @@ function Notificationadd() {
   };
   // end add new Cms
   console.log("ad_disp_date_to", ad_disp_date_to);
+  const displaypositionarr = [
+    { value: "top", label: "Top" },
+    { value: "right", label: "Right" },
+    { value: "bottom", label: "Bottom" },
+  ];
+  const displaypagearr = [
+    { value: "home", label: "Home" },
+    { value: "exam", label: "Exam Listing" },
+    { value: "course", label: "Course Listing" },
+    { value: "search", label: "Search Page" },
+  ];
   return (
     <>
       <div className="flex bg-white shadow">
@@ -253,84 +274,26 @@ function Notificationadd() {
             />
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="ad_disp_position"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Display Position
-            </label>
-            <select
-              name="ad_disp_position"
+            <TocSelectList
               id="ad_disp_position"
-              className="block w-auto p-2 mb-6 text-sm text-gray-900  rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option
-                value="top"
-                selected={editdata.ad_disp_position == "top" ? "selected" : ""}
-              >
-                Top
-              </option>
-              <option
-                value="right"
-                selected={
-                  editdata.ad_disp_position == "right" ? "selected" : ""
-                }
-              >
-                Right
-              </option>
-              <option
-                value="bottom"
-                selected={
-                  editdata.ad_disp_position == "bottom" ? "selected" : ""
-                }
-              >
-                Bottom
-              </option>
-            </select>
+              label="Display Position"
+              options={displaypositionarr}
+              value={displayposition}
+              required={true}
+              //errmsg={errForm.ad_disp_position}
+              onChange={(e) => setDisplayposition(e.target.value)}
+            />
           </div>
           <div className="mt-2">
-            <label
-              htmlFor="ad_disp_page"
-              className="block text-sm font-bold leading-6 text-gray-900"
-            >
-              Display Page
-            </label>
-            <select
-              name="ad_disp_page"
+            <TocSelectList
               id="ad_disp_page"
-              className="block w-auto p-2 mb-6 text-sm text-gray-900  rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-            >
-              <option
-                value="home"
-                selected={editdata.ad_disp_page == "home" ? "selected" : ""}
-              >
-                Home
-              </option>
-              <option
-                value="listing"
-                selected={editdata.ad_disp_page == "listing" ? "selected" : ""}
-              >
-                College Listing
-              </option>
-              <option
-                value="exams"
-                selected={editdata.ad_disp_page == "exams" ? "selected" : ""}
-              >
-                Exam Listing
-              </option>
-              <option
-                value="courses"
-                selected={editdata.ad_disp_page == "courses" ? "selected" : ""}
-              >
-                Course Listing
-              </option>
-              <option
-                value="search"
-                selected={editdata.ad_disp_page == "search" ? "selected" : ""}
-              >
-                Search
-              </option>
-            </select>
+              label="Display Page"
+              options={displaypagearr}
+              value={displaypage}
+              required={true}
+              //errmsg={errForm.ad_disp_page}
+              onChange={(e) => setDisplaypage(e.target.value)}
+            />
           </div>
           <div className="mt-2">
             <label
@@ -357,12 +320,9 @@ function Notificationadd() {
           </div>
           <div className="btn-section">
             <button type="button">Cancle</button>
-            <button
-              type="submit"
-              className="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Submit
-            </button>
+            <TocButton type="submit" className="pl-10 pr-10 h-10">
+              {editdata.ad_id > 0 ? "Update" : "Submit"}
+            </TocButton>
           </div>
         </form>
       </div>
@@ -370,4 +330,4 @@ function Notificationadd() {
     </>
   );
 }
-export default Notificationadd;
+export default Advertisementadd;

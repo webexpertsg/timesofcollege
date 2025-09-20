@@ -165,7 +165,6 @@ function Questionanswer() {
           data: payload,
         })
           .then(function (response) {
-            //console.log(response);
             //console.log(response.statusText);
             if (response.statusText === "OK") {
               //window.location.href = "../../questionanswerlist";
@@ -181,7 +180,7 @@ function Questionanswer() {
                 // transition: Bounce,
               });
               setTimeout(function () {
-                window.location.replace("../../questionanswerlist");
+                window.location.replace("/admin/questionanswerlist");
               }, 3000);
             }
           })
