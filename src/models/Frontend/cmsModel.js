@@ -11,7 +11,7 @@ const pool = new Pool({
   port: config.dbport,
 });
 
-const cmsdetails = (cms_url) => {
+export const cmsdetails = (cms_url) => {
   //const cms_url = cms_url;
   return new Promise(function (resolve, reject) {
     pool.query(
@@ -27,7 +27,4 @@ const cmsdetails = (cms_url) => {
       }
     );
   });
-};
-module.exports = {
-  cmsdetails,
 };

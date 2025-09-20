@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { hasNotEmptyValue } from "@/utils";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 //import { Link, useParams } from "react-router-dom";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocRadioInput from "@/components/ui/atoms/tocRadio";
@@ -28,8 +28,9 @@ function Notificationadd() {
     notification_position: "",
     notification_status: notificationstatus,
   });
-  const searchParams = useSearchParams();
-  const notif_id = searchParams.get("nid");
+  // const searchParams = useSearchParams();
+  // const notif_id = searchParams.get("nid");
+  const notif_id = 1;
   useEffect(() => {
     if (notif_id) {
       axios

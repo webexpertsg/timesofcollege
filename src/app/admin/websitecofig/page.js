@@ -1,6 +1,6 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
-import {Link,useParams} from "next/link";
+import { Link, useParams } from "next/link";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
@@ -8,9 +8,9 @@ import axios from "axios";
 // import moment from "moment";
 // import "react-datepicker/dist/react-datepicker.css";
 function Websitconfig() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
 
   const [editdata, setEditdata] = useState({
     college_title_append: "",

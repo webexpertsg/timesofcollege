@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import {
@@ -19,9 +19,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 
 function Newsnevent() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   const [returndspmsg, setReturndspmsg] = useState();
   const [errorMsg, setErrorMsg] = useState([]);

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import {
   MaterialReactTable,
   useMaterialReactTable,
@@ -18,18 +18,18 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ToastContainer, toast } from "react-toastify";
-import TocInputWithLabel from '@/components/ui/atoms/tocInputWithLabel';
-import TocButton from '@/components/ui/atoms/tocButtom';
+import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
+import TocButton from "@/components/ui/atoms/tocButtom";
 const TocClientSideCustomEditor = dynamic(
-  () => import('@/components/ui/atoms/tocCkEditor'),
+  () => import("@/components/ui/atoms/tocCkEditor"),
   { ssr: false }
 );
 import axios from "axios";
 
 function Location() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [countrylist, setCountrylist] = useState([]);
   const [statelist, setStatelist] = useState([]);
   const [citylist, setCitylist] = useState([]);
@@ -58,13 +58,12 @@ function Location() {
   const [statebriefvalue, setStatebriefvalue] = useState();
   const [citybriefvalue, setCitybriefvalue] = useState();
   const [errForm, setErrForm] = useState(true);
-  const [errCname, setErrCname] = useState('');
-  const [errCurl, setErrCurl] = useState('');
-  const [errCmetatitle, setErrCmetatitle] = useState('');
-  const [errCmetakeyword, setErrCmetakeyword] = useState('');
-  const [errCmetadescription, setErrCmetadescription] = useState('');
+  const [errCname, setErrCname] = useState("");
+  const [errCurl, setErrCurl] = useState("");
+  const [errCmetatitle, setErrCmetatitle] = useState("");
+  const [errCmetakeyword, setErrCmetakeyword] = useState("");
+  const [errCmetadescription, setErrCmetadescription] = useState("");
   useEffect(() => {
-
     axios
       .get("/api/admin/getcountrylisting")
       .then((response) => {
@@ -334,7 +333,7 @@ function Location() {
     if (meta_description.value === "") {
       setErrCmetadescription("Meta Description can not be blank!");
     } else {
-      setErrCmetadescription(""); 
+      setErrCmetadescription("");
       setErrForm(false);
     }
     if (!errForm) {
@@ -509,7 +508,6 @@ function Location() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  
                   <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
                 </svg>
               </span>
@@ -687,7 +685,7 @@ function Location() {
               {returndspmsg && returndspmsg}
               <div className="mt-2">
                 <input type="hidden" value={editdata.cout_id} name="cout_id" />
-                
+
                 <TocInputWithLabel
                   id="country_name"
                   label="Country Name"
@@ -708,7 +706,10 @@ function Location() {
                 <div className="errmsg">{errCurl}</div>
               </div>
               <div className="mt-2">
-                <TocClientSideCustomEditor data={editdata.country_brief ? editdata.country_brief : ""} onChange={handleEditorChange} />
+                <TocClientSideCustomEditor
+                  data={editdata.country_brief ? editdata.country_brief : ""}
+                  onChange={handleEditorChange}
+                />
                 <div className="errmsg"></div>
               </div>
 
@@ -723,18 +724,18 @@ function Location() {
                 <div className="errmsg">{errCmetatitle}</div>
               </div>
               <div className="mt-2">
-             
                 <TocInputWithLabel
                   id="meta_description"
                   label="Meta Description"
                   placeholder="Please Enter Meta Description."
-                  value={editdata.meta_description ? editdata.meta_description : ""}
+                  value={
+                    editdata.meta_description ? editdata.meta_description : ""
+                  }
                   onChange={handleChangeFormdata}
                 />
                 <div className="errmsg">{errCmetadescription}</div>
               </div>
               <div className="mt-2">
-                
                 <TocInputWithLabel
                   id="meta_keyword"
                   label="Meta Keyword"
@@ -748,8 +749,10 @@ function Location() {
                 <button type="button" onClick={() => setIsEditOpencunt(false)}>
                   Cancle
                 </button>
-                <TocButton type="submit" className='pl-10 pr-10 h-10'> {editdata.cout_id > 0 ? "Update" : "Submit"}</TocButton>
-                
+                <TocButton type="submit" className="pl-10 pr-10 h-10">
+                  {" "}
+                  {editdata.cout_id > 0 ? "Update" : "Submit"}
+                </TocButton>
               </div>
             </form>
           </div>

@@ -3285,9 +3285,3 @@ export const updateCollegeBasicInfoNew = (body) => {
     );
   });
 };
-
-module.exports = {
-  Login,
-  getColleges,
-  //college,
-};

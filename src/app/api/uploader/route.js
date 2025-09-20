@@ -1,4 +1,4 @@
-import formidable from 'formidable';
+//import formidable from 'formidable';
 
 // Disable default body parsing
 export const config = {
@@ -8,11 +8,11 @@ export const config = {
 };
 
 const handler = async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ message: 'Method not allowed' });
+  if (req.method !== "POST") {
+    return res.status(405).json({ message: "Method not allowed" });
   }
 
-  const form = formidable();
+  //const form = formidable();
 
   try {
     const { fields, files } = await new Promise((resolve, reject) => {
@@ -25,16 +25,14 @@ const handler = async (req, res) => {
     // You can now process 'files' and 'fields' as needed
     // For example: save to disk, upload to cloud, etc.
 
-    res.status(200).json({ message: 'File uploaded successfully' });
+    res.status(200).json({ message: "File uploaded successfully" });
   } catch (error) {
-    console.error('Error uploading file:', error);
-    res.status(500).json({ message: 'File upload failed' });
+    console.error("Error uploading file:", error);
+    res.status(500).json({ message: "File upload failed" });
   }
 };
 
 export default handler;
-
-
 
 // export default async function handler(req, res) {
 //   if (req.method === 'POST') {

@@ -27,9 +27,9 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 
 function Exam() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   const [errForm, setErrForm] = useState({});
   const [isEditOpen, setIsEditOpen] = useState(false);

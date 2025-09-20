@@ -24,9 +24,9 @@ import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocButton from "@/components/ui/atoms/tocButtom";
 
 function Facilites() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   const [returndspmsg, setReturndspmsg] = useState();
   const [facilityName, setFacilityName] = useState();

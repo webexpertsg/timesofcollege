@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { hasNotEmptyValue, commaWithSingleQuotes } from "@/utils";
-import { useSearchParams } from "next/navigation";
+//import { useSearchParams } from "next/navigation";
 import { ToastContainer, toast } from "react-toastify";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocSelectList from "@/components/ui/atoms/tocSelectlist";
@@ -33,8 +33,9 @@ function Advertisementadd() {
   const [ad_image, setAd_image] = useState();
   const [ad_disp_date_from, setAd_disp_date_from] = useState(new Date());
   const [ad_disp_date_to, setAd_disp_date_to] = useState(new Date());
-  const searchParams = useSearchParams();
-  const ad_id = searchParams.get("adid");
+  //const searchParams = useSearchParams();
+  //const ad_id = searchParams.get("adid");
+  const ad_id = 1;
 
   useEffect(() => {
     if (ad_id > 0) {

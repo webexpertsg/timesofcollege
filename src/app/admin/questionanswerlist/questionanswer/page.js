@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { hasNotEmptyValue, commaWithSingleQuotes, createUrl } from "@/utils";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocTextarea from "@/components/ui/atoms/tocTextarea";
 import TocRadioInput from "@/components/ui/atoms/tocRadio";
@@ -44,8 +44,9 @@ function Questionanswer() {
     categories: selectCategory,
     trading: selectTrading,
   });
-  const searchParams = useSearchParams();
-  const qid = searchParams.get("qid");
+  //const searchParams = useSearchParams();
+  //const qid = searchParams.get("qid");
+  const qid = 1;
   useEffect(() => {
     axios
       .get("/api/admin/getcategoriesarr")

@@ -36,16 +36,17 @@ function Collegelisting() {
   const [isFilter, setIsFilter] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem("login_id", 1);
-    localStorage.setItem("role_id", 1);
+    //localStorage.setItem("login_id", 1);
+    //localStorage.setItem("role_id", 1);
 
     axios
-      .get(
-        "/api/admin/getcollegeslisting?loginid=" +
-          localStorage.getItem("login_id") +
-          "&loginrole_id=" +
-          localStorage.getItem("role_id")
-      )
+      // .get(
+      //   "/api/admin/getcollegeslisting?loginid=" +
+      //     localStorage.getItem("login_id") +
+      //     "&loginrole_id=" +
+      //     localStorage.getItem("role_id")
+      // )
+      .get("/api/admin/getcollegeslisting?loginid=1&loginrole_id=1")
       .then((response) => {
         setDatas(response.data);
       })
@@ -204,12 +205,7 @@ function Collegelisting() {
             setTimeout(function () {
               //render college listing
               axios
-                .get(
-                  "/api/admin/getcollegeslisting?loginid=" +
-                    localStorage.getItem("login_id") +
-                    "&loginrole_id=" +
-                    localStorage.getItem("role_id")
-                )
+                .get("/api/admin/getcollegeslisting?loginid=1&loginrole_id=1")
 
                 .then((response) => {
                   setDatas(response.data);

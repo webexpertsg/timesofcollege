@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { hasNotEmptyValue } from "@/utils";
-import { useSearchParams } from "next/navigation";
+//import { useSearchParams } from "next/navigation";
 import TocInputWithLabel from "@/components/ui/atoms/tocInputWithLabel";
 import TocTextarea from "@/components/ui/atoms/tocTextarea";
 import TocRadioInput from "@/components/ui/atoms/tocRadio";
@@ -34,8 +34,9 @@ function Addcms() {
     cms_meta_keyword: "",
     cms_status: cmsstatus,
   });
-  const searchParams = useSearchParams();
-  const cmsid = searchParams.get("cmsid");
+  //const searchParams = useSearchParams();
+  // const cmsid = searchParams.get("cmsid");
+  const cmsid = 1;
   useEffect(() => {
     if (cmsid > 0) {
       axios

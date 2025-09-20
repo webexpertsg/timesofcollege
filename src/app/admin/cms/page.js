@@ -22,9 +22,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import axios from "axios";
 
 function Cms() {
-  if (localStorage.getItem("login_id") <= 0) {
-    window.location = "/login";
-  }
+  // if (localStorage.getItem("login_id") <= 0) {
+  //   window.location = "/login";
+  // }
   const [datas, setDatas] = useState([]);
   const [returndspmsg, setReturndspmsg] = useState();
   const [errorMsg, setErrorMsg] = useState([]);
